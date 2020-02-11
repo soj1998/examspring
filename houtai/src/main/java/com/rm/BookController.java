@@ -40,7 +40,14 @@ public class BookController {
         return mav;
     }
      
- 
+    @RequestMapping(value="/list2")
+    public String list2(){
+    	List<Book> bkall=bookDao.findAll();
+    	for(Book b:bkall) {
+    			LOG.info("--- "+b.getBookName());
+    	}
+        return "aaa";
+    }
      
     /**
      * 添加图书
@@ -92,4 +99,10 @@ public class BookController {
         bookDao.deleteById(id);
         return "forward:/book/list";
     }
+    public static void main(String[] args) {
+    	Book b=new Book();
+    	b.setBookName("111");
+    	new BookController().add(b);
+    	LOG.info("1111");
+	}
 }
