@@ -1,0 +1,26 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /houtai
+   
+helloWorld: spring Boot\u5927\u7237\u4F60\u597D
+   
+msyql:
+   jdbcName: com.mysql.cj.jdbc.Driver
+   dbUrl: jdbc:mysql://localhost:3306/db_book
+   userName: root
+   password: 123456
+ 
+spring:
+   datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/abc?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      username: root
+      password: ChCh1625!
+   jpa:
+     hibernate.ddl-auto: update
+     show-sql: true
+     
+freemarker:
+   suffix: .html
+   template-loader-path: classpath:/templates/
