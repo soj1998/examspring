@@ -1,5 +1,7 @@
 package com.rm.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +39,40 @@ public class GuanLianXing {
     @Column(length=100)
     private String zhongYaoXing;
     
-    public Integer getId() {
+    private boolean yxbz;
+    
+    @Column(length=100)
+    private String publicOrPrivate;
+    
+    private Date gongKaiYxqq;
+    
+    private Date gongKaiYxqz;
+    
+    public boolean isYxbz() {
+		return yxbz;
+	}
+	public void setYxbz(boolean yxbz) {
+		this.yxbz = yxbz;
+	}
+	public String getPublicOrPrivate() {
+		return publicOrPrivate;
+	}
+	public void setPublicOrPrivate(String publicOrPrivate) {
+		this.publicOrPrivate = publicOrPrivate;
+	}
+	public Date getGongKaiYxqq() {
+		return gongKaiYxqq;
+	}
+	public void setGongKaiYxqq(Date gongKaiYxqq) {
+		this.gongKaiYxqq = gongKaiYxqq;
+	}
+	public Date getGongKaiYxqz() {
+		return gongKaiYxqz;
+	}
+	public void setGongKaiYxqz(Date gongKaiYxqz) {
+		this.gongKaiYxqz = gongKaiYxqz;
+	}
+	public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
@@ -74,5 +109,13 @@ public class GuanLianXing {
 		this.zhongYaoXing = zhongYaoXing;
 	}
     
+	private Date xgsj;
+
+	public Date getXgsj() {
+		return xgsj;
+	}
+	public void setXgsj(Date xgsj) {
+		this.xgsj = xgsj;
+	} 
      
 }
