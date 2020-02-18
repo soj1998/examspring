@@ -19,8 +19,26 @@ public class XueKe {
     
     @Column(length=30)
     private String erJiFenLei;
+    
+    @Column(length=40)
+    private String zhang;
      
-    public Integer getId() {
+    @Column(length=40)
+    private String jie;
+     
+    public String getZhang() {
+		return zhang;
+	}
+	public void setZhang(String zhang) {
+		this.zhang = zhang;
+	}
+	public String getJie() {
+		return jie;
+	}
+	public void setJie(String jie) {
+		this.jie = jie;
+	}
+	public Integer getId() {
         return id;
     }
     public void setId(Integer id) {

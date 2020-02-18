@@ -1,5 +1,7 @@
 package com.rm.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,13 +28,11 @@ public class QueandAns {
     @Column(length=500)
     private String analyse;
     
-    private Integer guanlianId;
-    
-    public Integer getGuanlianId() {
-		return guanlianId;
+  	public String getZhongYaoXing() {
+		return zhongYaoXing;
 	}
-	public void setGuanlianId(Integer guanlianId) {
-		this.guanlianId = guanlianId;
+	public void setZhongYaoXing(String zhongYaoXing) {
+		this.zhongYaoXing = zhongYaoXing;
 	}
 	public Integer getId() {
         return id;
@@ -65,6 +65,50 @@ public class QueandAns {
 		this.analyse = analyse;
 	}
     
-     
+	private Integer xueKeId;
+    
+    public Integer getXueKeId() {
+		return xueKeId;
+	}
+	public void setXueKeId(Integer xueKeId) {
+		this.xueKeId = xueKeId;
+	}
+
+	@Column(length=100)
+    private String zhongYaoXing;
+    
+    private boolean yxbz;
+    
+    @Column(length=100)
+    private String publicOrPrivate;
+    
+    private Date gongKaiYxqq;
+    
+    private Date gongKaiYxqz;
+    
+    public boolean isYxbz() {
+		return yxbz;
+	}
+	public void setYxbz(boolean yxbz) {
+		this.yxbz = yxbz;
+	}
+	public String getPublicOrPrivate() {
+		return publicOrPrivate;
+	}
+	public void setPublicOrPrivate(String publicOrPrivate) {
+		this.publicOrPrivate = publicOrPrivate;
+	}
+	public Date getGongKaiYxqq() {
+		return gongKaiYxqq;
+	}
+	public void setGongKaiYxqq(Date gongKaiYxqq) {
+		this.gongKaiYxqq = gongKaiYxqq;
+	}
+	public Date getGongKaiYxqz() {
+		return gongKaiYxqz;
+	}
+	public void setGongKaiYxqz(Date gongKaiYxqz) {
+		this.gongKaiYxqz = gongKaiYxqz;
+	}
      
 }
