@@ -64,10 +64,17 @@ public class QueandAns {
 	public void setAnalyse(String analyse) {
 		this.analyse = analyse;
 	}
-    
+	@Column
 	private Integer xueKeId;
-    
-    public Integer getXueKeId() {
+	@Column
+	private Integer userId;
+    public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	public Integer getXueKeId() {
 		return xueKeId;
 	}
 	public void setXueKeId(Integer xueKeId) {
@@ -76,14 +83,14 @@ public class QueandAns {
 
 	@Column(length=100)
     private String zhongYaoXing;
-    
+	@Column
     private boolean yxbz;
     
     @Column(length=100)
     private String publicOrPrivate;
-    
+    @Column
     private Date gongKaiYxqq;
-    
+    @Column
     private Date gongKaiYxqz;
     
     public boolean isYxbz() {
@@ -110,5 +117,13 @@ public class QueandAns {
 	public void setGongKaiYxqz(Date gongKaiYxqz) {
 		this.gongKaiYxqz = gongKaiYxqz;
 	}
-     
+	@Column
+    private Date lrxgsj;
+
+	public Date getLrxgsj() {
+		return lrxgsj;
+	}
+	public void setLrxgsj(Date lrxgsj) {
+		this.lrxgsj = lrxgsj;
+	}
 }

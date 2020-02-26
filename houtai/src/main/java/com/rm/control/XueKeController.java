@@ -2,16 +2,15 @@ package com.rm.control;
 
 import java.util.List;
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.rm.dao.QueandAnsDao;
 import com.rm.dao.XueKeDao;
-import com.rm.entity.QueandAns;
-import com.rm.entity.XueKe;
+import com.rm.entity.XueKeBaoCun;
 import com.rm.util.SimCalculator;
 import com.rm.util.StringUtil;
 @RequestMapping(value="/xueke")
@@ -19,51 +18,78 @@ import com.rm.util.StringUtil;
 public class XueKeController {
 	@Resource
     private XueKeDao xkDao;    
-	@Resource
-    private QueandAnsDao qaDao;  
+	
 	private static final Logger LOG = LoggerFactory.getLogger(XueKeController.class);
     @RequestMapping(value="/listall")
-    public List<XueKe> listall(){    	
-        List<XueKe> list_glx=xkDao.findAll();
+    public List<XueKeBaoCun> listall(){    	
+        List<XueKeBaoCun> list_glx=xkDao.findAll();
         return list_glx;
     }
     /**
-     * 添加图书
-     * @param book
-     * @return
-     */
+ // 绑定变量名字和属性，参数封装进类  
+    @InitBinder("xueke")  
+    public void initBinderAddr(WebDataBinder binder) {  
+        binder.setFieldDefaultPrefix("xueke.");  
+    }      
+      
+*/
+    @RequestMapping(value="/listxueke")
+    public List<String> listxueke(){    	
+        List<String> list_glx=xkDao.getXueKeNative();
+        return list_glx;
+    }
+    
+    @RequestMapping(value="/listerji",method=RequestMethod.POST)
+    public List<String> listerji(@RequestParam("xueken") String xueke){    	
+        List<String> list_glx=xkDao.getErJiFenLeiByXueKeNative(xueke);
+        return list_glx;
+    }
+    
+    @RequestMapping(value="/listzhangjie",method=RequestMethod.POST)
+    public List<XueKeBaoCun> listzhangjie(@RequestParam("xueken") String xueke,
+    		@RequestParam("erji") String erjifenlei){    	
+        List<XueKeBaoCun> list_glx=xkDao.getZhangJieByXueKeNative(xueke, erjifenlei);
+        return list_glx;
+    }
+    
     @RequestMapping(value="/add",method=RequestMethod.POST)
-    public String add(XueKe xueke,QueandAns qaa){
+    public String add(XueKeBaoCun xueke){
     	SimCalculator sc=new SimCalculator();
-    	List<XueKe> bkall=xkDao.findAll();
-    	for(XueKe b:bkall) {
-    		double bl=sc.calculate(b.getZhang(), xueke.getZhang(), 20);    
-    		if(bl>0.8) {
-    			if( StringUtil.isNotEmpty(xueke.getJie())) {
-    				bl=sc.calculate(b.getJie(), xueke.getJie(), 20);
-    				if(bl>0.8) {
-    					LOG.info("already have same zhang jie");
-    					return "存在相同的章和节";
-    				}
-    			}else {
-    				LOG.info("already have same zhang");
-					return "存在相同的章且节为空";
-    			}
+    	List<XueKeBaoCun> bkall=xkDao.findAll();
+    	for(XueKeBaoCun b:bkall) {
+    		double bl=sc.calculate(b.getXueKe(), xueke.getXueKe(), 20); 
+    		if(bl<0.8) {
+    			continue;
     		}
+    		bl=sc.calculate(b.getErJiFenLei(), xueke.getErJiFenLei(), 20); 
+    		if(bl<0.8) {
+    			continue;
+    		}
+    		bl=sc.calculate(b.getZhang(), xueke.getZhang(), 20); 
+    		if(bl<0.8) {
+    			continue;
+    		}
+			if( StringUtil.isNotEmpty(xueke.getJie())) {
+				bl=sc.calculate(b.getJie(), xueke.getJie(), 20);
+				if(bl>0.8) {
+					LOG.info("already have same zhang jie");
+					return "存在相同的章和节";
+				}
+			}else {
+				LOG.info("already have same zhang");
+				return "存在相同的章且节为空";
+			}
     	}
     	Integer xuekeId= xkDao.save(xueke).getId();
     	LOG.info("xueke already save");
-    	qaa.setXueKeId(xuekeId);
-    	List<QueandAns> qaaall=qaDao.findAll();
-    	for(QueandAns b:qaaall) {
-    		double bl=sc.calculate(b.getQuestion(), qaa.getQuestion(), 40);    
-    		if(bl>0.8) {
-    			LOG.info("already have same question");
-				return "存在相同的问题";    			
-    		}
-    	}
-    	qaDao.save(qaa);
-    	LOG.info("question already save");
-    	return "保存成功";
+    	return ""+xuekeId;
+    }  
+    
+    @GetMapping(path = "delete")
+    public String urlParam(@RequestParam(name = "xuekeid") String  xuekeid) {
+    	LOG.info(xuekeid);
+    	xkDao.deleteById(Integer.parseInt(xuekeid));
+    	return "ok";
     }
+   
 }

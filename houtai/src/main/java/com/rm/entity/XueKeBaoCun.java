@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="t_xueke")
-public class XueKe {
+public class XueKeBaoCun {
  
     @Id
     @GeneratedValue
@@ -16,17 +16,18 @@ public class XueKe {
      
     @Column(length=20)
     private String xueKe;
-    
+     
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+   
     @Column(length=30)
     private String erJiFenLei;
-    
-    @Column(length=40)
-    private String zhang;
-     
-    @Column(length=40)
-    private String jie;
-     
-    public String getZhang() {
+
+	public String getZhang() {
 		return zhang;
 	}
 	public void setZhang(String zhang) {
@@ -38,12 +39,6 @@ public class XueKe {
 	public void setJie(String jie) {
 		this.jie = jie;
 	}
-	public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
 	public String getXueKe() {
 		return xueKe;
 	}
@@ -56,6 +51,9 @@ public class XueKe {
 	public void setErJiFenLei(String erJiFenLei) {
 		this.erJiFenLei = erJiFenLei;
 	}
-    
-     
+	 @Column(length=40)
+	private String zhang;
+	     
+    @Column(length=40)
+    private String jie;
 }

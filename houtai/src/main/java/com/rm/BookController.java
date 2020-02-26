@@ -1,18 +1,12 @@
 package com.rm;
 
 import java.util.List;
-
 import javax.annotation.Resource;
-
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,6 +63,22 @@ public class BookController {
         bookDao.save(book);
         return "add";
     }
+    
+    @RequestMapping(value="/add2",method=RequestMethod.POST)
+    public String add2(Book book){
+    	LOG.info(book.getBookName());
+    	SimCalculator sc=new SimCalculator();
+    	List<Book> bkall=bookDao.findAll();
+    	for(Book b:bkall) {
+    		double bl=sc.calculate(b.getBookName(), book.getBookName(), 20);    
+    		if(bl>0.8) {
+    			LOG.info("存在相同的书籍了");
+    			return "already have same book";
+    		}
+    	}
+        bookDao.save(book);
+        return "add";
+    }
      
     @GetMapping(value="/preUpdate/{id}")
     public ModelAndView preUpdate(@PathVariable("id") Integer id){
@@ -99,10 +109,5 @@ public class BookController {
         bookDao.deleteById(id);
         return "forward:/book/list";
     }
-    public static void main(String[] args) {
-    	Book b=new Book();
-    	b.setBookName("111");
-    	new BookController().add(b);
-    	LOG.info("1111");
-	}
+   
 }
