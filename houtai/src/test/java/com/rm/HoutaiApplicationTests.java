@@ -28,6 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.BookDao;
 import com.rm.dao.QueandAnsDao;
 import com.rm.dao.XueKeDao;
+import com.rm.entity.MultiTree;
 import com.rm.entity.XueKeBaoCun;
 
 
@@ -126,6 +127,7 @@ class HoutaiApplicationTests {
 	 *章节目对应的段落数 多少空段落 对应的段落数。
 	 *2.对每一个章节目 存到mysql 包括上下文和具体文字
 	 *3.概括有个数字 对应着详细	
+	 *4.用多叉树存储相关信息
 	*/
 	@Test
     public void test2(){
@@ -220,6 +222,7 @@ class HoutaiApplicationTests {
 			//jsonobject.put("jieshu",j)
 			//jsonobject.put("")
 			JSONArray jsonDuanGaiKuoArray = new JSONArray();
+			MultiTree mtree = new MultiTree();
 			for (int i = 0; i < jsonDuanArray.size(); i++) {
 	            JSONObject obj1 = (JSONObject)jsonDuanArray.get(i);
 	            JSONObject obj2 = new JSONObject();
