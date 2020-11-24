@@ -141,6 +141,14 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
         <artifactId>poi-ooxml-schemas</artifactId>
         <version>4.1.2</version>
     </dependency>
+    
+    <!--阿里巴巴的fastjson-->
+	<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+	<dependency>
+	    <groupId>com.alibaba</groupId>
+	    <artifactId>fastjson</artifactId>
+	    <version>1.2.75</version>
+	</dependency>
 
 	</dependencies>
 
