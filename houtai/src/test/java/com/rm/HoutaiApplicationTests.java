@@ -223,13 +223,30 @@ class HoutaiApplicationTests {
 			//jsonobject.put("")
 			JSONArray jsonDuanGaiKuoArray = new JSONArray();
 			MultiTree mtree = new MultiTree();
+			System.out.println(mtree.returnList().size());
 			for (int i = 0; i < jsonDuanArray.size(); i++) {
 	            JSONObject obj1 = (JSONObject)jsonDuanArray.get(i);
 	            JSONObject obj2 = new JSONObject();
 	            int dqduan= (int)obj1.get("biaoti");
 	            int dqhangshu= (int)obj1.get("hangshu");
 	            String dqneirong= (String)obj1.get("neirong");
+	            //get(biaoti)得到节点 
+	            //循环所有的节点把他们都挂上去
+	            //挂的时候按照顺序挂 先找父节点
+	            //treenode 有id 和 string 增加一个行数 
+	            //行数 是
+	            
+	            if(null!= obj1.get("biaoti") && 1==(int)(obj1.get("biaoti")))
+	            {
+	            	mtree.add(0, obj1.toJSONString());
+	            }
+	            if(null!= obj1.get("biaoti") && 2==(int)(obj1.get("biaoti")))
+	            {
+	            	mtree.add(1, obj1.toJSONString());
+	            }	            
 			}
+			mtree.list();
+			System.out.println(mtree.returnList().size());
 			int Zhang = 0,Jie = 0,Mu = 0,KongBai = 0;
 			for (int i = 0; i < jsonDuanArray.size(); i++) {
 	            JSONObject obj = (JSONObject)jsonDuanArray.get(i);	            
@@ -252,17 +269,7 @@ class HoutaiApplicationTests {
 	        }
 			System.out.println("当前文章一共有"+duanLuoZongshu
 					+ ",有"+Zhang+"章，"+Jie+"节，"+KongBai+"个空白段。"
-					);
-			for (int i = 0; i < jsonDuanArray.size(); i++) {
-	            JSONObject obj = (JSONObject)jsonDuanArray.get(i);	            
-	            if(null!= obj.get("biaoti") && 2==(int)(obj.get("biaoti")))
-	            {
-	            	Zhang++;
-	            }
-			}
-			System.out.println("第一章一共有"+duanLuoZongshu
-					+ ",有"+Zhang+"章，"+Jie+"节，"+KongBai+"个空白段。"
-					);
+					);			
 
 		} catch (Exception e) {
 			e.printStackTrace();
