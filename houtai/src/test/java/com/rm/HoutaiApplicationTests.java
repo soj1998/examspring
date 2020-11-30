@@ -206,21 +206,12 @@ class HoutaiApplicationTests {
 				}
 				*/
 			}
-			int DuanLuoDingDuanWei = 1;			
-			for (int j = 0; j < jsonDuanArray.size(); j++) {
-	            JSONObject obj = (JSONObject)jsonDuanArray.get(j);
-	            if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
-	            	if(DuanLuoDingDuanWei < (int)(obj.get("biaoti"))) {
-	            		DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
-	            	}
-	            }	            
-			}
-			System.out.println("当前文章标题深度" + DuanLuoDingDuanWei);
+			
+			System.out.println("当前文章标题深度" + getMaxBiaoTiDuanWei(jsonDuanArray));
 			//第几章 从几到几 前一章
 			//jsonobject.put("biaoti"+i,j)
 			//jsonobject.put("kaishi",j)
 			//jsonobject.put("jieshu",j)
-			//jsonobject.put("")
 			JSONArray jsonDuanGaiKuoArray = new JSONArray();
 			MultiTree mtree = new MultiTree();
 			System.out.println(mtree.returnList().size());
@@ -294,7 +285,7 @@ class HoutaiApplicationTests {
       * @param para
       * @return
     */
-	private static String getTitleLvl(XWPFDocument doc, XWPFParagraph para) {
+	private String getTitleLvl(XWPFDocument doc, XWPFParagraph para) {
 		String titleLvl = "";
 		try {
 			// 判断该段落是否设置了大纲级别
@@ -349,6 +340,60 @@ class HoutaiApplicationTests {
 		return titleLvl;
 	}
 	
+	/**
+	 * 得到当前传入paragraph的最小标题度
+	 */
+	private int getMinBiaoTiDuanWei(JSONArray jsonDuanArray) {
+		int DuanLuoDingDuanWei = 1;
+		if (null == jsonDuanArray || 0 == jsonDuanArray.size()) {
+			return DuanLuoDingDuanWei;
+		}
+		for (int j = 0; j < jsonDuanArray.size(); j++) {
+            JSONObject obj = (JSONObject)jsonDuanArray.get(j);
+            if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
+            	if(DuanLuoDingDuanWei < (int)(obj.get("biaoti"))) {
+            		DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
+            	}
+            }	            
+		}
+		return DuanLuoDingDuanWei;
+	}
+	/**
+	 * 得到当前传入paragraph的最大标题度
+	 */
+	private int getMaxBiaoTiDuanWei(JSONArray jsonDuanArray) {
+		int DuanLuoDingDuanWei = 1;
+		if (null == jsonDuanArray || 0 == jsonDuanArray.size()) {
+			return DuanLuoDingDuanWei;
+		}
+		for (int j = 0; j < jsonDuanArray.size(); j++) {
+            JSONObject obj = (JSONObject)jsonDuanArray.get(j);
+            if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
+            	DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
+            	return DuanLuoDingDuanWei;
+            }	            
+		}
+		return DuanLuoDingDuanWei;
+	}
 	
-	
+	/**
+	 * 用递归，求节点
+	 */
+	public MultiTree diGuiQiu(int QiShiDuanWei, MultiTree mtree, JSONArray jsonDuanArray) {
+		if (QiShiDuanWei == getMinBiaoTiDuanWei(jsonDuanArray)) {
+			return mtree;
+		}
+		JSONObject obj1 = (JSONObject)jsonDuanArray.get(0);
+		if(QiShiDuanWei == 0) {			
+        	mtree.add(0, obj1.toJSONString());
+        }
+		if(null!= obj1.get("biaoti") && (int)(obj1.get("biaoti")) - QiShiDuanWei == 1)
+        {
+        	mtree.add(QiShiDuanWei, obj1.toJSONString());
+        } 
+		jsonDuanArray.remove(obj1); 
+		diGuiQiu(QiShiDuanWei+1, mtree, jsonDuanArray);		
+		return mtree;
+	}
+
 }

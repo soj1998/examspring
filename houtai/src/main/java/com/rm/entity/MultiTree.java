@@ -39,6 +39,10 @@ public class MultiTree {
         }        
     }
     //遍历方法的重载
+    public List<TreeNode> getTree(){
+        return this.getRoot().nodes;
+    }
+    //遍历方法的重载
     public void list(){
         this.list(this.getRoot().nodes);
     }
