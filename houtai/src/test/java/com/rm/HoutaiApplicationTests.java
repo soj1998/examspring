@@ -212,32 +212,9 @@ class HoutaiApplicationTests {
 			//jsonobject.put("biaoti"+i,j)
 			//jsonobject.put("kaishi",j)
 			//jsonobject.put("jieshu",j)
-			JSONArray jsonDuanGaiKuoArray = new JSONArray();
 			MultiTree mtree = new MultiTree();
-			System.out.println(mtree.returnList().size());
-			for (int i = 0; i < jsonDuanArray.size(); i++) {
-	            JSONObject obj1 = (JSONObject)jsonDuanArray.get(i);
-	            JSONObject obj2 = new JSONObject();
-	            int dqduan= (int)obj1.get("biaoti");
-	            int dqhangshu= (int)obj1.get("hangshu");
-	            String dqneirong= (String)obj1.get("neirong");
-	            //get(biaoti)得到节点 
-	            //循环所有的节点把他们都挂上去
-	            //挂的时候按照顺序挂 先找父节点
-	            //treenode 有id 和 string 增加一个行数 
-	            //行数 是
-	            
-	            if(null!= obj1.get("biaoti") && 1==(int)(obj1.get("biaoti")))
-	            {
-	            	mtree.add(0, obj1.toJSONString());
-	            }
-	            if(null!= obj1.get("biaoti") && 2==(int)(obj1.get("biaoti")))
-	            {
-	            	mtree.add(1, obj1.toJSONString());
-	            }	            
-			}
+			diGuiQiu(mtree, jsonDuanArray);	
 			mtree.list();
-			System.out.println(mtree.returnList().size());
 			int Zhang = 0,Jie = 0,Mu = 0,KongBai = 0;
 			for (int i = 0; i < jsonDuanArray.size(); i++) {
 	            JSONObject obj = (JSONObject)jsonDuanArray.get(i);	            
@@ -259,7 +236,7 @@ class HoutaiApplicationTests {
 	            }
 	        }
 			System.out.println("当前文章一共有"+duanLuoZongshu
-					+ ",有"+Zhang+"章，"+Jie+"节，"+KongBai+"个空白段。"
+					+ ",有"+Zhang+"章，"+Jie+"节，"+Mu+"目，" +KongBai+"个空白段。"
 					);			
 
 		} catch (Exception e) {
@@ -341,9 +318,9 @@ class HoutaiApplicationTests {
 	}
 	
 	/**
-	 * 得到当前传入paragraph的最小标题度
+	 * 得到当前传入paragraph的最大标题度
 	 */
-	private int getMinBiaoTiDuanWei(JSONArray jsonDuanArray) {
+	private int getMaxBiaoTiDuanWei(JSONArray jsonDuanArray) {
 		int DuanLuoDingDuanWei = 1;
 		if (null == jsonDuanArray || 0 == jsonDuanArray.size()) {
 			return DuanLuoDingDuanWei;
@@ -359,9 +336,9 @@ class HoutaiApplicationTests {
 		return DuanLuoDingDuanWei;
 	}
 	/**
-	 * 得到当前传入paragraph的最大标题度
+	 * 得到当前传入paragraph的最小标题度
 	 */
-	private int getMaxBiaoTiDuanWei(JSONArray jsonDuanArray) {
+	private int getMinBiaoTiDuanWei(JSONArray jsonDuanArray) {
 		int DuanLuoDingDuanWei = 1;
 		if (null == jsonDuanArray || 0 == jsonDuanArray.size()) {
 			return DuanLuoDingDuanWei;
@@ -379,21 +356,22 @@ class HoutaiApplicationTests {
 	/**
 	 * 用递归，求节点
 	 */
-	public MultiTree diGuiQiu(int QiShiDuanWei, MultiTree mtree, JSONArray jsonDuanArray) {
-		if (QiShiDuanWei == getMinBiaoTiDuanWei(jsonDuanArray)) {
+	public MultiTree diGuiQiu(MultiTree mtree, JSONArray jsonDuanArray) {
+		if (null == jsonDuanArray ||jsonDuanArray.size() == 0) {
 			return mtree;
 		}
-		JSONObject obj1 = (JSONObject)jsonDuanArray.get(0);
-		if(QiShiDuanWei == 0) {			
-        	mtree.add(0, obj1.toJSONString());
-        }
-		if(null!= obj1.get("biaoti") && (int)(obj1.get("biaoti")) - QiShiDuanWei == 1)
-        {
-        	mtree.add(QiShiDuanWei, obj1.toJSONString());
-        } 
-		jsonDuanArray.remove(obj1); 
-		diGuiQiu(QiShiDuanWei+1, mtree, jsonDuanArray);		
+		for (Object obj :jsonDuanArray) {
+			JSONObject obj1 = (JSONObject)obj;
+			if(null!= obj1.get("biaoti"))
+	        {
+	        	mtree.addright((int)(obj1.get("biaoti")) - 1, obj1);
+	        	jsonDuanArray.remove(obj1);
+	        	diGuiQiu(mtree, jsonDuanArray);		
+	        	break;	        	
+	        }
+		}		
 		return mtree;
 	}
 
+	
 }

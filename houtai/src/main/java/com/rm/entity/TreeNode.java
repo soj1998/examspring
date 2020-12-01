@@ -3,16 +3,18 @@ package com.rm.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class TreeNode {
 	private int Id;    //节点Id
-    private String data; //节点数据
+    private JSONObject data; //节点数据
     //private int HangShu; //章节目录 重要的是行数 id是自增的无法对应 
 
 	public List<TreeNode> nodes = new ArrayList<TreeNode>(); //多个子节点，利用List实现
     public TreeNode(int Id){
         this.Id = Id;
     }
-    public TreeNode(int Id,String data){
+    public TreeNode(int Id,JSONObject data){
         this.Id = Id;
         this.data = data;
     }
@@ -23,10 +25,10 @@ public class TreeNode {
     public void setId(int id) {
         Id = id;
     }
-    public String getData() {
+    public JSONObject getData() {
         return data;
     }
-    public void setData(String data) {
+    public void setData(JSONObject data) {
         this.data = data;
     }
     /*

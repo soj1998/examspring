@@ -3,6 +3,8 @@ package com.rm.entity;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class MultiTree {
     private TreeNode root = new TreeNode(0);    //树的根节点
     public int identifying = 1;  //用于记录树上的节点
@@ -11,12 +13,21 @@ public class MultiTree {
     public TreeNode getRoot(){
         return this.root;
     }
-    //添加方法重载
-    public void add(int parentId,String data){
-        this.add(parentId,data,this.getRoot().nodes);
+    public int getRight(int parentId,List<TreeNode> list) {
+    	int rightId = 0;
+    	for(TreeNode item:list){
+        	if(item.getData().getShort("biaoti") == parentId){
+        		rightId = item.getId();
+        	}        	
+        }
+    	return rightId;
     }
-    //添加
-    public void add(int parentId,String data,List<TreeNode> list){
+    //添加方法重载
+    public void addright(int parentId,JSONObject data){
+        this.addright(parentId,data,this.getRoot().nodes);
+    }
+    //先向树的右节点添加
+    public void addright(int parentId,JSONObject data,List<TreeNode> list){
         if(parentId==0){	//如果父节点Id为0
         	TreeNode newNode = new TreeNode(identifying++,data);
             this.root.nodes.add(newNode);
@@ -24,15 +35,16 @@ public class MultiTree {
             if(list.size()==0){
                 return;
             }
+            int rightId = getRight(parentId,list);            
             for(TreeNode item:list){
             	//System.out.println("here" + item.getId() + "," + parentId);
-                if(item.getId() == parentId){  //找到父节点
+            	if(item.getId() == rightId){  //找到父节点
                 	//System.out.println("jinlaile");
                 	TreeNode newNode = new TreeNode(identifying++, data);
                     item.nodes.add(newNode); //节点添加
                     break;
                 }else {
-                    add(parentId,data,item.nodes);
+                	addright(parentId,data,item.nodes);
                 }
             }
             //System.out.println("1  " + list.size());
@@ -53,7 +65,7 @@ public class MultiTree {
             return;
         }
         for(TreeNode item:list){
-            System.out.println(item.getId() + "," + item.getData());
+            System.out.println(item.getId() + "," + item.getData().toJSONString());
             if(item.nodes.size() == 0){
                 continue;
             }else {
@@ -61,16 +73,60 @@ public class MultiTree {
             }
             System.out.println("\t");
         }
-    }   
+    }
+    public TreeNode minRightNode(List<TreeNode> list,int dqId){
+    	index++;  //遍历次数，用于退出循环
+        if(index == identifying){
+            return null;
+        }
+        for(TreeNode item:this.getRoot().nodes){        	
+            if(item.nodes.size() == 0){
+                continue;
+            } else if(item.getId() < dqId){
+            	minRightNode(item.nodes,dqId);
+            } else if(item.getId() == dqId){
+            	return item;
+            }           
+        }
+        return null;
+    }  
     public List<TreeNode> returnList(){
     	return this.getRoot().nodes;
     }
     
-    /* 插入一个child节点到当前节点中 */  
-    public void addChildNode(TreeNode treeNode) {  
-        this.add(treeNode.getId(),treeNode.getData());  
-    }  
+     
     /**
+    //添加方法重载
+    public void addleft(int parentId,String data){
+        this.addleft(parentId,data,this.getRoot().nodes);
+    }
+    //先向树的左节点添加
+    public void addleft(int parentId,String data,List<TreeNode> list){
+        if(parentId==0){	//如果父节点Id为0
+        	TreeNode newNode = new TreeNode(identifying++,data);
+            this.root.nodes.add(newNode);
+        }else {  //判空
+            if(list.size()==0){
+                return;
+            }
+            for(TreeNode item:list){
+            	//System.out.println("here" + item.getId() + "," + parentId);
+            	if(item.getId() == parentId){  //找到父节点
+                	//System.out.println("jinlaile");
+                	TreeNode newNode = new TreeNode(identifying++, data);
+                    item.nodes.add(newNode); //节点添加
+                    break;
+                }else {
+                	addleft(parentId,data,item.nodes);
+                }
+            }
+            //System.out.println("1  " + list.size());
+        }        
+    }
+    //插入一个child节点到当前节点中   
+    public void addChildNode(TreeNode treeNode) {  
+        this.addleft(treeNode.getId(),treeNode.getData());  
+    } 
     public void initChildList() {  
         if (childList == null)  
             childList = new ArrayList<TreeNode>();  
