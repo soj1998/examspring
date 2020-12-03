@@ -9,4 +9,12 @@ public class StringUtil {
 		}
 		return false;
 	}
+	
+	public static String isNUllGetSpace(String a) {
+		if( a == null )
+		{
+			return "";
+		}
+		return a;
+	}
 }

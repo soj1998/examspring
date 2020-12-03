@@ -1,11 +1,21 @@
-package com.rm.entity;
+package com.rm.czentity;
 
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
-
+import javax.annotation.Resource;
 import com.alibaba.fastjson.JSONObject;
+import com.rm.dao.TreeNodeSjkDao;
+import com.rm.entity.TreeNode;
+import com.rm.entity.TreeNodeSjk;
 
-public class MultiTree {
+
+public class CzTreeNode {
+	@Resource
+    private TreeNodeSjkDao tnDao;  
+	
     private TreeNode root = new TreeNode(0);    //树的根节点
     public int identifying = 1;  //用于记录树上的节点
     public int index = 0;		//用于遍历树的指针路过节点的个数
@@ -15,12 +25,16 @@ public class MultiTree {
     }
     public int getRight(int parentId,List<TreeNode> list) {
     	int rightId = 0;
-    	for(TreeNode item:list){
+    	for(TreeNode item:list){    		
         	if(item.getData().getShort("biaoti") == parentId){
         		rightId = item.getId();
         	}        	
-        }
+        }    	
     	return rightId;
+    }
+    //添加方法重载
+    public void addright(JSONObject data){
+        this.addright(data.getIntValue("biaoti") - 1,data,this.getRoot().nodes);
     }
     //添加方法重载
     public void addright(int parentId,JSONObject data){
@@ -28,26 +42,29 @@ public class MultiTree {
     }
     //先向树的右节点添加
     public void addright(int parentId,JSONObject data,List<TreeNode> list){
-        if(parentId==0){	//如果父节点Id为0
+        if(parentId==0){
         	TreeNode newNode = new TreeNode(identifying++,data);
             this.root.nodes.add(newNode);
-        }else {  //判空
+        }else {
             if(list.size()==0){
                 return;
-            }
-            int rightId = getRight(parentId,list);            
+            }          
             for(TreeNode item:list){
-            	//System.out.println("here" + item.getId() + "," + parentId);
-            	if(item.getId() == rightId){  //找到父节点
-                	//System.out.println("jinlaile");
+            	//int rightId = getRight(parentId,list);
+            	int rightId = 0;
+            	for(TreeNode item1:list){    		
+                	if(item1.getData().getShort("biaoti") == parentId){
+                		rightId = item1.getId();
+                	}                	
+                }
+            	if(item.getId() == rightId){                	
                 	TreeNode newNode = new TreeNode(identifying++, data);
-                    item.nodes.add(newNode); //节点添加
-                    break;
+                    item.nodes.add(newNode);
+                    return;
                 }else {
                 	addright(parentId,data,item.nodes);
                 }
             }
-            //System.out.println("1  " + list.size());
         }        
     }
     //遍历方法的重载
@@ -63,7 +80,7 @@ public class MultiTree {
         index++;  //遍历次数，用于退出循环
         if(index == identifying){
             return;
-        }
+        }        
         for(TreeNode item:list){
             System.out.println(item.getId() + "," + item.getData().toJSONString());
             if(item.nodes.size() == 0){
@@ -71,7 +88,7 @@ public class MultiTree {
             }else {
                 list(item.nodes);
             }
-            System.out.println("\t");
+            System.out.println();
         }
     }
     public TreeNode minRightNode(List<TreeNode> list,int dqId){
@@ -94,7 +111,39 @@ public class MultiTree {
     	return this.getRoot().nodes;
     }
     
-     
+    //遍历TreeNode并插入
+    //遍历方法的重载
+    public void listAndInsSql(String wzlx,String wzversion,String sz){
+        this.listAndInsSql(this.getRoot().nodes,wzlx,wzversion,sz);
+    }
+    //循环Tree
+    public void listAndInsSql(List<TreeNode> list,String wzlx,String wzversion,String sz){
+        index++;  //遍历次数，用于退出循环
+        if(index == identifying){
+            return;
+        }        
+        for(TreeNode item:list){
+        	TreeNodeSjk tn = new TreeNodeSjk();
+        	tn.setAtclx(wzlx);
+        	tn.setSz(sz);
+            tn.setVersion(wzversion);			
+			tn.setBiaoti(item.getData().getInteger("biaoti"));
+			tn.setBtneirong(item.getData().getString("btneirong"));
+			tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
+			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+            tn.setRootid(item.getId());            
+            //tn.setId(-1);
+            System.out.println(tn.toString());
+            tnDao.save(tn);
+            System.out.println(item.getId() + "," + item.getData().toJSONString());
+            if(item.nodes.size() == 0){
+                continue;
+            }else {
+            	listAndInsSql(item.nodes,wzlx,wzversion,sz);
+            }
+            System.out.println();
+        }
+    }
     /**
     //添加方法重载
     public void addleft(int parentId,String data){
