@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.entity.TreeNode;
@@ -13,8 +12,6 @@ import com.rm.entity.TreeNodeSjk;
 
 
 public class CzTreeNode {
-	@Resource
-    private TreeNodeSjkDao tnDao;  
 	
     private TreeNode root = new TreeNode(0);    //树的根节点
     public int identifying = 1;  //用于记录树上的节点
@@ -113,11 +110,11 @@ public class CzTreeNode {
     
     //遍历TreeNode并插入
     //遍历方法的重载
-    public void listAndInsSql(String wzlx,String wzversion,String sz){
-        this.listAndInsSql(this.getRoot().nodes,wzlx,wzversion,sz);
+    public void listAndInsSql(TreeNodeSjkDao tnDao,String wzlx,String wzversion,String sz){
+        this.listAndInsSql(tnDao,this.getRoot().nodes,wzlx,wzversion,sz);
     }
     //循环Tree
-    public void listAndInsSql(List<TreeNode> list,String wzlx,String wzversion,String sz){
+    public void listAndInsSql(TreeNodeSjkDao tnDao, List<TreeNode> list,String wzlx,String wzversion,String sz){
         index++;  //遍历次数，用于退出循环
         if(index == identifying){
             return;
@@ -139,7 +136,7 @@ public class CzTreeNode {
             if(item.nodes.size() == 0){
                 continue;
             }else {
-            	listAndInsSql(item.nodes,wzlx,wzversion,sz);
+            	listAndInsSql(tnDao,item.nodes,wzlx,wzversion,sz);
             }
             System.out.println();
         }

@@ -119,7 +119,7 @@ class HoutaiApplicationTests {
 		InputStream is = null;
 		XWPFDocument doc = null;
 		try {
-			is = new FileInputStream("E:\\1234.docx");
+			is = new FileInputStream("E:\\菜鸟税法.docx");
 			doc = new XWPFDocument(is);
 			//获取段落
 			List<XWPFParagraph> paras = doc.getParagraphs();
@@ -220,7 +220,7 @@ class HoutaiApplicationTests {
 			diGuiQiu(mtree, zhengLiArray);	
 			//mtree.list();
 			//list并且插入到数据库 		
-			mtree.listAndInsSql("zsd", "1.0.0.0", "zzs");
+			mtree.listAndInsSql(tnDao,"zsd", "1.0.0.0", "zzs");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
