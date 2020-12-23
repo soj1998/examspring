@@ -95,6 +95,10 @@ public class TreeNodeSjk {
     
     @Column
     private Integer rootid;
+    
+    @Column
+    private Integer parentid;
+    
     @Column
     private Integer biaoti;
     
@@ -110,11 +114,21 @@ public class TreeNodeSjk {
         return atclx;
     }
 
+	public Integer getParentid() {
+		return parentid;
+	}
+
+	public void setParentid(Integer parentid) {
+		this.parentid = parentid;
+	}
+
 	@Override
 	public String toString() {
 		return "TreeNodeSjk [id=" + id + ", atclx=" + atclx + ", sz=" + sz + ", version=" + version + ", rootid="
-				+ rootid + ", biaoti=" + biaoti + ", btneirong=" + btneirong + ", qbneirong=" + qbneirong + ", lrsj="
-				+ lrsj + "]";
+				+ rootid + ", parentid=" + parentid + ", biaoti=" + biaoti + ", btneirong=" + btneirong + ", qbneirong="
+				+ qbneirong + ", lrsj=" + lrsj + "]";
 	}
+
+	
     
 }

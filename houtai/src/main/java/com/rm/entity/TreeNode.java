@@ -9,13 +9,15 @@ public class TreeNode {
 	private int Id;    //节点Id
     private JSONObject data; //节点数据
     //private int HangShu; //章节目录 重要的是行数 id是自增的无法对应 
+    private int parentId; 
 
 	public List<TreeNode> nodes = new ArrayList<TreeNode>(); //多个子节点，利用List实现
     public TreeNode(int Id){
         this.Id = Id;
     }
-    public TreeNode(int Id,JSONObject data){
+    public TreeNode(int Id,int parentid,JSONObject data){
         this.Id = Id;
+        this.parentId = parentid;
         this.data = data;
     }
     
@@ -31,6 +33,13 @@ public class TreeNode {
     public void setData(JSONObject data) {
         this.data = data;
     }
+	public int getParentId() {
+		return parentId;
+	}
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+    
     /*
     public TreeNode(int Id, int HangShu, String data){
         this.Id = Id;

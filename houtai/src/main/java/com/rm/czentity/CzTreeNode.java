@@ -40,7 +40,7 @@ public class CzTreeNode {
     //先向树的右节点添加
     public void addright(int parentId,JSONObject data,List<TreeNode> list){
         if(parentId==0){
-        	TreeNode newNode = new TreeNode(identifying++,data);
+        	TreeNode newNode = new TreeNode(identifying++,parentId,data);
             this.root.nodes.add(newNode);
         }else {
             if(list.size()==0){
@@ -55,7 +55,7 @@ public class CzTreeNode {
                 	}                	
                 }
             	if(item.getId() == rightId){                	
-                	TreeNode newNode = new TreeNode(identifying++, data);
+                	TreeNode newNode = new TreeNode(identifying++, parentId, data);
                     item.nodes.add(newNode);
                     return;
                 }else {
@@ -128,7 +128,8 @@ public class CzTreeNode {
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
-            tn.setRootid(item.getId());            
+            tn.setRootid(item.getId());   
+            tn.setParentid(item.getParentId());
             //tn.setId(-1);
             System.out.println(tn.toString());
             tnDao.save(tn);

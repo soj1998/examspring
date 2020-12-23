@@ -119,7 +119,7 @@ class HoutaiApplicationTests {
 		InputStream is = null;
 		XWPFDocument doc = null;
 		try {
-			is = new FileInputStream("E:\\菜鸟税法.docx");
+			is = new FileInputStream("d:\\菜鸟税法.docx");
 			doc = new XWPFDocument(is);
 			//获取段落
 			List<XWPFParagraph> paras = doc.getParagraphs();
