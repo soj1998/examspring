@@ -20,7 +20,7 @@ public class AtcController {
     private AtcDao atcDao;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AtcController.class);
-	@RequestMapping(value="/gettreebyid",method=RequestMethod.GET)
+	@RequestMapping(value="/gettreebyid",method=RequestMethod.POST)
     public List<TreeNodeSjk> listerji(@RequestParam("parentid") int pid){    	
         List<TreeNodeSjk> list_glx=atcDao.getTreeByParentid(pid);
         LOG.info(list_glx.size() + "");
