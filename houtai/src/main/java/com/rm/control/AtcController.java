@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ public class AtcController {
     private AtcDao atcDao;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AtcController.class);
+	@CrossOrigin
 	@RequestMapping(value="/gettreebyid",method=RequestMethod.POST)
     public List<TreeNodeSjk> listerji(@RequestParam("parentid") int pid){    	
         List<TreeNodeSjk> list_glx=atcDao.getTreeByParentid(pid);

@@ -55,7 +55,7 @@ public class CzTreeNode {
                 	}                	
                 }
             	if(item.getId() == rightId){                	
-                	TreeNode newNode = new TreeNode(identifying++, parentId, data);
+                	TreeNode newNode = new TreeNode(identifying++, rightId, data);
                     item.nodes.add(newNode);
                     return;
                 }else {
