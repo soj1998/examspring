@@ -89,7 +89,7 @@ public class SimCalculator {
         return result;
     }
     
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         String[] str = new String[10];
         str[0] = "中华人民共和国我很好 中华人民共和国我很好 中华人民共和国我很好 中华人民共和国我很好 中华人民共和国我很好 中华人民共和国我很好 中华人民共和国我很好";
         str[1] = "中华人民共和国 我,很,好";        
