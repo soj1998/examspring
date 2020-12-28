@@ -107,15 +107,15 @@ class HoutaiApplicationTests {
 			tn.setRootid(3);
             tn.setSz("xfs");
             tn.setVersion("1.0.0.1");
+            tn.setFirstnode(true);
             //tn.setId(-1);
             System.out.println(tn.toString());
-            TreeNodeSjk newtn = tnDao.save(tn);
+            tnDao.save(tn);
             Set<TnsQbNeiRong> qbneirongset = new HashSet<TnsQbNeiRong>();
-			TnsQbNeiRong tn1 = new TnsQbNeiRong("a1",newtn);
-			TnsQbNeiRong tn2 = new TnsQbNeiRong("a2",newtn);
+			TnsQbNeiRong tn1 = new TnsQbNeiRong("a1",1,tn);
+			TnsQbNeiRong tn2 = new TnsQbNeiRong("a2",2,tn);
 			qbneirongset.add(tn1);
-			qbneirongset.add(tn2);	
-			tn.setQbneirong(qbneirongset);
+			qbneirongset.add(tn2);				
             tnsneirongDao.saveAll(qbneirongset);
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,7 +172,7 @@ class HoutaiApplicationTests {
 		InputStream is = null;
 		XWPFDocument doc = null;
 		try {
-			is = new FileInputStream("d:\\菜鸟税法.docx");
+			is = new FileInputStream("d:\\菜鸟税法2.docx");
 			doc = new XWPFDocument(is);
 			//获取段落
 			List<XWPFParagraph> paras = doc.getParagraphs();
@@ -256,6 +256,7 @@ class HoutaiApplicationTests {
 							) {						
 						JSONObject nobj2 = new JSONObject();
 						nobj2.put("neirong", obj3.getString("neirong"));
+						nobj2.put("hangshu", obj3.getShort("hangshu"));
 						zL2Array.add(nobj2);
 					}
 					if(obj3.getShort("biaoti") > 0
@@ -423,6 +424,7 @@ class HoutaiApplicationTests {
 			if(null!= obj1.get("biaoti"))
 	        {
 	        	//mtree.addright((int)(obj1.get("biaoti")) - 1, obj1);
+				System.out.println("btneirong  1  " + obj1.getString("btneirong"));
 	        	mtree.addright(obj1);
 	        	jsonDuanArray.remove(obj1);	
 	        	diGuiQiu(mtree, jsonDuanArray);	

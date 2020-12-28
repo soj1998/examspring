@@ -45,8 +45,13 @@ public class CzTreeNode {
     }
     //先向树的右节点添加
     public void addright(int parentId,JSONObject data,List<TreeNode> list){
-        if(parentId==0){
-        	TreeNode newNode = new TreeNode(identifying++,parentId,data);
+        for(TreeNode item1:list){
+    		System.out.println("btneirong   2" + item1.getData().getString("btneirong"));
+    		System.out.println("biaotidengji   " + item1.getData().getShort("biaoti"));
+    		System.out.println("parentId   " + parentId);                	
+        }
+    	if(parentId==0){
+        	TreeNode newNode = new TreeNode(identifying++,parentId,true,data);
             this.root.nodes.add(newNode);
         }else {
             if(list.size()==0){
@@ -55,13 +60,14 @@ public class CzTreeNode {
             for(TreeNode item:list){
             	//int rightId = getRight(parentId,list);
             	int rightId = 0;
-            	for(TreeNode item1:list){    		
-                	if(item1.getData().getShort("biaoti") == parentId){
-                		rightId = item1.getId();
-                	}                	
-                }
-            	if(item.getId() == rightId){                	
-                	TreeNode newNode = new TreeNode(identifying++, rightId, data);
+            	boolean firstn = true;            	
+            	for(TreeNode item1:list){
+            		if(item1.getData().getIntValue("biaoti") == parentId){
+                		rightId = item1.getId();                		
+                	}
+                }            	
+            	if(item.getId() == rightId){            		
+                	TreeNode newNode = new TreeNode(identifying++, rightId, firstn,data);
                     item.nodes.add(newNode);
                     return;
                 }else {
@@ -132,22 +138,23 @@ public class CzTreeNode {
             tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
+			tn.setFirstnode(item.isFirstnode());
 			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
 			JSONArray qbnr = item.getData().getJSONArray("qbneirong");
 			Set<TnsQbNeiRong> tnsqbnr = new HashSet<TnsQbNeiRong>();
 			qbnr.forEach(e ->{
 				JSONObject js = (JSONObject)e;
-				tnsqbnr.add(new TnsQbNeiRong(js.getString("neirong"),tn));
+				tnsqbnr.add(new TnsQbNeiRong(js.getString("neirong"),js.getInteger("hangshu"),tn));
 			});
-			tn.setQbneirong(tnsqbnr);
+			//tn.setQbneirong(tnsqbnr);
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
             tn.setRootid(item.getId());   
             tn.setParentid(item.getParentId());
             //tn.setId(-1);
-            System.out.println(tn.toString());
+            //System.out.println(tn.toString());
             tnDao.save(tn);
             tnsneirongDao.saveAll(tnsqbnr);
-            System.out.println(item.getId() + "," + item.getData().toJSONString());
+            //System.out.println(item.getId() + "," + item.getData().toJSONString());
             if(item.nodes.size() == 0){
                 continue;
             }else {

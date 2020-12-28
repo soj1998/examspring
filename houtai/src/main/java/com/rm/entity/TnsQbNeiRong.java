@@ -22,8 +22,16 @@ public class TnsQbNeiRong {
     @Column(length=10000)
     private String qbneirong;
     
+    @Column
+    private Integer hangshu;
     
-    /**
+    public Integer getHangshu() {
+		return hangshu;
+	}
+	public void setHangshu(Integer hangshu) {
+		this.hangshu = hangshu;
+	}
+	/**
      * 	1. 	多个学生对应一个老师
      *	2. 	注解形式配置多对一
      *  3.	配置表关系
@@ -34,7 +42,7 @@ public class TnsQbNeiRong {
     private TreeNodeSjk treenodesjk;
     */
     
-  //多个工人---1个部门
+    //多个工人---1个部门
   	@ManyToOne(fetch = FetchType.EAGER)
   	@JoinColumn(name = "treeNodeSjk_id",referencedColumnName = "id")
   	private TreeNodeSjk treeNodeSjk;
@@ -59,9 +67,10 @@ public class TnsQbNeiRong {
     public void setId(Integer id) {
         this.id = id;
     }    
-	public TnsQbNeiRong(String qbneirong, TreeNodeSjk treeNodeSjk) {
+	public TnsQbNeiRong(String qbneirong, int hangshu,TreeNodeSjk treeNodeSjk) {
 		super();
 		this.qbneirong = qbneirong;
+		this.hangshu = hangshu;
 		this.treeNodeSjk = treeNodeSjk;
 	}
 	public TnsQbNeiRong() {

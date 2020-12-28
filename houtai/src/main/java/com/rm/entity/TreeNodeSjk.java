@@ -1,14 +1,11 @@
 package com.rm.entity;
 
 import java.util.Date;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -94,7 +91,18 @@ public class TreeNodeSjk {
     @Column
     private Integer parentid;
     
-    @Column
+    @Column(columnDefinition = "boolean default 0")
+    private boolean firstnode; 
+    
+	public boolean isFirstnode() {
+		return firstnode;
+	}
+
+	public void setFirstnode(boolean firstnode) {
+		this.firstnode = firstnode;
+	}
+
+	@Column
     private Integer biaoti;
     
     @Column(length=100)
@@ -133,7 +141,7 @@ public class TreeNodeSjk {
     @OneToMany(targetEntity = TnsQbNeiRong.class)
     @JoinColumn(name = "neirong_atc_id",referencedColumnName = "tnssjk_id")
     private Set<TnsQbNeiRong> qbneirong = new HashSet<>();
-	*/
+	
 	
 	@OneToMany(mappedBy="treeNodeSjk",fetch = FetchType.EAGER)
 	private Set<TnsQbNeiRong> qbneirong;
@@ -145,7 +153,7 @@ public class TreeNodeSjk {
 	public void setQbneirong(Set<TnsQbNeiRong> qbneirong) {
 		this.qbneirong = qbneirong;
 	}
-
+     */
 	@Override
 	public String toString() {
 		return "TreeNodeSjk [id=" + id + ", atclx=" + atclx + ", sz=" + sz + ", version=" + version + ", rootid="
