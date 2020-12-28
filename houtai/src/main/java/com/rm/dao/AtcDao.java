@@ -14,7 +14,7 @@ import com.rm.entity.TreeNodeSjk;
  */
 public interface AtcDao extends JpaRepository<TreeNodeSjk, Integer>{
 
-	 @Query(value = "select * from t_myatc1 where parentid = :pid",nativeQuery = true)
+	 @Query(value = "select * from treenodesjk where parentid = :pid",nativeQuery = true)
 	  public List<TreeNodeSjk> getTreeByParentid(@Param("pid") int parentid);
 	 
 	 

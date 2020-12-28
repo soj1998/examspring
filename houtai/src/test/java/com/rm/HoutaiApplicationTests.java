@@ -114,7 +114,8 @@ class HoutaiApplicationTests {
 			TnsQbNeiRong tn1 = new TnsQbNeiRong("a1",newtn);
 			TnsQbNeiRong tn2 = new TnsQbNeiRong("a2",newtn);
 			qbneirongset.add(tn1);
-			qbneirongset.add(tn2);			
+			qbneirongset.add(tn2);	
+			tn.setQbneirong(qbneirongset);
             tnsneirongDao.saveAll(qbneirongset);
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +128,7 @@ class HoutaiApplicationTests {
 	@Test
 	public void insertOneToMany(){
 		Author author = new Author();
-		author.setName("周晨曦");
+		author.setName("周晨曦4");
 		List<Article> list = new ArrayList<Article>();
 		for(int i =0; i<10; i++ ){
 			Article article = new Article();
@@ -138,11 +139,18 @@ class HoutaiApplicationTests {
 			list.add(article);			
 		}
 		
-		author.setArticleList(list);
+		// author.setArticleList(list);
 		authorDao.save(author);
 		list.forEach(e ->{
 			articleDao.save(e);
 		});
+		List<Author> ab = authorDao.findAll();
+		ab.forEach(e->{
+			List<Article> a = articleDao.findArticleByAuthorid(e.getId().intValue());
+			System.out.println(a.get(0).getAuthor());
+		});
+
+		System.out.println("aa");
 	}
 	
 	/**

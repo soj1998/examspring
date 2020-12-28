@@ -15,7 +15,7 @@ import com.rm.entity.linshi.Author;
  */
 public interface AuthorDao extends JpaRepository<Author, Integer>{
 
-	 @Query(value = "select * from t_myatc1 where parentid = :pid",nativeQuery = true)
+	 @Query(value = "select * from author where parentid = :pid",nativeQuery = true)
 	  public List<TreeNodeSjk> getTreeByParentid(@Param("pid") int parentid);
 	 
 	 

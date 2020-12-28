@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "article")
 public class Article {
@@ -25,8 +27,9 @@ public class Article {
     private String content;//文章全文内容
     
     //可选属性optional=false,表示author不能为空。删除文章，不影响用户
-    @ManyToOne(cascade={CascadeType.MERGE,CascadeType.REFRESH},optional=false)
+    @ManyToOne(cascade={CascadeType.MERGE,CascadeType.REFRESH,CascadeType.REMOVE},optional=false)
     @JoinColumn(name="author_id")//设置在article表中的关联字段(外键)
+    @JsonIgnore
     private Author author;//所属作者
 
 	@Override
