@@ -6,8 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -22,10 +26,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.rm.czentity.CzTreeNode;
 import com.rm.dao.BookDao;
 import com.rm.dao.QueandAnsDao;
+import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.dao.XueKeDao;
+import com.rm.dao.linshi.ArticleDao;
+import com.rm.dao.linshi.AuthorDao;
+import com.rm.entity.TnsQbNeiRong;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
+import com.rm.entity.linshi.Article;
+import com.rm.entity.linshi.Author;
 
 
 
@@ -38,7 +48,14 @@ class HoutaiApplicationTests {
 	@Resource
     private QueandAnsDao qaDao;
 	@Resource
-    private TreeNodeSjkDao tnDao;  
+    private TreeNodeSjkDao tnDao; 
+	@Resource
+    private TnsQbNeiRongDao tnsneirongDao;
+	@Resource
+    private AuthorDao authorDao;
+	@Resource
+    private ArticleDao articleDao;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(HoutaiApplicationTests.class);
     
 	@Test
@@ -85,21 +102,49 @@ class HoutaiApplicationTests {
 			TreeNodeSjk tn = new TreeNodeSjk();
 			tn.setAtclx("zsd");
 			tn.setBiaoti(2);
-			tn.setBtneirong("1");
-			tn.setQbneirong(new JSONArray().toString());
+			tn.setBtneirong("1");			
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
 			tn.setRootid(3);
             tn.setSz("xfs");
             tn.setVersion("1.0.0.1");
             //tn.setId(-1);
             System.out.println(tn.toString());
-            tnDao.save(tn);
+            TreeNodeSjk newtn = tnDao.save(tn);
+            Set<TnsQbNeiRong> qbneirongset = new HashSet<TnsQbNeiRong>();
+			TnsQbNeiRong tn1 = new TnsQbNeiRong("a1",newtn);
+			TnsQbNeiRong tn2 = new TnsQbNeiRong("a2",newtn);
+			qbneirongset.add(tn1);
+			qbneirongset.add(tn2);			
+            tnsneirongDao.saveAll(qbneirongset);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
         	System.out.println("结束啦");
         }
     }
+	
+
+	@Test
+	public void insertOneToMany(){
+		Author author = new Author();
+		author.setName("周晨曦");
+		List<Article> list = new ArrayList<Article>();
+		for(int i =0; i<10; i++ ){
+			Article article = new Article();
+			article.setTitle("标题:" + i);
+			article.setContent("内容:" + i);
+			// 记住一定要添加关系实体对象，否在关联字段为null
+			article.setAuthor(author);
+			list.add(article);			
+		}
+		
+		author.setArticleList(list);
+		authorDao.save(author);
+		list.forEach(e ->{
+			articleDao.save(e);
+		});
+	}
+	
 	/**
 	 *1.搞一个json 把读到的信息储存到mysql，信息包括多少段，多少章，多少节，多少目，
 	 *章节目对应的段落数 多少空段落 对应的段落数。
@@ -220,7 +265,7 @@ class HoutaiApplicationTests {
 			diGuiQiu(mtree, zhengLiArray);	
 			//mtree.list();
 			//list并且插入到数据库 		
-			mtree.listAndInsSql(tnDao,"zsd", "1.0.0.0", "zzs");
+			mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -306,7 +351,7 @@ class HoutaiApplicationTests {
             tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
-			tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
+			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
             tn.setRootid(item.getId());            
             //tn.setId(-1);

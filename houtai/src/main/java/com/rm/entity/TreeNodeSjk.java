@@ -1,22 +1,25 @@
 package com.rm.entity;
 
 import java.util.Date;
-
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="t_myatc1")
+@Table(name="treenodesjk")
 public class TreeNodeSjk {
  
     @Id
-    @GeneratedValue
-    private Integer id;
-     
-    public Integer getId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id; 
+	
+	public Integer getId() {
 		return id;
 	}
 
@@ -62,16 +65,8 @@ public class TreeNodeSjk {
 
 	public void setBtneirong(String btneirong) {
 		this.btneirong = btneirong;
-	}
-
-	public String getQbneirong() {
-		return qbneirong;
-	}
-
-	public void setQbneirong(String qbneirong) {
-		this.qbneirong = qbneirong;
-	}
-
+	}	
+	
 	public Date getLrsj() {
 		return lrsj;
 	}
@@ -105,8 +100,9 @@ public class TreeNodeSjk {
     @Column(length=100)
     private String btneirong;
     
-    @Column(length=20000)
-    private String qbneirong;
+    //@Column(length=20000)
+    //private String qbneirong;
+    
     @Column
     private Date lrsj;
     
@@ -122,11 +118,39 @@ public class TreeNodeSjk {
 		this.parentid = parentid;
 	}
 
+	//配置老师和学生一对多
+    /**
+     *                     
+     *  1. 注解配置多表关系
+     *  2. 声明关系
+     *  3. 配置外键,或者中间表
+     *  OneToMany配置一对多
+     *      targetEntity设置对应的实体类的类型
+     *  JoinColumn 配置外键
+     *      name:外键的名称,
+     *      referencedColumnName参照的主表的主键字段名称
+     
+    @OneToMany(targetEntity = TnsQbNeiRong.class)
+    @JoinColumn(name = "neirong_atc_id",referencedColumnName = "tnssjk_id")
+    private Set<TnsQbNeiRong> qbneirong = new HashSet<>();
+	*/
+	
+	@OneToMany(mappedBy="treeNodeSjk",fetch = FetchType.EAGER)
+	private Set<TnsQbNeiRong> qbneirong;
+
+	public Set<TnsQbNeiRong> getQbneirong() {
+		return qbneirong;
+	}
+
+	public void setQbneirong(Set<TnsQbNeiRong> qbneirong) {
+		this.qbneirong = qbneirong;
+	}
+
 	@Override
 	public String toString() {
 		return "TreeNodeSjk [id=" + id + ", atclx=" + atclx + ", sz=" + sz + ", version=" + version + ", rootid="
 				+ rootid + ", parentid=" + parentid + ", biaoti=" + biaoti + ", btneirong=" + btneirong + ", qbneirong="
-				+ qbneirong + ", lrsj=" + lrsj + "]";
+			    + ", lrsj=" + lrsj + "]";
 	}
 
 	

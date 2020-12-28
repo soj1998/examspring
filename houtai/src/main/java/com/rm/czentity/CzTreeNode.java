@@ -4,9 +4,15 @@ package com.rm.czentity;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
+import com.rm.entity.TnsQbNeiRong;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
 
@@ -110,11 +116,11 @@ public class CzTreeNode {
     
     //遍历TreeNode并插入
     //遍历方法的重载
-    public void listAndInsSql(TreeNodeSjkDao tnDao,String wzlx,String wzversion,String sz){
-        this.listAndInsSql(tnDao,this.getRoot().nodes,wzlx,wzversion,sz);
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String wzlx,String wzversion,String sz){
+        this.listAndInsSql(tnsneirongDao,tnDao,this.getRoot().nodes,wzlx,wzversion,sz);
     }
     //循环Tree
-    public void listAndInsSql(TreeNodeSjkDao tnDao, List<TreeNode> list,String wzlx,String wzversion,String sz){
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,String wzlx,String wzversion,String sz){
         index++;  //遍历次数，用于退出循环
         if(index == identifying){
             return;
@@ -126,18 +132,26 @@ public class CzTreeNode {
             tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
-			tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
+			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
+			JSONArray qbnr = item.getData().getJSONArray("qbneirong");
+			Set<TnsQbNeiRong> tnsqbnr = new HashSet<TnsQbNeiRong>();
+			qbnr.forEach(e ->{
+				JSONObject js = (JSONObject)e;
+				tnsqbnr.add(new TnsQbNeiRong(js.getString("neirong"),tn));
+			});
+			tn.setQbneirong(tnsqbnr);
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
             tn.setRootid(item.getId());   
             tn.setParentid(item.getParentId());
             //tn.setId(-1);
             System.out.println(tn.toString());
             tnDao.save(tn);
+            tnsneirongDao.saveAll(tnsqbnr);
             System.out.println(item.getId() + "," + item.getData().toJSONString());
             if(item.nodes.size() == 0){
                 continue;
             }else {
-            	listAndInsSql(tnDao,item.nodes,wzlx,wzversion,sz);
+            	listAndInsSql(tnsneirongDao,tnDao,item.nodes,wzlx,wzversion,sz);
             }
             System.out.println();
         }
