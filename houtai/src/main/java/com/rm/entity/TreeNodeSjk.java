@@ -1,5 +1,6 @@
 package com.rm.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +11,14 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="treenodesjk")
-public class TreeNodeSjk {
+public class TreeNodeSjk implements Serializable{
  
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; 
 	
@@ -91,16 +97,9 @@ public class TreeNodeSjk {
     @Column
     private Integer parentid;
     
-    @Column(columnDefinition = "boolean default 0")
-    private boolean firstnode; 
-    
-	public boolean isFirstnode() {
-		return firstnode;
-	}
-
-	public void setFirstnode(boolean firstnode) {
-		this.firstnode = firstnode;
-	}
+    //@Column(columnDefinition = "boolean default 0")
+    //private boolean firstnode;   
+	
 
 	@Column
     private Integer biaoti;

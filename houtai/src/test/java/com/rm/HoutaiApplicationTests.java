@@ -107,7 +107,6 @@ class HoutaiApplicationTests {
 			tn.setRootid(3);
             tn.setSz("xfs");
             tn.setVersion("1.0.0.1");
-            tn.setFirstnode(true);
             //tn.setId(-1);
             System.out.println(tn.toString());
             tnDao.save(tn);
@@ -172,7 +171,7 @@ class HoutaiApplicationTests {
 		InputStream is = null;
 		XWPFDocument doc = null;
 		try {
-			is = new FileInputStream("d:\\菜鸟税法2.docx");
+			is = new FileInputStream("d:\\菜鸟税法.docx");
 			doc = new XWPFDocument(is);
 			//获取段落
 			List<XWPFParagraph> paras = doc.getParagraphs();

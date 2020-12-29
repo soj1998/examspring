@@ -45,13 +45,8 @@ public class CzTreeNode {
     }
     //先向树的右节点添加
     public void addright(int parentId,JSONObject data,List<TreeNode> list){
-        for(TreeNode item1:list){
-    		System.out.println("btneirong   2" + item1.getData().getString("btneirong"));
-    		System.out.println("biaotidengji   " + item1.getData().getShort("biaoti"));
-    		System.out.println("parentId   " + parentId);                	
-        }
-    	if(parentId==0){
-        	TreeNode newNode = new TreeNode(identifying++,parentId,true,data);
+        if(parentId==0){
+        	TreeNode newNode = new TreeNode(identifying++,parentId,data);
             this.root.nodes.add(newNode);
         }else {
             if(list.size()==0){
@@ -60,14 +55,13 @@ public class CzTreeNode {
             for(TreeNode item:list){
             	//int rightId = getRight(parentId,list);
             	int rightId = 0;
-            	boolean firstn = true;            	
             	for(TreeNode item1:list){
             		if(item1.getData().getIntValue("biaoti") == parentId){
                 		rightId = item1.getId();                		
                 	}
                 }            	
             	if(item.getId() == rightId){            		
-                	TreeNode newNode = new TreeNode(identifying++, rightId, firstn,data);
+                	TreeNode newNode = new TreeNode(identifying++, rightId, data);
                     item.nodes.add(newNode);
                     return;
                 }else {
@@ -138,7 +132,6 @@ public class CzTreeNode {
             tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
-			tn.setFirstnode(item.isFirstnode());
 			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
 			JSONArray qbnr = item.getData().getJSONArray("qbneirong");
 			Set<TnsQbNeiRong> tnsqbnr = new HashSet<TnsQbNeiRong>();
@@ -302,5 +295,30 @@ public class CzTreeNode {
             return null;  
         }  
     }  
+    找到树的最左边的节点
+    public:
+    void findBottomLeftValue(TreeNode* root, int& maxDepth, int& leftVal, int depth) {
+        if (root == NULL) {
+            return;
+        }
+        //Go to the left and right of each node 
+        findBottomLeftValue(root->left, maxDepth, leftVal, depth+1);
+        findBottomLeftValue(root->right, maxDepth, leftVal, depth+1);
+
+        //Update leftVal and maxDepth
+        if (depth > maxDepth) {
+            maxDepth = depth;
+            leftVal = root->val;
+        }
+    }
+
+    //Entry function
+    int findBottomLeftValue(TreeNode* root) {
+        int maxDepth = 0;
+        //Initialize leftVal with root's value to cover the edge case with single node
+        int leftVal = root->val;
+        findBottomLeftValue(root, maxDepth, leftVal, 0);
+        return leftVal;
+    }
     */
 }

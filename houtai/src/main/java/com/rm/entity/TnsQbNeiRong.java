@@ -43,8 +43,8 @@ public class TnsQbNeiRong {
     */
     
     //多个工人---1个部门
-  	@ManyToOne(fetch = FetchType.EAGER)
-  	@JoinColumn(name = "treeNodeSjk_id",referencedColumnName = "id")
+  	@ManyToOne(targetEntity = TreeNodeSjk.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "treenodesjkid",referencedColumnName = "rootid")
   	private TreeNodeSjk treeNodeSjk;
 
     
