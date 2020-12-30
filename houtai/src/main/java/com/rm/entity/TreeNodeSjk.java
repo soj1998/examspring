@@ -104,7 +104,18 @@ public class TreeNodeSjk implements Serializable{
 	@Column
     private Integer biaoti;
     
-    @Column(length=100)
+	@Column
+    private Integer hangshu;
+	
+    public Integer getHangshu() {
+		return hangshu;
+	}
+
+	public void setHangshu(Integer hangshu) {
+		this.hangshu = hangshu;
+	}
+
+	@Column(length=100)
     private String btneirong;
     
     //@Column(length=20000)

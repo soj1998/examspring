@@ -17,7 +17,7 @@ import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
 
 
-public class CzTreeNode {
+public class CzTreeNodeSjk {
 	
     private TreeNode root = new TreeNode(0);    //树的根节点
     public int identifying = 1;  //用于记录树上的节点
@@ -53,18 +53,15 @@ public class CzTreeNode {
                 return;
             }          
             for(TreeNode item:list){
-            	int rightId = getRight(parentId,list);
-            	/**int rightId = 0;
+            	//int rightId = getRight(parentId,list);
+            	int rightId = 0;
             	for(TreeNode item1:list){
             		if(item1.getData().getIntValue("biaoti") == parentId){
                 		rightId = item1.getId();                		
-                	}            		
-                }**/
+                	}
+                }            	
             	if(item.getId() == rightId){            		
                 	TreeNode newNode = new TreeNode(identifying++, rightId, data);
-                	if(data.getString("btneirong").equals("自来水")){
-                		System.out.println("2.rightId"+ rightId+",biaoti"+item.getData().getString("btneirong")+","+item.getId()+"," + data.getString("btneirong"));
-                	}
                     item.nodes.add(newNode);
                     return;
                 }else {
@@ -88,15 +85,13 @@ public class CzTreeNode {
             return;
         }        
         for(TreeNode item:list){
-        	if(item.getData().getString("btneirong").equals("自来水")){
-        		System.out.println(item.getId() + "," + item.getParentId() + "," + item.getData().getString("btneirong"));
-        	}
+            System.out.println(item.getId() + "," + item.getData().toJSONString());
             if(item.nodes.size() == 0){
                 continue;
             }else {
                 list(item.nodes);
             }
-            //System.out.println();
+            System.out.println();
         }
     }
     public TreeNode minRightNode(List<TreeNode> list,int dqId){
@@ -159,7 +154,7 @@ public class CzTreeNode {
             }else {
             	listAndInsSql(tnsneirongDao,tnDao,item.nodes,wzlx,wzversion,sz);
             }
-            //System.out.println();
+            System.out.println();
         }
     }
     /**

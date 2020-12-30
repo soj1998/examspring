@@ -83,11 +83,12 @@ class HoutaiApplicationTests {
 		System.out.println("开始啦");
 		//HWPFDocument document = null;
 		try {
-			List<TreeNodeSjk> bkall=tnDao.findAll();
-	    	for(TreeNodeSjk b:bkall) {
-	    			LOG.info("--- "+b.getAtclx());
-	    	}
-            
+			//得到全部的子节点
+			List<TreeNodeSjk> a= new ArrayList<TreeNodeSjk>();
+			List<TreeNodeSjk> b=diGuiQiu(7,a);
+			b.forEach(e->{
+				System.out.println(e);
+			});
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -252,7 +253,8 @@ class HoutaiApplicationTests {
 					if(obj3.getShort("biaoti") == 0
 						&&
 						obj3.getShort("hangshu") > obj1.getShort("hangshu")
-							) {						
+					) 
+					{						
 						JSONObject nobj2 = new JSONObject();
 						nobj2.put("neirong", obj3.getString("neirong"));
 						nobj2.put("hangshu", obj3.getShort("hangshu"));
@@ -269,11 +271,18 @@ class HoutaiApplicationTests {
 				if(null != nobj && nobj.size() > 0)
 					zhengLiArray.add(nobj);
 			}
+			zhengLiArray.forEach(e->{
+				JSONObject obj1 = (JSONObject)e;
+				if (obj1.getString("btneirong").equals("自来水"))
+				{
+					System.out.println("找到一个");
+				}
+			});
 			CzTreeNode mtree = new CzTreeNode();
 			diGuiQiu(mtree, zhengLiArray);	
-			//mtree.list();
+			mtree.list();
 			//list并且插入到数据库 		
-			mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
+			// mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -412,9 +421,9 @@ class HoutaiApplicationTests {
 	*/
 	
 	/**
-	 * 用递归，求节点
+	 *	用递归，求节点
 	 */
-	 private CzTreeNode diGuiQiu(CzTreeNode mtree, JSONArray jsonDuanArray) {
+	private CzTreeNode diGuiQiu(CzTreeNode mtree, JSONArray jsonDuanArray) {
 		if (null == jsonDuanArray ||jsonDuanArray.size() == 0) {
 			return mtree;
 		}
@@ -423,9 +432,12 @@ class HoutaiApplicationTests {
 			if(null!= obj1.get("biaoti"))
 	        {
 	        	//mtree.addright((int)(obj1.get("biaoti")) - 1, obj1);
-				System.out.println("btneirong  1  " + obj1.getString("btneirong"));
+				//System.out.println("btneirong  1  " + obj1.getString("btneirong"));
 	        	mtree.addright(obj1);
-	        	jsonDuanArray.remove(obj1);	
+	        	jsonDuanArray.remove(obj1);
+	        	if (obj1.getString("btneirong").equals("自来水")) {
+	        		System.out.println("挂上一次");
+	        	}
 	        	diGuiQiu(mtree, jsonDuanArray);	
 	        	break;     	
 	        }
@@ -433,6 +445,20 @@ class HoutaiApplicationTests {
 		}		
 		return mtree;
 	}
-	
-	
+	 
+	//用递归求treesnsjk标题节点
+	private List<TreeNodeSjk> diGuiQiu(int rid, List<TreeNodeSjk> trs) {
+		if (null == trs ||trs.size() == 0) {
+			trs = new ArrayList<TreeNodeSjk>();
+		}
+		List<TreeNodeSjk> temp = tnDao.getTreeByParentid(rid);
+		if (null == temp ||temp.size() == 0) {
+			return trs;
+		}
+		for (TreeNodeSjk s:temp) {
+			trs.add(s);
+			diGuiQiu(s.getRootid(),trs);
+		}
+		return trs;
+	}
 }

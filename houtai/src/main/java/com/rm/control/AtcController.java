@@ -62,16 +62,23 @@ public class AtcController {
 	
 	@CrossOrigin
 	@RequestMapping(value="/gettreeneirongbyid",method=RequestMethod.POST)
-    public List<TnsQbNeiRong> listerji2(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid){    	
-        int minr = treeNodeSjkDao.getMinRootidByParentid(pid);
-        List<TnsQbNeiRong> rs =new ArrayList<TnsQbNeiRong>();
+    public JSONObject listerji2(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid){
+		JSONObject r1 =new JSONObject();
+		int minr = treeNodeSjkDao.getMinRootidByParentid(pid);
+        List<TnsQbNeiRong> rs1 =new ArrayList<TnsQbNeiRong>();
+        List<TreeNodeSjk> rs2 =new ArrayList<TreeNodeSjk>();
         if (minr == rid) {
 			List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(pid);
-			rs.addAll(list_glx1);
+			rs1.addAll(list_glx1);
+			List<TreeNodeSjk> listbt=treeNodeSjkDao.getTreeByRootid(pid);
+	        rs2.addAll(listbt);
 		}
 		List<TnsQbNeiRong> list_glx=tnsQbNeiRongDao.getQbNrBySjktid(rid);
-        LOG.info(list_glx.size() + "");
-        rs.addAll(list_glx);
-        return rs;
+		rs1.addAll(list_glx);
+		r1.put("neirong", rs1);        
+        List<TreeNodeSjk> listbt2=treeNodeSjkDao.getTreeByRootid(rid);
+        rs2.addAll(listbt2);               
+        r1.put("zhangjie", rs2);        
+        return r1;
     }
 }
