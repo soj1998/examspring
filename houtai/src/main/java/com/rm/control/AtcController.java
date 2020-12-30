@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.rm.czentity.CzTreeNodeSjk;
 import com.rm.dao.AtcDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
@@ -65,20 +66,23 @@ public class AtcController {
     public JSONObject listerji2(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid){
 		JSONObject r1 =new JSONObject();
 		int minr = treeNodeSjkDao.getMinRootidByParentid(pid);
-        List<TnsQbNeiRong> rs1 =new ArrayList<TnsQbNeiRong>();
-        List<TreeNodeSjk> rs2 =new ArrayList<TreeNodeSjk>();
+        List<TnsQbNeiRong> rs1 = new ArrayList<TnsQbNeiRong>();
+        List<TreeNodeSjk> rs2 = new ArrayList<TreeNodeSjk>();
         if (minr == rid) {
-			List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(pid);
-			rs1.addAll(list_glx1);
+			// List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(pid);
+			// rs1.addAll(list_glx1);
 			List<TreeNodeSjk> listbt=treeNodeSjkDao.getTreeByRootid(pid);
 	        rs2.addAll(listbt);
-		}
-		List<TnsQbNeiRong> list_glx=tnsQbNeiRongDao.getQbNrBySjktid(rid);
-		rs1.addAll(list_glx);
-		r1.put("neirong", rs1);        
-        List<TreeNodeSjk> listbt2=treeNodeSjkDao.getTreeByRootid(rid);
-        rs2.addAll(listbt2);               
-        r1.put("zhangjie", rs2);        
+		}		
+		List<TreeNodeSjk> listbt2 = new ArrayList<TreeNodeSjk>();
+        List<TreeNodeSjk> listbt3 = CzTreeNodeSjk.diGuiQiu(rid, listbt2, treeNodeSjkDao);
+        rs2.addAll(listbt3);               
+        r1.put("zhangjie", rs2);
+        for(TreeNodeSjk ts:rs2) {
+        	List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(ts.getRootid());
+			rs1.addAll(list_glx1);
+        }
+        r1.put("neirong", rs1);   
         return r1;
     }
 }

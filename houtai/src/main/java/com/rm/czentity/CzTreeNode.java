@@ -37,7 +37,7 @@ public class CzTreeNode {
     }
     //添加方法重载
     public void addright(JSONObject data){
-        this.addright(data.getIntValue("biaoti") - 1,data,this.getRoot().nodes);
+    	this.addright(data.getIntValue("biaoti") - 1,data,this.getRoot().nodes);
     }
     //添加方法重载
     public void addright(int parentId,JSONObject data){
@@ -51,24 +51,29 @@ public class CzTreeNode {
         }else {
             if(list.size()==0){
                 return;
-            }          
-            for(TreeNode item:list){
+            }
+            boolean a =false;
+            for(int i = list.size() -1;i>=0;i--)
+            //for(TreeNode item:list)
+            {
             	int rightId = getRight(parentId,list);
             	/**int rightId = 0;
             	for(TreeNode item1:list){
             		if(item1.getData().getIntValue("biaoti") == parentId){
                 		rightId = item1.getId();                		
                 	}            		
-                }**/
-            	if(item.getId() == rightId){            		
+                }**/            	
+            	if(list.get(i).getId() == rightId){            		
                 	TreeNode newNode = new TreeNode(identifying++, rightId, data);
                 	if(data.getString("btneirong").equals("自来水")){
-                		System.out.println("2.rightId"+ rightId+",biaoti"+item.getData().getString("btneirong")+","+item.getId()+"," + data.getString("btneirong"));
+                		System.out.println("2.rightId"+ rightId+",biaoti"+list.get(i).getData().getString("btneirong")+","+list.get(i).getId()+"," + data.getString("btneirong"));
                 	}
-                    item.nodes.add(newNode);
+                	list.get(i).nodes.add(newNode);
+                	a = true;
                     return;
-                }else {
-                	addright(parentId,data,item.nodes);
+                } else {
+                	if(!a)
+                		addright(parentId,data,list.get(i).nodes);
                 }
             }
         }        

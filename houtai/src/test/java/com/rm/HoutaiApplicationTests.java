@@ -275,14 +275,14 @@ class HoutaiApplicationTests {
 				JSONObject obj1 = (JSONObject)e;
 				if (obj1.getString("btneirong").equals("自来水"))
 				{
-					System.out.println("找到一个");
+					//System.out.println("找到一个");
 				}
 			});
 			CzTreeNode mtree = new CzTreeNode();
 			diGuiQiu(mtree, zhengLiArray);	
 			mtree.list();
 			//list并且插入到数据库 		
-			// mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
+			//mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
