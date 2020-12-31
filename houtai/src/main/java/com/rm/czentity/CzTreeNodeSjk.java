@@ -10,9 +10,9 @@ import com.rm.entity.TreeNodeSjk;
 
 public class CzTreeNodeSjk {
 	
-	public static List<TreeNodeSjk> diGuiQiu(int rid, List<TreeNodeSjk> trs,TreeNodeSjkDao tnDao) {
+	public List<TreeNodeSjk> diGuiQiu(int rid, List<TreeNodeSjk> trs,TreeNodeSjkDao tnDao) {
 		if (null == trs ||trs.size() == 0) {
-			trs = new ArrayList<TreeNodeSjk>();
+			trs = tnDao.getTreeByRootid(rid);;
 		}
 		List<TreeNodeSjk> temp = tnDao.getTreeByParentid(rid);
 		if (null == temp ||temp.size() == 0) {

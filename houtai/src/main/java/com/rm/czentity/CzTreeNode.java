@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -51,8 +52,7 @@ public class CzTreeNode {
         }else {
             if(list.size()==0){
                 return;
-            }
-            boolean a =false;
+            }           
             for(int i = list.size() -1;i>=0;i--)
             //for(TreeNode item:list)
             {
@@ -69,15 +69,19 @@ public class CzTreeNode {
                 		System.out.println("2.rightId"+ rightId+",biaoti"+list.get(i).getData().getString("btneirong")+","+list.get(i).getId()+"," + data.getString("btneirong"));
                 	}
                 	list.get(i).nodes.add(newNode);
-                	a = true;
-                    return;
+                	return;
                 } else {
-                	if(!a)
-                		addright(parentId,data,list.get(i).nodes);
+                	addright(parentId,data,list.get(i).nodes);
                 }
             }
         }        
     }
+    
+  //先向树的右节点添加
+    public void addright2(int parentId,JSONObject data,List<TreeNode> list){
+    	this.addTreeNodeByStack(parentId,data);       
+    }
+    
     //遍历方法的重载
     public List<TreeNode> getTree(){
         return this.getRoot().nodes;
@@ -104,6 +108,69 @@ public class CzTreeNode {
             //System.out.println();
         }
     }
+    //非递归 栈压入遍历
+    public void displayTreeByStack() {
+    	TreeNode root = this.getRoot();
+		if (root == null)
+			System.out.println("空树");
+		else {
+			Stack<TreeNode> allNode = new Stack<TreeNode>();// 临时存储用栈
+			allNode.push(root);// 压入根节点
+			while (!allNode.isEmpty()) {// 只有栈不为空
+				TreeNode n = (TreeNode) allNode.pop();// 弹出元素
+				System.out.println(n.getData());
+				if (n.nodes != null && n.nodes.size()> 0) {// 再遍历压入子树
+					for (TreeNode tn : n.nodes)
+						allNode.push(tn);
+				}
+			}
+		}
+	}
+    
+  //非递归 栈压入遍历
+    public void addTreeNodeByStack(int parentId,JSONObject data) {
+    	TreeNode root = this.getRoot();
+		if (root == null)
+			System.out.println("空树");
+		else {
+			Stack<TreeNode> allNode = new Stack<TreeNode>();// 临时存储用栈
+			allNode.push(root);// 压入根节点
+			while (!allNode.isEmpty()) {// 只有栈不为空				
+				if(parentId==0){
+		        	TreeNode newNode = new TreeNode(identifying++,parentId,data);
+		            this.root = newNode;
+		        	//this.root.nodes.add(newNode);
+		            return;
+		        }else {
+		        	TreeNode n = (TreeNode) allNode.peek();
+		        	int rightId = parentId;
+	            	/**for(TreeNode item1:n.nodes){
+	            		if(item1.getData().getIntValue("biaoti") == parentId){
+	                		rightId = item1.getId();                		
+	                	}            		
+	                }**/
+	            	if(n.getData().getIntValue("biaoti") == parentId){
+                		rightId = n.getId(); 
+                		TreeNode newNode = new TreeNode(identifying++, rightId, data);
+	                	n.nodes.add(newNode);
+	                	return;
+                	} 
+	            	/**if(n.getId() == rightId){            		
+	                	TreeNode newNode = new TreeNode(identifying++, rightId, data);
+	                	n.nodes.add(newNode);
+	                	return;
+	                }**/
+		        }				
+				TreeNode n = (TreeNode) allNode.pop();// 弹出元素
+				// System.out.println(n.getData());
+				if (n.nodes != null && n.nodes.size()> 0) {// 再遍历压入子树
+					for (TreeNode tn : n.nodes) //这个操作是把n.nodes全部压入，并把最后压入的当做顶
+						allNode.push(tn);
+				}
+			}
+		}
+	}
+    
     public TreeNode minRightNode(List<TreeNode> list,int dqId){
     	index++;  //遍历次数，用于退出循环
         if(index == identifying){
@@ -306,7 +373,7 @@ public class CzTreeNode {
             return null;  
         }  
     }  
-    找到树的最左边的节点
+    	//找到树的最左边的节点
     public:
     void findBottomLeftValue(TreeNode* root, int& maxDepth, int& leftVal, int depth) {
         if (root == NULL) {
@@ -331,5 +398,23 @@ public class CzTreeNode {
         findBottomLeftValue(root, maxDepth, leftVal, 0);
         return leftVal;
     }
+    // 多叉树遍历 非递归
+    static void displayTreeByStack(treenode root) {
+		if (root == null)
+			System.out.println("空树");
+		else {
+			Stack allNode = new Stack();// 临时存储用栈
+			allNode.push(root);// 压入根节点
+			while (!allNode.isEmpty()) {// 只有栈不为空
+				treenode n = (treenode) allNode.pop();// 弹出元素
+				System.out.println(n.getData());
+				if (n.getkNode() != null) {// 再遍历压入子树
+					for (treenode tn : n.getkNode())
+						allNode.push(tn);
+				}
+			}
+		}
+	}
+    
     */
 }

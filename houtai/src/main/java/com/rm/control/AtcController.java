@@ -75,7 +75,8 @@ public class AtcController {
 	        rs2.addAll(listbt);
 		}		
 		List<TreeNodeSjk> listbt2 = new ArrayList<TreeNodeSjk>();
-        List<TreeNodeSjk> listbt3 = CzTreeNodeSjk.diGuiQiu(rid, listbt2, treeNodeSjkDao);
+		CzTreeNodeSjk czTreeNodeSjk = new CzTreeNodeSjk();
+        List<TreeNodeSjk> listbt3 = czTreeNodeSjk.diGuiQiu(rid, listbt2, treeNodeSjkDao);
         rs2.addAll(listbt3);               
         r1.put("zhangjie", rs2);
         for(TreeNodeSjk ts:rs2) {

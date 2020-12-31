@@ -279,10 +279,12 @@ class HoutaiApplicationTests {
 				}
 			});
 			CzTreeNode mtree = new CzTreeNode();
-			diGuiQiu(mtree, zhengLiArray);	
-			mtree.list();
+			diGuiQiu(mtree, zhengLiArray);
+			//非递归 遍历
+			//mtree.displayTreeByStack();
+			//mtree.list();
 			//list并且插入到数据库 		
-			//mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
+			mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -433,7 +435,8 @@ class HoutaiApplicationTests {
 	        {
 	        	//mtree.addright((int)(obj1.get("biaoti")) - 1, obj1);
 				//System.out.println("btneirong  1  " + obj1.getString("btneirong"));
-	        	mtree.addright(obj1);
+	        	//mtree.addright(obj1);
+				mtree.addTreeNodeByStack(obj1.getIntValue("biaoti") - 1,obj1);
 	        	jsonDuanArray.remove(obj1);
 	        	if (obj1.getString("btneirong").equals("自来水")) {
 	        		System.out.println("挂上一次");
