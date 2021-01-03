@@ -193,11 +193,11 @@ public class CzTreeNode {
     
     //遍历TreeNode并插入
     //遍历方法的重载
-    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String wzlx,String wzversion,String sz){
-        this.listAndInsSql(tnsneirongDao,tnDao,this.getRoot().nodes,wzlx,wzversion,sz);
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String wzlx,String wzversion,String sz,String fileweizhi){
+        this.listAndInsSql(tnsneirongDao,tnDao,this.getRoot().nodes,wzlx,wzversion,sz,fileweizhi);
     }
     //循环Tree
-    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,String wzlx,String wzversion,String sz){
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,String wzlx,String wzversion,String sz,String fileweizhi){
         index++;  //遍历次数，用于退出循环
         if(index == identifying){
             return;
@@ -206,7 +206,8 @@ public class CzTreeNode {
         	TreeNodeSjk tn = new TreeNodeSjk();
         	tn.setAtclx(wzlx);
         	tn.setSz(sz);
-            tn.setVersion(wzversion);			
+        	tn.setVersion(wzversion);
+        	tn.setFileweizhi(fileweizhi);
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			tn.setHangshu(item.getData().getInteger("hangshu"));
@@ -219,6 +220,7 @@ public class CzTreeNode {
 			});
 			//tn.setQbneirong(tnsqbnr);
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+			System.out.println("Rootid " + item.getId());
             tn.setRootid(item.getId());   
             tn.setParentid(item.getParentId());
             //tn.setId(-1);
@@ -229,7 +231,7 @@ public class CzTreeNode {
             if(item.nodes.size() == 0){
                 continue;
             }else {
-            	listAndInsSql(tnsneirongDao,tnDao,item.nodes,wzlx,wzversion,sz);
+            	listAndInsSql(tnsneirongDao,tnDao,item.nodes,wzlx,wzversion,sz,fileweizhi);
             }
             //System.out.println();
         }

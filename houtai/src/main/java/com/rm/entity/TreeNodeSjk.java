@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
+
 @Entity
 @Table(name="treenodesjk")
 public class TreeNodeSjk implements Serializable{
@@ -20,13 +22,16 @@ public class TreeNodeSjk implements Serializable{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id; 
+
+    private Long id; 
 	
-	public Integer getId() {
+
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -91,7 +96,31 @@ public class TreeNodeSjk implements Serializable{
     @Column(length=10)
     private String version;
     
-    @Column
+    
+    @Column(length=50)
+    private String fileweizhi;
+     
+    
+    public String getFileweizhi() {
+		return fileweizhi;
+	}
+
+	public void setFileweizhi(String fileweizhi) {
+		this.fileweizhi = fileweizhi;
+	}
+
+	@Column(length=1)
+    private boolean yxbz;
+	
+	public boolean isYxbz() {
+		return yxbz;
+	}
+
+	public void setYxbz(boolean yxbz) {
+		this.yxbz = yxbz;
+	}
+
+	@Column
     private Integer rootid;
     
     @Column
