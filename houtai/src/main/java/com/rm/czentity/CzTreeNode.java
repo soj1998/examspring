@@ -220,7 +220,7 @@ public class CzTreeNode {
 			});
 			//tn.setQbneirong(tnsqbnr);
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
-			System.out.println("Rootid " + item.getId());
+			//System.out.println("Rootid " + item.getId());
             tn.setRootid(item.getId());   
             tn.setParentid(item.getParentId());
             //tn.setId(-1);

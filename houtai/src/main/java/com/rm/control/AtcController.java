@@ -80,7 +80,7 @@ public class AtcController {
         rs2.addAll(listbt3);               
         r1.put("zhangjie", rs2);
         for(TreeNodeSjk ts:rs2) {
-        	List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(ts.getRootid());
+        	List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(ts.getId().intValue());
 			rs1.addAll(list_glx1);
         }
         r1.put("neirong", rs1);   

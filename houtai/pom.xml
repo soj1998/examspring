@@ -150,6 +150,12 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	    <version>1.2.75</version>
 	</dependency>
 
+	<dependency>
+	    <groupId>commons-fileupload</groupId>
+	    <artifactId>commons-fileupload</artifactId>
+	    <version>1.4</version>
+	</dependency>
+
 	</dependencies>
 
 	<build>

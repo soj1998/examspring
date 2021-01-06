@@ -109,7 +109,7 @@ public class TreeNodeSjk implements Serializable{
 		this.fileweizhi = fileweizhi;
 	}
 
-	@Column(length=1)
+	@Column(columnDefinition = "bit(1) default 1")
     private boolean yxbz;
 	
 	public boolean isYxbz() {
