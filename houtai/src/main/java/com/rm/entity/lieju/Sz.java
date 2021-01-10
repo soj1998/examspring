@@ -29,5 +29,17 @@ public class Sz {
 	public void setSzmc(String szmc) {
 		this.szmc = szmc;
 	}
+	public Sz(int id,String szmc) {
+		super();
+		if(id!= -1) {
+			this.id = id;
+		}
+		this.szmc = szmc;
+	}
+	public Sz() {
+		super();
+	}
+	
+	
     
 }

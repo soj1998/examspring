@@ -4,6 +4,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rm.dao.sys.WzlxDao;
 import com.rm.entity.lieju.Wzlx;
 import com.rm.util.StringUtil;
+
+@CrossOrigin(origins = "*")
 @RequestMapping(value="/sys/wzlx")
 @RestController
 public class WzlxController {
@@ -45,10 +48,9 @@ public class WzlxController {
     	return ""+xuekeId;
     }  
     
-    @GetMapping(path = "delete")
-    public String urlParam(@RequestParam(name = "szid") String  szid) {
-    	LOG.info(szid);
-    	wzlxDao.deleteById(Integer.parseInt(szid));
+    @RequestMapping(path = "delete",method=RequestMethod.POST)
+    public String urlParam(@RequestParam(name = "szid") int  szid) {
+    	wzlxDao.deleteById(szid);
     	return "ok";
     }
    

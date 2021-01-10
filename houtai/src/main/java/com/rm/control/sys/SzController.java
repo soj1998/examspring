@@ -4,6 +4,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.lieju.Sz;
 import com.rm.util.StringUtil;
+
+@CrossOrigin(origins = "*")
 @RequestMapping(value="/sys/sz")
 @RestController
 public class SzController {
@@ -27,11 +30,12 @@ public class SzController {
 
     
     @RequestMapping(value="/add",method=RequestMethod.POST)
-    public String add(Sz sz){
+    public String add(@RequestParam("szid") int szid,@RequestParam("szmc") String szmc){
+    	System.out.println(szmc);
     	List<Sz> szall=szDao.findAll();
     	for(Sz b:szall) {    		
-			if(StringUtil.isNotEmpty(sz.getSzmc())) {				
-				if(b.getSzmc().equals(sz.getSzmc())) {
+			if(StringUtil.isNotEmpty(szmc)) {				
+				if(b.getSzmc().equals(szmc)) {
 					LOG.info("save sz exists");
 					return "sz exists,not save";
 				}
@@ -40,15 +44,14 @@ public class SzController {
 				return "sz is null,not save";
 			}
     	}
-    	Integer xuekeId= szDao.save(sz).getId();
+    	Integer xuekeId= szDao.save(new Sz(szid,szmc)).getId();
     	LOG.info("sz ok");
     	return ""+xuekeId;
     }  
     
-    @GetMapping(path = "delete")
-    public String urlParam(@RequestParam(name = "szid") String  szid) {
-    	LOG.info(szid);
-    	szDao.deleteById(Integer.parseInt(szid));
+    @RequestMapping(path = "delete",method=RequestMethod.POST)
+    public String urlParam(@RequestParam(name = "szid") int  szid) {
+    	szDao.deleteById(szid);
     	return "ok";
     }
    
