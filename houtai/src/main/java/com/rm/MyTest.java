@@ -63,8 +63,6 @@ public class MyTest {
 	@ResponseBody
 	@RequestMapping("/say2")
     public String say3(){
-		FileSaveSql fileSaveSql = new FileSaveSql();
-		fileSaveSql.asoneinsertToSql(tnsQbNeiRongDao, treeNodeSjkDao, "d:\\菜鸟税法.docx", "zsd", "1.0.0.3", "zzs");
 		return "hh3";
 	}
 	
@@ -75,21 +73,23 @@ public class MyTest {
     }
 	@ResponseBody
 	@RequestMapping(value="/say3",method=RequestMethod.POST)
-	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") String wzlx,HttpServletResponse response) throws Exception{
+	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzversion") String banben,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
-		System.out.println(wzlx);
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
-		String path=StringUtil.getRootDir(request)
+		String path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
 				+"uploadfiles";
 	    up.setSavePath(path);
-	    String[] fileType = {".docx" , ".png" , ".jpg" , ".jpeg" , ".bmp"};
+	    String[] fileType = {".docx"};
 	    up.setAllowFiles(fileType);
 	    up.upload();
 	    String callback = request.getParameter("callback");
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
+	    // 保存的位置是 path + geturl
 	    System.out.println("r    "+result);
+	    FileSaveSql fileSaveSql = new FileSaveSql();
+		fileSaveSql.asoneinsertToSql(tnsQbNeiRongDao, treeNodeSjkDao, path + up.getUrl(), wzlx, banben, sz);
 	    return "<script>"+ callback +"(" + result + ")</script>";
 	    
 	}

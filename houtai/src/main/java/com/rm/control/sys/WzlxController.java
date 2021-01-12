@@ -5,7 +5,6 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,20 +29,21 @@ public class WzlxController {
 
     
     @RequestMapping(value="/add",method=RequestMethod.POST)
-    public String add(Wzlx sz){
+    public String add(@RequestParam("szid") int szid,@RequestParam("szmc") String szmc){
+    	if (StringUtil.isEmpty(szmc)) {
+    		LOG.info("wzlx is null");
+			return "wzlx is null,not save";
+    	}
     	List<Wzlx> szall=wzlxDao.findAll();
     	for(Wzlx b:szall) {    		
-			if(StringUtil.isNotEmpty(sz.getWzlxmc())) {				
-				if(b.getWzlxmc().equals(sz.getWzlxmc())) {
+			if(StringUtil.isNotEmpty(b.getWzlxmc()) && StringUtil.isNotEmpty(szmc)) {				
+				if(b.getWzlxmc().equals(szmc)) {
 					LOG.info("save wzlx exists");
 					return "wzlx exists,not save";
 				}
-			}else {
-				LOG.info("wzlx is null");
-				return "wzlx is null,not save";
 			}
     	}
-    	Integer xuekeId= wzlxDao.save(sz).getId();
+    	Integer xuekeId= wzlxDao.save(new Wzlx(szid,szmc)).getId();
     	LOG.info("wzlx ok");
     	return ""+xuekeId;
     }  

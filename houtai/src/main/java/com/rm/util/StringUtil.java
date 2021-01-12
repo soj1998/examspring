@@ -85,6 +85,17 @@ public class StringUtil {
 		return path;
 	}
 	
+	public static String getRootDir(HttpServletRequest request,String jiequmingzi) throws Exception{
+		String path = request.getSession().getServletContext().getRealPath("");
+		System.out.println("webapp绝对路径   "+path);
+		if (path.indexOf(jiequmingzi) <= 0) {
+			throw new Exception("出现错误啦");
+		}
+		path=path.substring(0,path.indexOf(jiequmingzi)-1);
+		System.out.println("上一层路径,保存的位置   "+path);
+		return path;
+	}
+	
 	/**
 	 * 获取文件扩展名
 	 * 

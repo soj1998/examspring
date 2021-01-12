@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name="treenodesjk")
+@Table(name="t_treenodesjk")
 public class TreeNodeSjk implements Serializable{
  
     /**
@@ -33,14 +33,6 @@ public class TreeNodeSjk implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getSz() {
-		return sz;
-	}
-
-	public void setSz(String sz) {
-		this.sz = sz;
 	}
 
 	public String getVersion() {
@@ -83,21 +75,37 @@ public class TreeNodeSjk implements Serializable{
 		this.lrsj = lrsj;
 	}
 
-	public void setAtclx(String atclx) {
-		this.atclx = atclx;
+
+
+	@Column
+    private int wzlxid;
+     
+    @Column
+    private int szid;
+     
+    public int getWzlxid() {
+		return wzlxid;
 	}
 
-	@Column(length=20)
-    private String atclx;
-     
-    @Column(length=20)
-    private String sz;
-     
-    @Column(length=10)
+	public void setWzlxid(int wzlxid) {
+		this.wzlxid = wzlxid;
+	}
+
+	public int getSzid() {
+		return szid;
+	}
+
+	public void setSzid(int szid) {
+		this.szid = szid;
+	}
+
+
+
+	@Column(length=10)
     private String version;
     
     
-    @Column(length=50)
+    @Column(length=200)
     private String fileweizhi;
      
     
@@ -109,16 +117,20 @@ public class TreeNodeSjk implements Serializable{
 		this.fileweizhi = fileweizhi;
 	}
 
-	@Column(columnDefinition = "bit(1) default 1")
-    private boolean yxbz;
+	@Column(length=1)
+    private String yxbz;
 	
-	public boolean isYxbz() {
+	
+
+	public String getYxbz() {
 		return yxbz;
 	}
 
-	public void setYxbz(boolean yxbz) {
+	public void setYxbz(String yxbz) {
 		this.yxbz = yxbz;
 	}
+
+
 
 	@Column
     private Integer rootid;
@@ -153,9 +165,6 @@ public class TreeNodeSjk implements Serializable{
     @Column
     private Date lrsj;
     
-    public String getAtclx() {
-        return atclx;
-    }
 
 	public Integer getParentid() {
 		return parentid;
@@ -195,7 +204,7 @@ public class TreeNodeSjk implements Serializable{
      */
 	@Override
 	public String toString() {
-		return "TreeNodeSjk [id=" + id + ", atclx=" + atclx + ", sz=" + sz + ", version=" + version + ", rootid="
+		return "TreeNodeSjk [id=" + id + ", wzlxid=" + wzlxid + ", sz=" + szid + ", version=" + version + ", rootid="
 				+ rootid + ", parentid=" + parentid + ", biaoti=" + biaoti + ", btneirong=" + btneirong + ", qbneirong="
 			    + ", lrsj=" + lrsj + "]";
 	}

@@ -101,12 +101,10 @@ class HoutaiApplicationTests {
 		//HWPFDocument document = null;
 		try {
 			TreeNodeSjk tn = new TreeNodeSjk();
-			tn.setAtclx("zsd");
 			tn.setBiaoti(2);
 			tn.setBtneirong("1");			
 			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
 			tn.setRootid(3);
-            tn.setSz("xfs");
             tn.setVersion("1.0.0.1");
             //tn.setId(-1);
             System.out.println(tn.toString());
@@ -284,7 +282,7 @@ class HoutaiApplicationTests {
 			//mtree.displayTreeByStack();
 			//mtree.list();
 			//list并且插入到数据库 		
-			mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs","fileweizhi");
+			mtree.listAndInsSql(tnsneirongDao,tnDao,0, "1.0.0.0", 0,"fileweizhi");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -365,9 +363,7 @@ class HoutaiApplicationTests {
 	public void listAndInsSql(List<TreeNode> list,String wzlx,String wzversion,String sz){
         for(TreeNode item:list){
         	TreeNodeSjk tn = new TreeNodeSjk();
-        	tn.setAtclx(wzlx);
-        	tn.setSz(sz);
-            tn.setVersion(wzversion);			
+        	tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());

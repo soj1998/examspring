@@ -30,6 +30,15 @@ public class Wzlx {
 		this.wzlxmc = wzlxmc;
 	}
     
-     
+	public Wzlx(int id,String wzlxmc) {
+		super();
+		if(id!= -1) {
+			this.id = id;
+		}
+		this.wzlxmc = wzlxmc;
+	}
+	public Wzlx() {
+		super();
+	} 
      
 }

@@ -193,21 +193,22 @@ public class CzTreeNode {
     
     //遍历TreeNode并插入
     //遍历方法的重载
-    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String wzlx,String wzversion,String sz,String fileweizhi){
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,int wzlx,String wzversion,int sz,String fileweizhi){
         this.listAndInsSql(tnsneirongDao,tnDao,this.getRoot().nodes,wzlx,wzversion,sz,fileweizhi);
     }
     //循环Tree
-    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,String wzlx,String wzversion,String sz,String fileweizhi){
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,int wzlx,String wzversion,int sz,String fileweizhi){
         index++;  //遍历次数，用于退出循环
         if(index == identifying){
             return;
         }        
         for(TreeNode item:list){
         	TreeNodeSjk tn = new TreeNodeSjk();
-        	tn.setAtclx(wzlx);
-        	tn.setSz(sz);
         	tn.setVersion(wzversion);
         	tn.setFileweizhi(fileweizhi);
+        	tn.setWzlxid(wzlx);
+        	tn.setSzid(sz);
+        	tn.setYxbz("Y");
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			tn.setHangshu(item.getData().getInteger("hangshu"));

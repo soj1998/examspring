@@ -27,7 +27,7 @@ public interface TnsQbNeiRongDao extends JpaRepository<TnsQbNeiRong, Integer>{
  @Query(value = "select * from t_guanlianxing where user_id = :userId",nativeQuery = true)
   public List<Book> findGuanLianXingByUserIdNative(@Param("userId") int useId);
 */
-	@Query(value = "select * from tnsqbneirong where treenodesjkid = :pid order by hangshu",nativeQuery = true)
+	@Query(value = "select * from t_tnsqbneirong where treenodesjkid = :pid order by hangshu",nativeQuery = true)
 	public List<TnsQbNeiRong> getQbNrBySjktid(@Param("pid") int parentid);
 	
 }

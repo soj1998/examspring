@@ -240,14 +240,14 @@ public class FileSaveSql {
 		}		
 		return mtree;
 	}
-	public void insertToSql(CzTreeNode mtree,TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String wzlx,String banben,String shuizhong,String fileweizhi) {
+	public void insertToSql(CzTreeNode mtree,TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,int wzlx,String banben,int shuizhong,String fileweizhi) {
 		//mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
 		mtree.listAndInsSql(tnsneirongDao,tnDao,wzlx, banben, shuizhong,fileweizhi);
 	}
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String fileweizhi,String wzlx,String banben,String shuizhong) {
+	public void asoneinsertToSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String fileweizhi,int wzlx,String banben,int shuizhong) {
 		//mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
 		JSONArray mtransFiletoList =transFiletoList(fileweizhi);
 		CzTreeNode mtransJsontoTreeMode = transJsontoTreeMode(mtransFiletoList);

@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name="tnsqbneirong")
+@Table(name="t_tnsqbneirong")
 public class TnsQbNeiRong {
  
     @Id
