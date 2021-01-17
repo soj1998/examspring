@@ -1,12 +1,14 @@
 package com.rm.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 
@@ -35,13 +37,7 @@ public class TreeNodeSjk implements Serializable{
 		this.id = id;
 	}
 
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
+	
 
 	public Integer getRootid() {
 		return rootid;
@@ -67,69 +63,12 @@ public class TreeNodeSjk implements Serializable{
 		this.btneirong = btneirong;
 	}	
 	
-	public Date getLrsj() {
-		return lrsj;
+
+	@Override
+	public String toString() {
+		return "TreeNodeSjk [id=" + id + ", rootid=" + rootid + ", parentid=" + parentid + ", biaoti=" + biaoti
+				+ ", hangshu=" + hangshu + ", btneirong=" + btneirong + ", atcSjk=" + atcSjk + "]";
 	}
-
-	public void setLrsj(Date lrsj) {
-		this.lrsj = lrsj;
-	}
-
-
-
-	@Column
-    private int wzlxid;
-     
-    @Column
-    private int szid;
-     
-    public int getWzlxid() {
-		return wzlxid;
-	}
-
-	public void setWzlxid(int wzlxid) {
-		this.wzlxid = wzlxid;
-	}
-
-	public int getSzid() {
-		return szid;
-	}
-
-	public void setSzid(int szid) {
-		this.szid = szid;
-	}
-
-
-
-	@Column(length=10)
-    private String version;
-    
-    
-    @Column(length=200)
-    private String fileweizhi;
-     
-    
-    public String getFileweizhi() {
-		return fileweizhi;
-	}
-
-	public void setFileweizhi(String fileweizhi) {
-		this.fileweizhi = fileweizhi;
-	}
-
-	@Column(length=1)
-    private String yxbz;
-	
-	
-
-	public String getYxbz() {
-		return yxbz;
-	}
-
-	public void setYxbz(String yxbz) {
-		this.yxbz = yxbz;
-	}
-
 
 
 	@Column
@@ -162,8 +101,6 @@ public class TreeNodeSjk implements Serializable{
     //@Column(length=20000)
     //private String qbneirong;
     
-    @Column
-    private Date lrsj;
     
 
 	public Integer getParentid() {
@@ -173,7 +110,9 @@ public class TreeNodeSjk implements Serializable{
 	public void setParentid(Integer parentid) {
 		this.parentid = parentid;
 	}
-
+	@ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "atctreenodesjkid",referencedColumnName = "id")
+  	private AtcSjk atcSjk;
 	//配置老师和学生一对多
     /**
      *                     
@@ -202,12 +141,37 @@ public class TreeNodeSjk implements Serializable{
 		this.qbneirong = qbneirong;
 	}
      */
-	@Override
-	public String toString() {
-		return "TreeNodeSjk [id=" + id + ", wzlxid=" + wzlxid + ", sz=" + szid + ", version=" + version + ", rootid="
-				+ rootid + ", parentid=" + parentid + ", biaoti=" + biaoti + ", btneirong=" + btneirong + ", qbneirong="
-			    + ", lrsj=" + lrsj + "]";
+
+
+
+	public TreeNodeSjk() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
+
+	public TreeNodeSjk(Integer rootid, Integer parentid, Integer biaoti, Integer hangshu, String btneirong,
+			AtcSjk atcSjk) {
+		super();
+		this.rootid = rootid;
+		this.parentid = parentid;
+		this.biaoti = biaoti;
+		this.hangshu = hangshu;
+		this.btneirong = btneirong;
+		this.atcSjk = atcSjk;
+	}
+
+	public AtcSjk getAtcSjk() {
+		return atcSjk;
+	}
+
+	public void setAtcSjk(AtcSjk atcSjk) {
+		this.atcSjk = atcSjk;
+	}
+
+	
+
+	
+
 
 	
     

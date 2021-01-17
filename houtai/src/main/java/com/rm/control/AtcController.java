@@ -37,16 +37,16 @@ public class AtcController {
 	private static final Logger LOG = LoggerFactory.getLogger(AtcController.class);
 	@CrossOrigin
 	@RequestMapping(value="/gettree",method=RequestMethod.POST)
-    public JSONArray listerji3(@RequestParam("parentid") int pid){    	
+    public JSONArray listerji3(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
         JSONArray rs = new JSONArray();
-		List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid);
+		List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid,atcid);
         list_glx.forEach(e -> {
-        	List<TreeNodeSjk> list_glx2 = treeNodeSjkDao.getTreeByParentid(e.getRootid());
+        	List<TreeNodeSjk> list_glx2 = treeNodeSjkDao.getTreeByParentid(e.getRootid(),atcid);
         	JSONObject r1 =new JSONObject();        	
         	r1.put("yuantou", e);
         	r1.put("children", list_glx2);
         	System.out.println(e);
-        	System.out.println(list_glx2.get(0));
+        	//System.out.println(list_glx2.get(0));
         	rs.add(r1);
         });        
         return rs;
@@ -55,28 +55,28 @@ public class AtcController {
 	
 	@CrossOrigin
 	@RequestMapping(value="/gettreebyid",method=RequestMethod.POST)
-    public List<TreeNodeSjk> listerji(@RequestParam("parentid") int pid){    	
-        List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid);
+    public List<TreeNodeSjk> listerji(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
+        List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid,atcid);
         LOG.info(list_glx.size() + "");
         return list_glx;
     }
 	
 	@CrossOrigin
 	@RequestMapping(value="/gettreeneirongbyid",method=RequestMethod.POST)
-    public JSONObject listerji2(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid){
+    public JSONObject listerji2(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid,@RequestParam("atctreenodesjkid") int atcid){
 		JSONObject r1 =new JSONObject();
-		int minr = treeNodeSjkDao.getMinRootidByParentid(pid);
+		int minr = treeNodeSjkDao.getMinRootidByParentid(pid,atcid);
         List<TnsQbNeiRong> rs1 = new ArrayList<TnsQbNeiRong>();
         List<TreeNodeSjk> rs2 = new ArrayList<TreeNodeSjk>();
         if (minr == rid) {
 			// List<TnsQbNeiRong> list_glx1=tnsQbNeiRongDao.getQbNrBySjktid(pid);
 			// rs1.addAll(list_glx1);
-			List<TreeNodeSjk> listbt=treeNodeSjkDao.getTreeByRootid(pid);
+			List<TreeNodeSjk> listbt=treeNodeSjkDao.getTreeByRootid(pid,atcid);
 	        rs2.addAll(listbt);
 		}		
 		List<TreeNodeSjk> listbt2 = new ArrayList<TreeNodeSjk>();
 		CzTreeNodeSjk czTreeNodeSjk = new CzTreeNodeSjk();
-        List<TreeNodeSjk> listbt3 = czTreeNodeSjk.diGuiQiu(rid, listbt2, treeNodeSjkDao);
+        List<TreeNodeSjk> listbt3 = czTreeNodeSjk.diGuiQiu(rid,atcid, listbt2, treeNodeSjkDao);
         rs2.addAll(listbt3);               
         r1.put("zhangjie", rs2);
         for(TreeNodeSjk ts:rs2) {

@@ -22,7 +22,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.util.StringUtil;
-import com.rm.util.file.FileSaveSql;
 import com.rm.util.file.FileUpload;
 import com.rm.util.file.UMEditor_Uploader;
 
@@ -88,8 +87,8 @@ public class MyTest {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    // 保存的位置是 path + geturl
 	    System.out.println("r    "+result);
-	    FileSaveSql fileSaveSql = new FileSaveSql();
-		fileSaveSql.asoneinsertToSql(tnsQbNeiRongDao, treeNodeSjkDao, path + up.getUrl(), wzlx, banben, sz);
+	    //FileSaveSql fileSaveSql = new FileSaveSql();
+		//fileSaveSql.asoneinsertToSql(tnsQbNeiRongDao, treeNodeSjkDao, path + up.getUrl(), wzlx, banben, sz);
 	    return "<script>"+ callback +"(" + result + ")</script>";
 	    
 	}

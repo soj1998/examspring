@@ -1,18 +1,16 @@
 package com.rm.czentity;
 
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
+import com.rm.entity.AtcSjk;
 import com.rm.entity.TnsQbNeiRong;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
@@ -193,22 +191,59 @@ public class CzTreeNode {
     
     //遍历TreeNode并插入
     //遍历方法的重载
-    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,int wzlx,String wzversion,int sz,String fileweizhi){
-        this.listAndInsSql(tnsneirongDao,tnDao,this.getRoot().nodes,wzlx,wzversion,sz,fileweizhi);
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,AtcSjk fid){
+        this.listAndInsSql(tnsneirongDao,tnDao,this.getRoot().nodes,fid);
     }
     //循环Tree
-    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,int wzlx,String wzversion,int sz,String fileweizhi){
+    public void listAndInsSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,AtcSjk fid){
+        index++;  //遍历次数，用于退出循环
+        if(index == identifying){
+            return;
+        }        
+        for(TreeNode item:list){
+        	TreeNodeSjk tn = new TreeNodeSjk();        	
+			tn.setBiaoti(item.getData().getInteger("biaoti"));
+			tn.setBtneirong(item.getData().getString("btneirong"));
+			tn.setHangshu(item.getData().getInteger("hangshu"));
+			JSONArray qbnr = item.getData().getJSONArray("qbneirong");
+			Set<TnsQbNeiRong> tnsqbnr = new HashSet<TnsQbNeiRong>();
+			qbnr.forEach(e ->{
+				JSONObject js = (JSONObject)e;
+				tnsqbnr.add(new TnsQbNeiRong(js.getString("neirong"),js.getInteger("hangshu"),tn));
+			});
+			tn.setRootid(item.getId());   
+            tn.setParentid(item.getParentId());
+            tn.setAtcSjk(fid);
+            //tn.setId(-1);
+            //System.out.println(tn.toString());
+            tnDao.save(tn);
+            tnsneirongDao.saveAll(tnsqbnr);
+            //System.out.println(item.getId() + "," + item.getData().toJSONString());
+            if(item.nodes.size() == 0){
+                continue;
+            }else {
+            	listAndInsSql(tnsneirongDao,tnDao,item.nodes,fid);
+            }
+            //System.out.println();
+        }
+    }
+    
+    public void listAndInsSql2(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,int wzlx,String wzversion,int sz,String fileweizhi){
+        this.listAndInsSql2(tnsneirongDao,tnDao,this.getRoot().nodes,wzlx,wzversion,sz,fileweizhi);
+    }
+    //循环Tree
+    public void listAndInsSql2(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao, List<TreeNode> list,int wzlx,String wzversion,int sz,String fileweizhi){
         index++;  //遍历次数，用于退出循环
         if(index == identifying){
             return;
         }        
         for(TreeNode item:list){
         	TreeNodeSjk tn = new TreeNodeSjk();
-        	tn.setVersion(wzversion);
-        	tn.setFileweizhi(fileweizhi);
-        	tn.setWzlxid(wzlx);
-        	tn.setSzid(sz);
-        	tn.setYxbz("Y");
+        	//tn.setVersion(wzversion);
+        	//tn.setFileweizhi(fileweizhi);
+        	//tn.setWzlxid(wzlx);
+        	//tn.setSzid(sz);
+        	//tn.setYxbz("Y");
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			tn.setHangshu(item.getData().getInteger("hangshu"));
@@ -220,7 +255,7 @@ public class CzTreeNode {
 				tnsqbnr.add(new TnsQbNeiRong(js.getString("neirong"),js.getInteger("hangshu"),tn));
 			});
 			//tn.setQbneirong(tnsqbnr);
-			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+			//tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
 			//System.out.println("Rootid " + item.getId());
             tn.setRootid(item.getId());   
             tn.setParentid(item.getParentId());
@@ -232,7 +267,7 @@ public class CzTreeNode {
             if(item.nodes.size() == 0){
                 continue;
             }else {
-            	listAndInsSql(tnsneirongDao,tnDao,item.nodes,wzlx,wzversion,sz,fileweizhi);
+            	listAndInsSql2(tnsneirongDao,tnDao,item.nodes,wzlx,wzversion,sz,fileweizhi);
             }
             //System.out.println();
         }

@@ -4,10 +4,9 @@ package com.rm;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -103,9 +102,9 @@ class HoutaiApplicationTests {
 			TreeNodeSjk tn = new TreeNodeSjk();
 			tn.setBiaoti(2);
 			tn.setBtneirong("1");			
-			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+			//tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
 			tn.setRootid(3);
-            tn.setVersion("1.0.0.1");
+            //tn.setVersion("1.0.0.1");
             //tn.setId(-1);
             System.out.println(tn.toString());
             tnDao.save(tn);
@@ -282,7 +281,7 @@ class HoutaiApplicationTests {
 			//mtree.displayTreeByStack();
 			//mtree.list();
 			//list并且插入到数据库 		
-			mtree.listAndInsSql(tnsneirongDao,tnDao,0, "1.0.0.0", 0,"fileweizhi");
+			//mtree.listAndInsSql(tnsneirongDao,tnDao,0, "1.0.0.0", 0,"fileweizhi");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -363,11 +362,11 @@ class HoutaiApplicationTests {
 	public void listAndInsSql(List<TreeNode> list,String wzlx,String wzversion,String sz){
         for(TreeNode item:list){
         	TreeNodeSjk tn = new TreeNodeSjk();
-        	tn.setVersion(wzversion);			
+        	//tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
-			tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+			//tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
             tn.setRootid(item.getId());            
             //tn.setId(-1);
             System.out.println(tn.toString());
@@ -447,17 +446,7 @@ class HoutaiApplicationTests {
 	 
 	//用递归求treesnsjk标题节点
 	private List<TreeNodeSjk> diGuiQiu(int rid, List<TreeNodeSjk> trs) {
-		if (null == trs ||trs.size() == 0) {
-			trs = new ArrayList<TreeNodeSjk>();
-		}
-		List<TreeNodeSjk> temp = tnDao.getTreeByParentid(rid);
-		if (null == temp ||temp.size() == 0) {
-			return trs;
-		}
-		for (TreeNodeSjk s:temp) {
-			trs.add(s);
-			diGuiQiu(s.getRootid(),trs);
-		}
+		
 		return trs;
 	}
 }

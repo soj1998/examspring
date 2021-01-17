@@ -3,6 +3,9 @@ package com.rm.util.file;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -11,8 +14,10 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.czentity.CzTreeNode;
+import com.rm.dao.AtcSjkDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
+import com.rm.entity.AtcSjk;
 
 public class FileSaveSql {
 
@@ -242,15 +247,26 @@ public class FileSaveSql {
 	}
 	public void insertToSql(CzTreeNode mtree,TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,int wzlx,String banben,int shuizhong,String fileweizhi) {
 		//mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
-		mtree.listAndInsSql(tnsneirongDao,tnDao,wzlx, banben, shuizhong,fileweizhi);
+		//mtree.listAndInsSql(tnsneirongDao,tnDao,wzlx, banben, shuizhong,fileweizhi);
 	}
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,String fileweizhi,int wzlx,String banben,int shuizhong) {
+	public void asoneinsertToSql(TnsQbNeiRongDao tnsneirongDao,TreeNodeSjkDao tnDao,AtcSjkDao atcSjkDao,String fileweizhi,int wzlx,String banben,int shuizhong,String wzlaiyuan,String wzjiagou) {
 		//mtree.listAndInsSql(tnsneirongDao,tnDao,"zsd", "1.0.0.0", "zzs");
+		//把文件先保存
+		AtcSjk asjk =new AtcSjk();
+		asjk.setFileweizhi(fileweizhi);
+		asjk.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+		asjk.setSzid(shuizhong);
+		asjk.setWzjiagou(wzjiagou);
+		asjk.setWzlxid(wzlx);
+		asjk.setVersion(banben);
+		asjk.setWzlaiyuan(wzlaiyuan);
+		asjk.setYxbz("Y");
+		AtcSjk fid = atcSjkDao.save(asjk);
 		JSONArray mtransFiletoList =transFiletoList(fileweizhi);
 		CzTreeNode mtransJsontoTreeMode = transJsontoTreeMode(mtransFiletoList);
-		mtransJsontoTreeMode.listAndInsSql(tnsneirongDao,tnDao,wzlx, banben, shuizhong,fileweizhi);
+		mtransJsontoTreeMode.listAndInsSql(tnsneirongDao,tnDao,fid);
 	}
 }

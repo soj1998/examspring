@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rm.dao.AtcSjkDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
-import com.rm.entity.TreeNodeSjk;
+import com.rm.entity.AtcSjk;
 import com.rm.util.StringUtil;
 import com.rm.util.file.FileSaveSql;
 import com.rm.util.file.UMEditor_Uploader;
@@ -28,6 +29,9 @@ import com.rm.util.file.UMEditor_Uploader;
 @RestController
 public class SzWenZhangController {
 	@Resource
+    private AtcSjkDao atcSjkDao;  
+	
+	@Resource
     private TreeNodeSjkDao treeNodeSjkDao;  
 	
 	@Resource
@@ -35,8 +39,8 @@ public class SzWenZhangController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzWenZhangController.class);
     @RequestMapping(value="/getbanben")
-    public List<TreeNodeSjk> listall(@RequestParam("szid") int szid,@RequestParam("wzlxid") int wzlxid){    	
-    	List<TreeNodeSjk> listall = treeNodeSjkDao.getBanbenBySzWzlx(szid, wzlxid);
+    public List<AtcSjk> listall(@RequestParam("szid") int szid,@RequestParam("wzlxid") int wzlxid){    	
+    	List<AtcSjk> listall = atcSjkDao.getBanbenBySzWzlx(szid, wzlxid);
     	if (listall.size() > 0) {
     		LOG.info("banben " + listall.get(0).getVersion());
     	}
@@ -45,7 +49,7 @@ public class SzWenZhangController {
 
     @ResponseBody
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
-	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzversion") String banben,HttpServletResponse response) throws Exception{
+	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzversion") String banben,@RequestParam("wzlaiyuan") String wzlaiyuan,@RequestParam("wzjiagou") String wzjiagou,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
@@ -59,12 +63,12 @@ public class SzWenZhangController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    // 保存的位置是 path + geturl
 	    System.out.println("r    "+result);
-	    int r1 = treeNodeSjkDao.updateBySzWzlx(sz, wzlx);
+	    int r1 = atcSjkDao.updateBySzWzlx(sz, wzlx);
 	    if (r1 > 0) {
 	    	System.out.println("update结果 update更新的条数    "+r1);
 	    }
 	    FileSaveSql fileSaveSql = new FileSaveSql();
-		fileSaveSql.asoneinsertToSql(tnsQbNeiRongDao, treeNodeSjkDao, path + up.getUrl(), wzlx, banben, sz);
+		fileSaveSql.asoneinsertToSql(tnsQbNeiRongDao, treeNodeSjkDao, atcSjkDao,path + up.getUrl(), wzlx, banben, sz,wzlaiyuan,wzjiagou);
 	    return result + "update jieguo " + r1;
 	    
 	}

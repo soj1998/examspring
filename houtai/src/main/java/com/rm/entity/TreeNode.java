@@ -42,7 +42,7 @@ public class TreeNode {
 	public void setParentId(int parentId) {
 		this.parentId = parentId;
 	}
-    
+	
     /*
     public TreeNode(int Id, int HangShu, String data){
         this.Id = Id;
