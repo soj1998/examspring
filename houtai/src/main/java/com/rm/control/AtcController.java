@@ -16,8 +16,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.czentity.CzTreeNodeSjk;
 import com.rm.dao.AtcDao;
+import com.rm.dao.AtcSjkDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
+import com.rm.entity.AtcSjk;
 import com.rm.entity.TnsQbNeiRong;
 import com.rm.entity.TreeNodeSjk;
 
@@ -27,7 +29,8 @@ public class AtcController {
   
 	@Resource
     private AtcDao atcDao;
-	
+	@Resource
+    private AtcSjkDao atcSjkDao;  
 	@Resource
     private TreeNodeSjkDao treeNodeSjkDao;
 	
@@ -57,6 +60,14 @@ public class AtcController {
 	@RequestMapping(value="/gettreebyid",method=RequestMethod.POST)
     public List<TreeNodeSjk> listerji(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
         List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid,atcid);
+        LOG.info(list_glx.size() + "");
+        return list_glx;
+    }
+	
+	@CrossOrigin
+	@RequestMapping(value="/getatcidbyszwzlx",method=RequestMethod.POST)
+    public List<AtcSjk> listerji2(@RequestParam("szid") int szid,@RequestParam("wzlx") int wzlxid){    	
+        List<AtcSjk> list_glx=atcSjkDao.getBanbenBySzWzlx(szid,wzlxid);
         LOG.info(list_glx.size() + "");
         return list_glx;
     }
