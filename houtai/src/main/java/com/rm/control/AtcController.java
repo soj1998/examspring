@@ -66,7 +66,7 @@ public class AtcController {
 	
 	@CrossOrigin
 	@RequestMapping(value="/getatcidbyszwzlx",method=RequestMethod.POST)
-    public List<AtcSjk> listerji2(@RequestParam("szid") int szid,@RequestParam("wzlx") int wzlxid){    	
+    public List<AtcSjk> listerji2(@RequestParam("szid") int szid,@RequestParam("wzlxid") int wzlxid){    	
         List<AtcSjk> list_glx=atcSjkDao.getBanbenBySzWzlx(szid,wzlxid);
         LOG.info(list_glx.size() + "");
         return list_glx;
