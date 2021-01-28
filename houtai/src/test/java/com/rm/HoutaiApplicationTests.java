@@ -4,13 +4,7 @@ package com.rm;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import java.util.ArrayList;
-
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -30,12 +24,8 @@ import com.rm.dao.TreeNodeSjkDao;
 import com.rm.dao.XueKeDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
-import com.rm.entity.TnsQbNeiRong;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
-import com.rm.entity.linshi.Article;
-import com.rm.entity.linshi.Author;
-
 
 
 @SpringBootTest
@@ -80,75 +70,47 @@ class HoutaiApplicationTests {
 	@Test
     public void test(){
 		System.out.println("开始啦");
-		//HWPFDocument document = null;
+		InputStream is = null;
+		XWPFDocument doc = null;
 		try {
-			//得到全部的子节点
-			List<TreeNodeSjk> a= new ArrayList<TreeNodeSjk>();
-			List<TreeNodeSjk> b=diGuiQiu(7,a);
-			b.forEach(e->{
-				System.out.println(e);
-			});
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        	System.out.println("结束啦");
-        }
-    }
-	@Test
-    public void testa(){
-		System.out.println("开始啦");
-		//HWPFDocument document = null;
-		try {
-			TreeNodeSjk tn = new TreeNodeSjk();
-			tn.setBiaoti(2);
-			tn.setBtneirong("1");			
-			//tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
-			tn.setRootid(3);
-            //tn.setVersion("1.0.0.1");
-            //tn.setId(-1);
-            System.out.println(tn.toString());
-            tnDao.save(tn);
-            Set<TnsQbNeiRong> qbneirongset = new HashSet<TnsQbNeiRong>();
-			TnsQbNeiRong tn1 = new TnsQbNeiRong("a1",1,tn);
-			TnsQbNeiRong tn2 = new TnsQbNeiRong("a2",2,tn);
-			qbneirongset.add(tn1);
-			qbneirongset.add(tn2);				
-            tnsneirongDao.saveAll(qbneirongset);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        	System.out.println("结束啦");
-        }
+			is = new FileInputStream("d:\\学研社-zzs-xt.docx");
+			doc = new XWPFDocument(is);
+			//获取段落
+			List<XWPFParagraph> paras = doc.getParagraphs();
+			int duanLuoZongshu = paras.size();
+			if(duanLuoZongshu <= 0) {
+				System.out.println("当前文档没有读取到的段落数");
+				doc.close();
+				return;
+			}
+			JSONArray jsonDuanArray = new JSONArray();			
+			for (int i = 0;i < duanLuoZongshu ; i++) {
+				JSONObject jsonDuan = new JSONObject();
+				if("".equals(paras.get(i).getParagraphText())) {
+					continue;
+				}else {
+					jsonDuan.put("neirong", paras.get(i).getParagraphText());
+				}
+				jsonDuan.put("hangshu", i);				
+				jsonDuanArray.add(jsonDuan);				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null != is) {
+					is.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     }
 	
+	
 
-	@Test
-	public void insertOneToMany(){
-		Author author = new Author();
-		author.setName("周晨曦4");
-		List<Article> list = new ArrayList<Article>();
-		for(int i =0; i<10; i++ ){
-			Article article = new Article();
-			article.setTitle("标题:" + i);
-			article.setContent("内容:" + i);
-			// 记住一定要添加关系实体对象，否在关联字段为null
-			article.setAuthor(author);
-			list.add(article);			
-		}
-		
-		// author.setArticleList(list);
-		authorDao.save(author);
-		list.forEach(e ->{
-			articleDao.save(e);
-		});
-		List<Author> ab = authorDao.findAll();
-		ab.forEach(e->{
-			List<Article> a = articleDao.findArticleByAuthorid(e.getId().intValue());
-			System.out.println(a.get(0).getAuthor());
-		});
-
-		System.out.println("aa");
-	}
+	
 	
 	/**
 	 *1.搞一个json 把读到的信息储存到mysql，信息包括多少段，多少章，多少节，多少目，
@@ -444,9 +406,5 @@ class HoutaiApplicationTests {
 		return mtree;
 	}
 	 
-	//用递归求treesnsjk标题节点
-	private List<TreeNodeSjk> diGuiQiu(int rid, List<TreeNodeSjk> trs) {
-		
-		return trs;
-	}
+	
 }
