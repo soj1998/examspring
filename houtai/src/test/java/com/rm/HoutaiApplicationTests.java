@@ -18,12 +18,16 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.czentity.CzTreeNode;
 import com.rm.dao.BookDao;
+import com.rm.dao.ExamChoiDao;
+import com.rm.dao.ExamQueDao;
 import com.rm.dao.QueandAnsDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.dao.XueKeDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
+import com.rm.entity.ExamChoi;
+import com.rm.entity.ExamQue;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
 
@@ -44,17 +48,17 @@ class HoutaiApplicationTests {
     private AuthorDao authorDao;
 	@Resource
     private ArticleDao articleDao;
+	@Resource
+    private ExamQueDao examQueDao;
+	@Resource
+    private ExamChoiDao examChoiDao;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HoutaiApplicationTests.class);
     
 	@Test
 	void contextLoads() {
-		LOG.info("aaaaaaaabbbbbbbb");
-		JSONObject a = new JSONObject();
-		a.put("aaa","ddd");
-		a.put("aaa","ccc");
-		LOG.info("aaaaaaaa"+a.getString("aaa") + "".equals(a.getString("ab"))
-				+ "   "+(null==a.getString("ab")));
+		LOG.info("【知识点关联】aaaaaaaabbbbbbbb");
+		LOG.info("【单选题  】aaaaaaaabbbbbbbb".substring(0,7));
 	}
 	
 
@@ -90,9 +94,16 @@ class HoutaiApplicationTests {
 					continue;
 				}else {
 					jsonDuan.put("neirong", paras.get(i).getParagraphText());
+					jsonDuan.put("hangshu", i);
+					String d = paras.get(i).getParagraphText().trim();
+					ExamChoi examChoi = new ExamChoi();
+					ExamQue examQue = new ExamQue();
+					switch (d.substring(0, 3)) {
+						
+					}
+					jsonDuanArray.add(jsonDuan);	
 				}
-				jsonDuan.put("hangshu", i);				
-				jsonDuanArray.add(jsonDuan);				
+							
 			}
 			
 		} catch (Exception e) {
