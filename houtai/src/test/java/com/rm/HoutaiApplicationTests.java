@@ -4,7 +4,11 @@ package com.rm;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -30,6 +34,7 @@ import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
+import com.rm.util.StringUtil;
 
 
 @SpringBootTest
@@ -53,12 +58,26 @@ class HoutaiApplicationTests {
 	@Resource
     private ExamChoiDao examChoiDao;
 	
+	
+	private String[] timu = new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】"};
+	private String[] zonghetimu = new String[] {"【综合单选题】","【综合多选题】","【综合计算题】"};
+	private String[] xuanxiang = new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
+	private String zsd = "【知识点】";
+	private String daan = "【答案】";
+	private String jiexi = "【解析】";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(HoutaiApplicationTests.class);
     
 	@Test
 	void contextLoads() {
-		LOG.info("【知识点关联】aaaaaaaabbbbbbbb");
-		LOG.info("【单选题  】aaaaaaaabbbbbbbb".substring(0,7));
+		LOG.info("【解析】aaaaaaaabbbbbbbb" + "\n" + "aaa");
+		LOG.info("【解析】aaaaaaaabbbbbbbb".substring(4));
+		JSONObject p = new JSONObject();
+		p.put("a", 1);
+		System.out.println("aa" + p.getIntValue("b"));
+		if(p.getIntValue("b") >= 0) {
+			System.out.println("bb" + p.getIntValue("b"));
+		}
 	}
 	
 
@@ -77,7 +96,7 @@ class HoutaiApplicationTests {
 		InputStream is = null;
 		XWPFDocument doc = null;
 		try {
-			is = new FileInputStream("d:\\学研社-zzs-xt.docx");
+			is = new FileInputStream("d:\\学研社-zzs-xt2.docx");
 			doc = new XWPFDocument(is);
 			//获取段落
 			List<XWPFParagraph> paras = doc.getParagraphs();
@@ -93,18 +112,50 @@ class HoutaiApplicationTests {
 				if("".equals(paras.get(i).getParagraphText())) {
 					continue;
 				}else {
-					jsonDuan.put("neirong", paras.get(i).getParagraphText());
+					jsonDuan.put("neirong", paras.get(i).getParagraphText().trim());
 					jsonDuan.put("hangshu", i);
 					String d = paras.get(i).getParagraphText().trim();
 					ExamChoi examChoi = new ExamChoi();
 					ExamQue examQue = new ExamQue();
-					switch (d.substring(0, 3)) {
-						
+					switch ("abcddddd".substring(0, 4)) {
+						case "【知识点" :
+							examQue.setZzd(d.substring(5));
+							break;
+						case "【单选题" :
+							break;
+						case "【多选题" :
+							break;
+						case "【计算题" :
+							break;
+						case "【综合题" :
+							break;
+						case "【答案】" :
+							break;
+						case "【解析】" :
+							break;
 					}
 					jsonDuanArray.add(jsonDuan);	
 				}
 							
 			}
+			JSONArray hzarray = new JSONArray();
+			diGuiHz(0,hzarray,jsonDuanArray);
+			List<Map<Integer,String>> zsdlist,timulist,xuanxianglist,daanlist,jiexilist;
+			for (Object fd:hzarray) {
+				JSONObject jb = (JSONObject)fd;
+				JSONArray arr = jb.getJSONArray("al");
+				int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr);
+				int[] timu_qz = getpanDuanGuiShuDian("timu",arr);
+				int[] xuanxiang_qz = getpanDuanGuiShuDian("xuanxiang",arr);
+				int[] daan_qz = getpanDuanGuiShuDian("daan",arr);
+				int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr);
+				zsdlist = getGuiShu(zsd_qz,arr);
+				timulist = getGuiShu(timu_qz,arr);
+				xuanxianglist = getGuiShu(xuanxiang_qz,arr);
+				daanlist = getGuiShu(daan_qz,arr);
+				jiexilist = getGuiShu(jiexi_qz,arr);
+			}
+			System.out.println(hzarray.size());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,6 +174,318 @@ class HoutaiApplicationTests {
 
 	
 	
+	
+	 
+	/**
+	 *	用递归，求节点 List<ExamQue> quelist,List<ExamChoi> choilist
+	 */
+	private int[] getpanDuanGuiShuDian(String pdKey,JSONArray crArray) {
+		int ksd = 0;
+		int jsd = 0;
+		int maxhangshu  = 0;
+		for (Object fd:crArray) {
+			JSONObject jb = (JSONObject)fd;
+			if(jb.getIntValue("hangshu")>= maxhangshu) {
+				maxhangshu = jb.getIntValue("hangshu");
+			}
+		}
+		switch(pdKey) {
+			case "zsd":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(zsd)>= 0) {
+							ksd = jb.getIntValue("hangshu");
+						}
+						for(String tm:timu) {
+							if (gets.indexOf(tm)>= 0) {
+								jsd = jb.getIntValue("hangshu");
+								return new int[] {ksd,jsd};
+							}
+						}
+					}
+				}
+				break;
+			}
+			case "timu":{
+				boolean sfcz = false;
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf("【单选题】")>= 0) {
+							sfcz = true;
+							break;
+						}
+						if (gets.indexOf("【多选题】")>= 0) {
+							sfcz = true;
+							break;
+						}
+						if (gets.indexOf("【判断题】")>= 0) {
+							sfcz = true;
+							break;
+						}
+					}
+				}
+				
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");						
+						for(String tm:timu) {
+							if (gets.indexOf(tm)>= 0) {
+								ksd = jb.getIntValue("hangshu");
+								break;
+							}
+						}
+						if (sfcz) {
+							for(String tm:xuanxiang) {
+								if (gets.indexOf(tm)>= 0) {
+									jsd = jb.getIntValue("hangshu");
+									return new int[] {ksd,jsd};
+								}
+							}
+						} else {
+							if (gets.indexOf(daan)>= 0) {
+								jsd = jb.getIntValue("hangshu");
+								return new int[] {ksd,jsd};
+							}
+						}
+					}
+				}
+				break;
+			}
+			case "xuanxiang":{
+				boolean sfcz = false;
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf("【单选题】")>= 0) {
+							sfcz = true;
+							break;
+						}
+						if (gets.indexOf("【多选题】")>= 0) {
+							sfcz = true;
+							break;
+						}
+						if (gets.indexOf("【判断题】")>= 0) {
+							sfcz = true;
+							break;
+						}
+					}
+				}
+				if (sfcz) {
+					for (Object fd:crArray) {
+						JSONObject jb = (JSONObject)fd;
+						if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+							String gets = jb.getString("neirong");
+							if (gets.indexOf(xuanxiang[0])>= 0) {
+								ksd = jb.getIntValue("hangshu");
+							}
+							if (gets.indexOf(daan)>= 0) {
+								jsd = jb.getIntValue("hangshu");
+							}
+						}
+					}
+				}
+				break;
+			}
+			case "daan":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(daan)>= 0) {
+							ksd = jb.getIntValue("hangshu");
+						}
+						if (gets.indexOf(jiexi)>= 0) {
+							jsd = jb.getIntValue("hangshu");							
+						}					
+					}
+				}
+				break;
+			}
+			case "jiexi":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(jiexi)>= 0) {
+							ksd = jb.getIntValue("hangshu");
+						}
+					}
+				}
+				break;
+			}
+		}		
+		jsd = jsd==0?maxhangshu:jsd;
+		return new int[] {ksd,jsd};
+	}
+	private List<Map<Integer,String>> getGuiShu(int[]qizhi,JSONArray crArray) {
+		List<Map<Integer,String>> rs = new ArrayList<Map<Integer,String>>();
+		int qi = qizhi[0];
+		int zhi = qizhi[1];
+		for (Object fd:crArray) {
+			JSONObject jb = (JSONObject)fd;
+			int a = jb.getIntValue("hangshu");
+			if (a >= qi && a < zhi) {
+				Map<Integer,String> hashmap = new HashMap<Integer,String>();
+				hashmap.put(a, jb.getString("neirong"));
+				rs.add(hashmap);
+			}
+		}
+		return rs;
+	}
+	
+	
+	private JSONArray diGuiHz(int hs,JSONArray rsArray,JSONArray csArray) {
+		if (null == rsArray) {
+			rsArray = new JSONArray();			
+		}
+		JSONObject j = new JSONObject();
+		JSONArray jarray = new JSONArray();
+		for (int i = hs;i<csArray.size();i++) {
+			JSONObject obj1 = (JSONObject)csArray.get(i);
+			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+	        {
+				String d = obj1.get("neirong").toString();
+				jarray.add(obj1);
+				if(d.indexOf("【知识点】") == 0) {
+					if(StringUtil.isNotEmpty(j.getString("zsd"))) {
+						rsArray.add(j);
+						diGuiHz(i,rsArray,csArray);
+						break;
+					}
+					j.put("al", jarray);
+					j.put("zsd", "1");
+					continue;
+				}				
+	        }
+			if (i == csArray.size() - 1) {
+				return rsArray;
+			}
+		}
+		return rsArray;
+	}
+	private JSONArray diGuiHuiZong(int hs,JSONArray rsArray,JSONArray csArray) {
+		if (null == rsArray) {
+			rsArray = new JSONArray();			
+		}
+		JSONObject j = new JSONObject();
+		JSONArray xuanxarray = new JSONArray();
+		StringBuilder strb = new StringBuilder();
+		for (int i = hs;i<csArray.size();i++) {
+			JSONObject obj1 = (JSONObject)csArray.get(i);
+			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+	        {
+				String d = obj1.get("neirong").toString();
+				strb.append(d);
+				if(d.indexOf("【知识点】") == 0) {
+					if(StringUtil.isNotEmpty(j.getString("zsd"))) {
+						rsArray.add(j);
+						diGuiHuiZong(i,rsArray,csArray);
+						break;
+					}
+					//j.put("zsd", d.substring(5));
+					continue;
+				}
+				if(d.indexOf("【单选题】") == 0) {
+					j.put("tmlx", "danxuan");
+					j.put("zsd", strb.substring(5));
+					strb = new StringBuilder();
+					j.put("wenti", d.substring(5));
+					continue;
+				}
+				if(d.indexOf("【多选题】") == 0) {
+					j.put("tmlx", "duoxuan");
+					j.put("zsd", strb.substring(5));
+					strb = new StringBuilder();
+					j.put("wenti", d.substring(5));
+					continue;
+				}				
+				if(d.indexOf("【计算题】") == 0) {
+					j.put("tmlx", "jisuan");
+					j.put("zsd", strb.substring(5));
+					strb = new StringBuilder();
+					j.put("wenti", d.substring(5));
+					continue;
+				}
+				if(d.indexOf("【综合题】") == 0) {
+					j.put("tmlx", "zonghe");
+					j.put("zsd", strb.substring(5));
+					strb = new StringBuilder();
+					j.put("wenti", d.substring(5));
+					continue;
+				}
+				if(d.indexOf("【答案】") == 0) {
+					if(xuanxarray.size()>0) {
+						j.put("xuanx", xuanxarray);
+					}
+					j.put("daan", d.substring(4));
+					continue;
+				}
+				if(d.indexOf("【解析】") == 0) {
+					j.put("jiexi", d.substring(4));
+					continue;
+				}
+				if(StringUtil.isNotEmpty(j.getString("tmlx")) && j.getString("tmlx").indexOf("xuan") > 0) {
+					j.put("wenti", strb.substring(5));
+					strb = new StringBuilder();
+					for (String xx:xuanxiang) {
+						if(d.indexOf(xx)>=0) {
+							JSONObject j1 = new JSONObject();
+							j1.put("xuanx", d);
+							xuanxarray.add(j1);
+							break;
+						}
+					}
+				}
+	        }
+			if (i == csArray.size() - 1) {
+				return rsArray;
+			}
+		}
+		return rsArray;
+	}
+	private JSONArray diGuiGao(JSONArray rsArray,JSONArray csArray) {
+		if (null == csArray ||csArray.size() == 0) {
+			return rsArray;
+		}
+		for (Object obj :csArray) {
+			JSONObject obj1 = (JSONObject)obj;
+			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+	        {
+				String d = obj1.get("neirong").toString();
+				ExamChoi examChoi = new ExamChoi();
+				ExamQue examQue = new ExamQue();
+				switch (d.substring(0, 4)) {
+					case "【知识点" :
+						examQue.setZzd(d.substring(5));
+						break;
+					case "【单选题" :
+						break;
+					case "【多选题" :
+						break;
+					case "【计算题" :
+						break;
+					case "【综合题" :
+						break;
+					case "【答案】" :
+						break;
+					case "【解析】" :
+						break;
+				}
+	        	csArray.remove(obj1);
+	        	diGuiGao(csArray, rsArray);	
+	        	break;     	
+	        }
+			
+		}
+		return rsArray;
+	}
+
 	/**
 	 *1.搞一个json 把读到的信息储存到mysql，信息包括多少段，多少章，多少节，多少目，
 	 *章节目对应的段落数 多少空段落 对应的段落数。
@@ -268,16 +631,17 @@ class HoutaiApplicationTests {
 		}
 	}
 	
+	
 	/**
-      * Word中的大纲级别，可以通过getPPr().getOutlineLvl()直接提取，但需要注意，Word中段落级别，通过如下三种方式定义： 
-      *  1、直接对段落进行定义； 
-      *  2、对段落的样式进行定义； 
-      *  3、对段落样式的基础样式进行定义。 
-      *  因此，在通过“getPPr().getOutlineLvl()”提取时，需要依次在如上三处读取。
-      * @param doc
-      * @param para
-      * @return
-    */
+     * Word中的大纲级别，可以通过getPPr().getOutlineLvl()直接提取，但需要注意，Word中段落级别，通过如下三种方式定义： 
+     *  1、直接对段落进行定义； 
+     *  2、对段落的样式进行定义； 
+     *  3、对段落样式的基础样式进行定义。 
+     *  因此，在通过“getPPr().getOutlineLvl()”提取时，需要依次在如上三处读取。
+     * @param doc
+     * @param para
+     * @return
+   */
 	private String getTitleLvl(XWPFDocument doc, XWPFParagraph para) {
 		String titleLvl = "";
 		try {
@@ -333,26 +697,26 @@ class HoutaiApplicationTests {
 		return titleLvl;
 	}
 	public void listAndInsSql(List<TreeNode> list,String wzlx,String wzversion,String sz){
-        for(TreeNode item:list){
-        	TreeNodeSjk tn = new TreeNodeSjk();
-        	//tn.setVersion(wzversion);			
+       for(TreeNode item:list){
+       	TreeNodeSjk tn = new TreeNodeSjk();
+       	//tn.setVersion(wzversion);			
 			tn.setBiaoti(item.getData().getInteger("biaoti"));
 			tn.setBtneirong(item.getData().getString("btneirong"));
 			//tn.setQbneirong(item.getData().getJSONArray("qbneirong").toString());
 			//tn.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
-            tn.setRootid(item.getId());            
-            //tn.setId(-1);
-            System.out.println(tn.toString());
-            tnDao.save(tn);
-            System.out.println(item.getId() + "," + item.getData().toJSONString());
-            if(item.nodes.size() == 0){
-                continue;
-            }else {
-            	listAndInsSql(item.nodes,wzlx,wzversion,sz);
-            }
-            System.out.println();
-        }
-    }
+           tn.setRootid(item.getId());            
+           //tn.setId(-1);
+           System.out.println(tn.toString());
+           tnDao.save(tn);
+           System.out.println(item.getId() + "," + item.getData().toJSONString());
+           if(item.nodes.size() == 0){
+               continue;
+           }else {
+           	listAndInsSql(item.nodes,wzlx,wzversion,sz);
+           }
+           System.out.println();
+       }
+   }
 	/**
 	 * 得到当前传入paragraph的最大标题度
 	 
@@ -362,12 +726,12 @@ class HoutaiApplicationTests {
 			return DuanLuoDingDuanWei;
 		}
 		for (int j = 0; j < jsonDuanArray.size(); j++) {
-            JSONObject obj = (JSONObject)jsonDuanArray.get(j);
-            if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
-            	if(DuanLuoDingDuanWei < (int)(obj.get("biaoti"))) {
-            		DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
-            	}
-            }	            
+           JSONObject obj = (JSONObject)jsonDuanArray.get(j);
+           if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
+           	if(DuanLuoDingDuanWei < (int)(obj.get("biaoti"))) {
+           		DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
+           	}
+           }	            
 		}
 		return DuanLuoDingDuanWei;
 	}
@@ -380,11 +744,11 @@ class HoutaiApplicationTests {
 			return DuanLuoDingDuanWei;
 		}
 		for (int j = 0; j < jsonDuanArray.size(); j++) {
-            JSONObject obj = (JSONObject)jsonDuanArray.get(j);
-            if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
-            	DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
-            	return DuanLuoDingDuanWei;
-            }	            
+           JSONObject obj = (JSONObject)jsonDuanArray.get(j);
+           if(null!= obj.get("biaoti") && (int)(obj.get("biaoti"))>=0) {
+           	DuanLuoDingDuanWei = (int)(obj.get("biaoti"));
+           	return DuanLuoDingDuanWei;
+           }	            
 		}
 		return DuanLuoDingDuanWei;
 	}
@@ -416,6 +780,4 @@ class HoutaiApplicationTests {
 		}		
 		return mtree;
 	}
-	 
-	
 }
