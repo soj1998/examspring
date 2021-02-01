@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="t_examquesjk")
-public class ExamQue {
+@Table(name="t_examquezhda")
+public class ExamQueZongHeDa {
  
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,38 +69,10 @@ public class ExamQue {
 		this.examque = examque;
 	}
 
-	public String getExamans() {
-		return examans;
-	}
 
-	public void setExamans(String examans) {
-		this.examans = examans;
-	}
 
-	public String getExamtype() {
-		return examtype;
-	}
 
-	public void setExamtype(String examtype) {
-		this.examtype = examtype;
-	}
 
-	public String getExamanal() {
-		return examanal;
-	}
-
-	public void setExamanal(String examanal) {
-		this.examanal = examanal;
-	}
-
-	@Column(length=300)
-    private String examans; 
-    
-    @Column(length=50)
-    private String examtype; 
-    
-    @Column(length=600)
-    private String examanal;
     
     
 }

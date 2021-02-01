@@ -8,42 +8,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="t_examquesjk")
-public class ExamQue {
+@Table(name="t_examquezhxiao")
+public class ExamQueZongHeXiao {
  
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-	@Column
-    private Integer szid;
-	
-    public Integer getSzid() {
-		return szid;
-	}
-
-	public void setSzid(Integer szid) {
-		this.szid = szid;
-	}
-
-	@Column(length=100)
-    private String zzd;
      
     @Column(length=600)
-    private String examque;
-    
-    @Column(length=1)
-    private String yxbz;
-	
-	
-
-	public String getYxbz() {
-		return yxbz;
-	}
-
-	public void setYxbz(String yxbz) {
-		this.yxbz = yxbz;
-	}
+    private String examque;    
+  
  
     public Integer getId() {
 		return id;
@@ -52,14 +27,7 @@ public class ExamQue {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-	public String getZzd() {
-		return zzd;
-	}
-
-	public void setZzd(String zzd) {
-		this.zzd = zzd;
-	}
+	
 
 	public String getExamque() {
 		return examque;
@@ -77,13 +45,7 @@ public class ExamQue {
 		this.examans = examans;
 	}
 
-	public String getExamtype() {
-		return examtype;
-	}
-
-	public void setExamtype(String examtype) {
-		this.examtype = examtype;
-	}
+	
 
 	public String getExamanal() {
 		return examanal;
@@ -96,8 +58,6 @@ public class ExamQue {
 	@Column(length=300)
     private String examans; 
     
-    @Column(length=50)
-    private String examtype; 
     
     @Column(length=600)
     private String examanal;
