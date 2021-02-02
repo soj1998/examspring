@@ -5,9 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -63,7 +66,8 @@ class HoutaiApplicationTests {
 	private String[] zonghetimu = new String[] {"【综合单选题】","【综合多选题】","【综合计算题】"};
 	private String[] xuanxiang = new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
 	private String zsd = "【知识点】";
-	private String daan = "【答案】";
+	private String zongheti = "【综合题】";
+	private String daan = "【答案】";	
 	private String jiexi = "【解析】";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HoutaiApplicationTests.class);
@@ -140,20 +144,48 @@ class HoutaiApplicationTests {
 			}
 			JSONArray hzarray = new JSONArray();
 			diGuiHz(0,hzarray,jsonDuanArray);
-			List<Map<Integer,String>> zsdlist,timulist,xuanxianglist,daanlist,jiexilist;
+			JSONArray hzzharray = new JSONArray();
+			Map<Integer,String> zsdlist,timulist,xuanxianglist,daanlist,jiexilist;
+			Map<Integer,String> zhzsdlist,zhdatimulist,zhtimulist,zhxuanxianglist,zhdaanlist,zhjiexilist;
 			for (Object fd:hzarray) {
 				JSONObject jb = (JSONObject)fd;
 				JSONArray arr = jb.getJSONArray("al");
-				int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr);
-				int[] timu_qz = getpanDuanGuiShuDian("timu",arr);
-				int[] xuanxiang_qz = getpanDuanGuiShuDian("xuanxiang",arr);
-				int[] daan_qz = getpanDuanGuiShuDian("daan",arr);
-				int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr);
-				zsdlist = getGuiShu(zsd_qz,arr);
-				timulist = getGuiShu(timu_qz,arr);
-				xuanxianglist = getGuiShu(xuanxiang_qz,arr);
-				daanlist = getGuiShu(daan_qz,arr);
-				jiexilist = getGuiShu(jiexi_qz,arr);
+				//先进行是否是综合题目的判断 非综合题进入非综合题
+				if(!getpanDuanZonghe(arr,zongheti)) {
+					int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr);
+					int[] timu_qz = getpanDuanGuiShuDian("timu",arr);
+					int[] xuanxiang_qz = getpanDuanGuiShuDian("xuanxiang",arr);
+					int[] daan_qz = getpanDuanGuiShuDian("daan",arr);
+					int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr);
+					zsdlist = getGuiShu(zsd_qz,arr);
+					timulist = getGuiShu(timu_qz,arr);
+					xuanxianglist = getGuiShu(xuanxiang_qz,arr);
+					daanlist = getGuiShu(daan_qz,arr);
+					jiexilist = getGuiShu(jiexi_qz,arr);
+					int szid = 3;
+					ExamQue examQue = new ExamQue(szid,zsdlist,timulist,"Y",daanlist,jiexilist);
+					examQueDao.save(examQue);
+					saveExamChoi(examQue,xuanxianglist); 
+				} else {					
+					diGuiHzZhsy(0,hzzharray,arr);
+					for (Object fd1:hzzharray) {
+						JSONObject jb1 = (JSONObject)fd1;
+						JSONArray arr1 = jb1.getJSONArray("al");
+						int[] zsd_qz1 = getpanDuanGuiShuDian("zsd",arr1);
+						int[] datimu_qz1 = getpanDuanGuiShuDian("datimu",arr1);
+						int[] timu_qz1 = getpanDuanGuiShuDian("timu",arr1);
+						int[] xuanxiang_qz1 = getpanDuanGuiShuDian("xuanxiang",arr1);
+						int[] daan_qz1 = getpanDuanGuiShuDian("daan",arr1);
+						int[] jiexi_qz1 = getpanDuanGuiShuDian("jiexi",arr1);
+						zhzsdlist = getGuiShu(zsd_qz1,arr1);
+						zhdatimulist = getGuiShu(datimu_qz1,arr1);
+						zhtimulist = getGuiShu(timu_qz1,arr1);
+						zhxuanxianglist = getGuiShu(xuanxiang_qz1,arr1);
+						zhdaanlist = getGuiShu(daan_qz1,arr1);
+						zhjiexilist = getGuiShu(jiexi_qz1,arr1);
+						
+					}
+				}
 			}
 			System.out.println(hzarray.size());
 			
@@ -179,6 +211,66 @@ class HoutaiApplicationTests {
 	/**
 	 *	用递归，求节点 List<ExamQue> quelist,List<ExamChoi> choilist
 	 */
+	private void saveExamChoi(ExamQue examQue, Map<Integer,String> map) {
+		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
+            //升序排序
+            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+        for(Map.Entry<Integer,String> mapping:list){
+        	String a = mapping.getValue();
+        	if (StringUtil.isNotEmpty(a)) {
+        		ExamChoi examChoi = new ExamChoi(a,examQue);
+        		examChoiDao.save(examChoi);
+        	}
+        }
+	}
+	
+	
+	private String getMapString(Map<Integer,String> map) {
+		StringBuilder sb = new StringBuilder();		
+		//这里将map.entrySet转换为List
+        List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
+            //升序排序
+            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+        for(Map.Entry<Integer,String> mapping:list){
+        	for(String tm:timu) {
+        		mapping.getValue().replaceAll(tm, "");
+			}
+        	mapping.getValue().replaceAll(zsd, "");
+        	mapping.getValue().replaceAll(daan, "");
+        	mapping.getValue().replaceAll(jiexi, "");
+        	sb = sb.append(mapping.getValue()); 
+       } 
+		return sb.toString();
+	}
+	
+	
+    
+	private boolean getpanDuanZonghe(JSONArray crArray,String zongheti) {
+		boolean rs= false;
+		for (Object fd:crArray) {
+			JSONObject jb = (JSONObject)fd;
+			if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+				String gets = jb.getString("neirong");
+				if (gets.indexOf(zongheti)>= 0) {
+					rs = true;
+					break;
+				}
+			}
+		}
+		return rs;
+	}
+	
+	
 	private int[] getpanDuanGuiShuDian(String pdKey,JSONArray crArray) {
 		int ksd = 0;
 		int jsd = 0;
@@ -199,6 +291,27 @@ class HoutaiApplicationTests {
 							ksd = jb.getIntValue("hangshu");
 						}
 						for(String tm:timu) {
+							if (gets.indexOf(tm)>= 0) {
+								jsd = jb.getIntValue("hangshu");
+								return new int[] {ksd,jsd};
+							}
+						}
+					}
+				}
+				break;
+			}
+			case "datimu":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(zongheti)>= 0) {
+							ksd = jb.getIntValue("hangshu");
+						}
+						for(String tm:timu) {
+							if(tm.equals(zongheti)) {
+								continue;
+							}
 							if (gets.indexOf(tm)>= 0) {
 								jsd = jb.getIntValue("hangshu");
 								return new int[] {ksd,jsd};
@@ -323,8 +436,8 @@ class HoutaiApplicationTests {
 		jsd = jsd==0?maxhangshu:jsd;
 		return new int[] {ksd,jsd};
 	}
-	private List<Map<Integer,String>> getGuiShu(int[]qizhi,JSONArray crArray) {
-		List<Map<Integer,String>> rs = new ArrayList<Map<Integer,String>>();
+	private Map<Integer,String> getGuiShu(int[]qizhi,JSONArray crArray) {
+		Map<Integer,String> rs = new HashMap<Integer,String>();
 		int qi = qizhi[0];
 		int zhi = qizhi[1];
 		for (Object fd:crArray) {
@@ -333,7 +446,7 @@ class HoutaiApplicationTests {
 			if (a >= qi && a < zhi) {
 				Map<Integer,String> hashmap = new HashMap<Integer,String>();
 				hashmap.put(a, jb.getString("neirong"));
-				rs.add(hashmap);
+				rs.put(a, jb.getString("neirong"));
 			}
 		}
 		return rs;
@@ -354,6 +467,7 @@ class HoutaiApplicationTests {
 				jarray.add(obj1);
 				if(d.indexOf("【知识点】") == 0) {
 					if(StringUtil.isNotEmpty(j.getString("zsd"))) {
+						jarray.remove(jarray.size()-1);
 						rsArray.add(j);
 						diGuiHz(i,rsArray,csArray);
 						break;
@@ -369,6 +483,45 @@ class HoutaiApplicationTests {
 		}
 		return rsArray;
 	}
+	
+	private JSONArray diGuiHzZhsy(int hs,JSONArray rsArray,JSONArray csArray) {
+		if (null == rsArray) {
+			rsArray = new JSONArray();			
+		}
+		JSONObject j = new JSONObject();
+		JSONArray jarray = new JSONArray();
+		boolean br = false;
+		for (int i = hs;i<csArray.size();i++) {
+			JSONObject obj1 = (JSONObject)csArray.get(i);
+			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+	        {
+				String d = obj1.get("neirong").toString();
+				jarray.add(obj1);
+				for(String tm:timu) {
+					if (d.indexOf(tm)>= 0) {
+						if(StringUtil.isNotEmpty(j.getString("zh"))) {
+							jarray.remove(jarray.size()-1);
+							rsArray.add(j);
+							diGuiHzZhsy(i,rsArray,csArray);
+							return rsArray;
+						}
+						j.put("al", jarray);
+						j.put("zh", "1");
+						br = true;
+						break;
+					}
+				}
+				if(br) {
+					continue;
+				}
+	        }
+			if (i == csArray.size() - 1) {
+				return rsArray;
+			}
+		}
+		return rsArray;
+	}
+	
 	private JSONArray diGuiHuiZong(int hs,JSONArray rsArray,JSONArray csArray) {
 		if (null == rsArray) {
 			rsArray = new JSONArray();			

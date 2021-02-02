@@ -3,9 +3,13 @@ package com.rm.util;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -254,5 +258,35 @@ public class StringUtil {
         if (0x7B <= ch && ch <= 0x7E) return true;  
 
         return false;  
-      } 
+    } 
+    
+    /**
+     * 对Map<Integer,String> 类型的map对，先排序 再取值
+     * 取值时，按照确定的数组替换为空
+     * 例如将“【单选题】”替换为空
+     * 将取到的值格式化为string输出
+     * 
+     */
+    public static String getMapString(Map<Integer,String> map,List<String> tihuan) {
+		StringBuilder sb = new StringBuilder();		
+		//这里将map.entrySet转换为List
+        List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
+            //升序排序
+            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+        for(Map.Entry<Integer,String> mapping:list){
+        	String a = mapping.getValue();
+        	for(String tm:tihuan) {
+        		a.replaceAll(tm, "");
+			}
+        	if (StringUtil.isNotEmpty(a)) {
+        		sb = sb.append(a);
+        	}
+       } 
+		return sb.toString();
+	}
 }

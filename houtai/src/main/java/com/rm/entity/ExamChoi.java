@@ -48,6 +48,17 @@ public class ExamChoi {
 	public void setExamQue(ExamQue examQue) {
 		this.examQue = examQue;
 	}
+
+	public ExamChoi(String xuanxiang, ExamQue examQue) {
+		super();
+		this.xuanxiang = xuanxiang;
+		this.examQue = examQue;
+	}
+
+	public ExamChoi() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
      
      
 }

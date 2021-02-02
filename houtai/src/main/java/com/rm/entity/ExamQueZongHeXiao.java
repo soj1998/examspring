@@ -2,9 +2,12 @@ package com.rm.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -62,5 +65,17 @@ public class ExamQueZongHeXiao {
     @Column(length=600)
     private String examanal;
     
+    @ManyToOne(targetEntity = ExamQueZongHeDa.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "examquezongheda",referencedColumnName = "id")
+  	private ExamQueZongHeDa examQueZongHeDa;
+
+
+	public ExamQueZongHeDa getExamQueZongHeDa() {
+		return examQueZongHeDa;
+	}
+
+	public void setExamQueZongHeDa(ExamQueZongHeDa examQueZongHeDa) {
+		this.examQueZongHeDa = examQueZongHeDa;
+	}
     
 }

@@ -22,7 +22,7 @@ public class ExamChoiZongHe {
     private String xuanxiang;
      
     @ManyToOne(targetEntity = ExamQueZongHeXiao.class,fetch = FetchType.EAGER)
-  	@JoinColumn(name = "examquechoisjkid",referencedColumnName = "id")
+  	@JoinColumn(name = "examquezhchoiid",referencedColumnName = "id")
   	private ExamQueZongHeXiao examQueZongHeXiao;
 
 	public Integer getId() {
