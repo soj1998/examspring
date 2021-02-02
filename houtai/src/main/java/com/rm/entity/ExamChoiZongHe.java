@@ -49,6 +49,17 @@ public class ExamChoiZongHe {
 		this.examQueZongHeXiao = examQueZongHeXiao;
 	}
 
+	public ExamChoiZongHe(String xuanxiang, ExamQueZongHeXiao examQueZongHeXiao) {
+		super();
+		this.xuanxiang = xuanxiang;
+		this.examQueZongHeXiao = examQueZongHeXiao;
+	}
+
+	public ExamChoiZongHe() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	
      
      

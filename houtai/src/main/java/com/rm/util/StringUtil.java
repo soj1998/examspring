@@ -281,7 +281,7 @@ public class StringUtil {
         for(Map.Entry<Integer,String> mapping:list){
         	String a = mapping.getValue();
         	for(String tm:tihuan) {
-        		a.replaceAll(tm, "");
+        		a = a.replaceAll(tm, "");
 			}
         	if (StringUtil.isNotEmpty(a)) {
         		sb = sb.append(a);

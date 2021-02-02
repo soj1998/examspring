@@ -21,12 +21,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.czentity.CzTreeNode;
 import com.rm.dao.BookDao;
 import com.rm.dao.ExamChoiDao;
+import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
+import com.rm.dao.ExamQueZongHeDaDao;
+import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.dao.QueandAnsDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
@@ -34,7 +39,10 @@ import com.rm.dao.XueKeDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.entity.ExamChoi;
+import com.rm.entity.ExamChoiZongHe;
 import com.rm.entity.ExamQue;
+import com.rm.entity.ExamQueZongHeDa;
+import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.TreeNode;
 import com.rm.entity.TreeNodeSjk;
 import com.rm.util.StringUtil;
@@ -60,10 +68,15 @@ class HoutaiApplicationTests {
     private ExamQueDao examQueDao;
 	@Resource
     private ExamChoiDao examChoiDao;
+	@Resource
+    private ExamQueZongHeDaDao examQueZongHeDaDao;
+	@Resource
+    private ExamQueZongHeXiaoDao examQueZongHeXiaoDao;
+	@Resource
+    private ExamChoiZongHeDao examChoiZongHeDao;
 	
 	
 	private String[] timu = new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】"};
-	private String[] zonghetimu = new String[] {"【综合单选题】","【综合多选题】","【综合计算题】"};
 	private String[] xuanxiang = new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
 	private String zsd = "【知识点】";
 	private String zongheti = "【综合题】";
@@ -96,6 +109,7 @@ class HoutaiApplicationTests {
 	
 	@Test
     public void test(){
+		//已经存入的数据 高一列存下来 还要搞一列记入时间
 		System.out.println("开始啦");
 		InputStream is = null;
 		XWPFDocument doc = null;
@@ -118,26 +132,6 @@ class HoutaiApplicationTests {
 				}else {
 					jsonDuan.put("neirong", paras.get(i).getParagraphText().trim());
 					jsonDuan.put("hangshu", i);
-					String d = paras.get(i).getParagraphText().trim();
-					ExamChoi examChoi = new ExamChoi();
-					ExamQue examQue = new ExamQue();
-					switch ("abcddddd".substring(0, 4)) {
-						case "【知识点" :
-							examQue.setZzd(d.substring(5));
-							break;
-						case "【单选题" :
-							break;
-						case "【多选题" :
-							break;
-						case "【计算题" :
-							break;
-						case "【综合题" :
-							break;
-						case "【答案】" :
-							break;
-						case "【解析】" :
-							break;
-					}
 					jsonDuanArray.add(jsonDuan);	
 				}
 							
@@ -163,27 +157,77 @@ class HoutaiApplicationTests {
 					daanlist = getGuiShu(daan_qz,arr);
 					jiexilist = getGuiShu(jiexi_qz,arr);
 					int szid = 3;
+					List<String> a = new ArrayList<String>();
+					a.add("【解析】");
+					a.add("【答案】");
+					System.out.println(StringUtil.getMapString(jiexilist, a));
+					System.out.println("1---------");
+					System.out.println(StringUtil.getMapString(daanlist, a));
 					ExamQue examQue = new ExamQue(szid,zsdlist,timulist,"Y",daanlist,jiexilist);
 					examQueDao.save(examQue);
+					try{
+						examQueDao.save(examQue);
+			        }catch (Exception e){
+			            LOG.error("添加examQueDao 失败!"+e.getMessage());
+			            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
+			        }
 					saveExamChoi(examQue,xuanxianglist); 
 				} else {					
 					diGuiHzZhsy(0,hzzharray,arr);
+					ExamQueZongHeDa examQueda = new ExamQueZongHeDa();
 					for (Object fd1:hzzharray) {
 						JSONObject jb1 = (JSONObject)fd1;
 						JSONArray arr1 = jb1.getJSONArray("al");
 						int[] zsd_qz1 = getpanDuanGuiShuDian("zsd",arr1);
 						int[] datimu_qz1 = getpanDuanGuiShuDian("datimu",arr1);
+						zhzsdlist = getGuiShu(zsd_qz1,arr1);
+						zhdatimulist = getGuiShu(datimu_qz1,arr1);
+						if(zhdatimulist.size()>0) {
+							int szid = 3;
+							examQueda.setSzid(szid);
+							examQueda.setZzd(zhzsdlist);
+							examQueda.setExamque(zhdatimulist);
+							examQueda.setYxbz("Y");
+							examQueda = new ExamQueZongHeDa(szid,zhzsdlist,zhdatimulist,"Y");
+							try{
+								examQueZongHeDaDao.save(examQueda);
+					        }catch (Exception e){
+					            LOG.error("添加examQueZongHeDaDao 失败!"+e.getMessage());
+					            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
+					        }
+						}
+					}
+					for (Object fd1:hzzharray) {
+						JSONObject jb1 = (JSONObject)fd1;
+						JSONArray arr1 = jb1.getJSONArray("al");
+						if(getpanDuanZonghe(arr,zongheti)) {
+							continue;
+						}
+						if(getpanDuanZonghe(arr,zsd)) {
+							continue;
+						}
 						int[] timu_qz1 = getpanDuanGuiShuDian("timu",arr1);
 						int[] xuanxiang_qz1 = getpanDuanGuiShuDian("xuanxiang",arr1);
 						int[] daan_qz1 = getpanDuanGuiShuDian("daan",arr1);
 						int[] jiexi_qz1 = getpanDuanGuiShuDian("jiexi",arr1);
-						zhzsdlist = getGuiShu(zsd_qz1,arr1);
-						zhdatimulist = getGuiShu(datimu_qz1,arr1);
 						zhtimulist = getGuiShu(timu_qz1,arr1);
 						zhxuanxianglist = getGuiShu(xuanxiang_qz1,arr1);
 						zhdaanlist = getGuiShu(daan_qz1,arr1);
 						zhjiexilist = getGuiShu(jiexi_qz1,arr1);
-						
+						List<String> a = new ArrayList<String>();
+						a.add("【解析】");
+						a.add("【答案】");
+						System.out.println(StringUtil.getMapString(zhjiexilist, a));
+						System.out.println("2---------");
+						System.out.println(StringUtil.getMapString(zhjiexilist, a));
+						ExamQueZongHeXiao examQueXiao = new ExamQueZongHeXiao(zhtimulist,zhdaanlist,zhjiexilist,examQueda);
+						try{
+							examQueZongHeXiaoDao.save(examQueXiao);
+				        }catch (Exception e){
+				            LOG.error("添加examQueZongHeXiaoDao 失败!"+e.getMessage());
+				            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
+				        }						
+						saveExamZongHeXiaoChoi(examQueXiao,zhxuanxianglist); 
 					}
 				}
 			}
@@ -191,6 +235,7 @@ class HoutaiApplicationTests {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
 		} finally {
 			try {
 				if (null != is) {
@@ -223,17 +268,19 @@ class HoutaiApplicationTests {
         for(Map.Entry<Integer,String> mapping:list){
         	String a = mapping.getValue();
         	if (StringUtil.isNotEmpty(a)) {
-        		ExamChoi examChoi = new ExamChoi(a,examQue);
-        		examChoiDao.save(examChoi);
+        		ExamChoi examChoi = new ExamChoi(a,examQue);        		
+        		try{
+        			examChoiDao.save(examChoi);
+		        }catch (Exception e){
+		            LOG.error("添加examChoiDao 失败!"+e.getMessage());
+		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
+		        }
         	}
         }
 	}
 	
-	
-	private String getMapString(Map<Integer,String> map) {
-		StringBuilder sb = new StringBuilder();		
-		//这里将map.entrySet转换为List
-        List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
+	private void saveExamZongHeXiaoChoi(ExamQueZongHeXiao examQueZongHeXiao, Map<Integer,String> map) {
+		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
         Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
             //升序排序
@@ -242,18 +289,21 @@ class HoutaiApplicationTests {
             }
         });
         for(Map.Entry<Integer,String> mapping:list){
-        	for(String tm:timu) {
-        		mapping.getValue().replaceAll(tm, "");
-			}
-        	mapping.getValue().replaceAll(zsd, "");
-        	mapping.getValue().replaceAll(daan, "");
-        	mapping.getValue().replaceAll(jiexi, "");
-        	sb = sb.append(mapping.getValue()); 
-       } 
-		return sb.toString();
+        	String a = mapping.getValue();
+        	if (StringUtil.isNotEmpty(a)) {
+        		ExamChoiZongHe examChoi = new ExamChoiZongHe(a,examQueZongHeXiao);
+        		try{
+        			examChoiZongHeDao.save(examChoi);
+		        }catch (Exception e){
+		            LOG.error("添加examChoiZongHeDao 失败!"+e.getMessage());
+		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
+		        }
+        	}
+        }
 	}
 	
 	
+		
     
 	private boolean getpanDuanZonghe(JSONArray crArray,String zongheti) {
 		boolean rs= false;
@@ -402,6 +452,8 @@ class HoutaiApplicationTests {
 							}
 						}
 					}
+				} else {
+					ksd = -1;
 				}
 				break;
 			}
@@ -428,6 +480,7 @@ class HoutaiApplicationTests {
 						if (gets.indexOf(jiexi)>= 0) {
 							ksd = jb.getIntValue("hangshu");
 						}
+						ksd = ksd==0?-1:ksd;
 					}
 				}
 				break;
@@ -443,7 +496,7 @@ class HoutaiApplicationTests {
 		for (Object fd:crArray) {
 			JSONObject jb = (JSONObject)fd;
 			int a = jb.getIntValue("hangshu");
-			if (a >= qi && a < zhi) {
+			if (qi>=0 && a >= qi && a < zhi) {
 				Map<Integer,String> hashmap = new HashMap<Integer,String>();
 				hashmap.put(a, jb.getString("neirong"));
 				rs.put(a, jb.getString("neirong"));
@@ -522,122 +575,6 @@ class HoutaiApplicationTests {
 		return rsArray;
 	}
 	
-	private JSONArray diGuiHuiZong(int hs,JSONArray rsArray,JSONArray csArray) {
-		if (null == rsArray) {
-			rsArray = new JSONArray();			
-		}
-		JSONObject j = new JSONObject();
-		JSONArray xuanxarray = new JSONArray();
-		StringBuilder strb = new StringBuilder();
-		for (int i = hs;i<csArray.size();i++) {
-			JSONObject obj1 = (JSONObject)csArray.get(i);
-			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
-	        {
-				String d = obj1.get("neirong").toString();
-				strb.append(d);
-				if(d.indexOf("【知识点】") == 0) {
-					if(StringUtil.isNotEmpty(j.getString("zsd"))) {
-						rsArray.add(j);
-						diGuiHuiZong(i,rsArray,csArray);
-						break;
-					}
-					//j.put("zsd", d.substring(5));
-					continue;
-				}
-				if(d.indexOf("【单选题】") == 0) {
-					j.put("tmlx", "danxuan");
-					j.put("zsd", strb.substring(5));
-					strb = new StringBuilder();
-					j.put("wenti", d.substring(5));
-					continue;
-				}
-				if(d.indexOf("【多选题】") == 0) {
-					j.put("tmlx", "duoxuan");
-					j.put("zsd", strb.substring(5));
-					strb = new StringBuilder();
-					j.put("wenti", d.substring(5));
-					continue;
-				}				
-				if(d.indexOf("【计算题】") == 0) {
-					j.put("tmlx", "jisuan");
-					j.put("zsd", strb.substring(5));
-					strb = new StringBuilder();
-					j.put("wenti", d.substring(5));
-					continue;
-				}
-				if(d.indexOf("【综合题】") == 0) {
-					j.put("tmlx", "zonghe");
-					j.put("zsd", strb.substring(5));
-					strb = new StringBuilder();
-					j.put("wenti", d.substring(5));
-					continue;
-				}
-				if(d.indexOf("【答案】") == 0) {
-					if(xuanxarray.size()>0) {
-						j.put("xuanx", xuanxarray);
-					}
-					j.put("daan", d.substring(4));
-					continue;
-				}
-				if(d.indexOf("【解析】") == 0) {
-					j.put("jiexi", d.substring(4));
-					continue;
-				}
-				if(StringUtil.isNotEmpty(j.getString("tmlx")) && j.getString("tmlx").indexOf("xuan") > 0) {
-					j.put("wenti", strb.substring(5));
-					strb = new StringBuilder();
-					for (String xx:xuanxiang) {
-						if(d.indexOf(xx)>=0) {
-							JSONObject j1 = new JSONObject();
-							j1.put("xuanx", d);
-							xuanxarray.add(j1);
-							break;
-						}
-					}
-				}
-	        }
-			if (i == csArray.size() - 1) {
-				return rsArray;
-			}
-		}
-		return rsArray;
-	}
-	private JSONArray diGuiGao(JSONArray rsArray,JSONArray csArray) {
-		if (null == csArray ||csArray.size() == 0) {
-			return rsArray;
-		}
-		for (Object obj :csArray) {
-			JSONObject obj1 = (JSONObject)obj;
-			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
-	        {
-				String d = obj1.get("neirong").toString();
-				ExamChoi examChoi = new ExamChoi();
-				ExamQue examQue = new ExamQue();
-				switch (d.substring(0, 4)) {
-					case "【知识点" :
-						examQue.setZzd(d.substring(5));
-						break;
-					case "【单选题" :
-						break;
-					case "【多选题" :
-						break;
-					case "【计算题" :
-						break;
-					case "【综合题" :
-						break;
-					case "【答案】" :
-						break;
-					case "【解析】" :
-						break;
-				}
-	        	csArray.remove(obj1);
-	        	diGuiGao(csArray, rsArray);	
-	        	break;     	
-	        }
-			
-		}
-		return rsArray;
-	}
 
 	/**
 	 *1.搞一个json 把读到的信息储存到mysql，信息包括多少段，多少章，多少节，多少目，
@@ -934,3 +871,124 @@ class HoutaiApplicationTests {
 		return mtree;
 	}
 }
+
+
+/**
+
+private JSONArray diGuiHuiZong(int hs,JSONArray rsArray,JSONArray csArray) {
+	if (null == rsArray) {
+		rsArray = new JSONArray();			
+	}
+	JSONObject j = new JSONObject();
+	JSONArray xuanxarray = new JSONArray();
+	StringBuilder strb = new StringBuilder();
+	for (int i = hs;i<csArray.size();i++) {
+		JSONObject obj1 = (JSONObject)csArray.get(i);
+		if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+        {
+			String d = obj1.get("neirong").toString();
+			strb.append(d);
+			if(d.indexOf("【知识点】") == 0) {
+				if(StringUtil.isNotEmpty(j.getString("zsd"))) {
+					rsArray.add(j);
+					diGuiHuiZong(i,rsArray,csArray);
+					break;
+				}
+				//j.put("zsd", d.substring(5));
+				continue;
+			}
+			if(d.indexOf("【单选题】") == 0) {
+				j.put("tmlx", "danxuan");
+				j.put("zsd", strb.substring(5));
+				strb = new StringBuilder();
+				j.put("wenti", d.substring(5));
+				continue;
+			}
+			if(d.indexOf("【多选题】") == 0) {
+				j.put("tmlx", "duoxuan");
+				j.put("zsd", strb.substring(5));
+				strb = new StringBuilder();
+				j.put("wenti", d.substring(5));
+				continue;
+			}				
+			if(d.indexOf("【计算题】") == 0) {
+				j.put("tmlx", "jisuan");
+				j.put("zsd", strb.substring(5));
+				strb = new StringBuilder();
+				j.put("wenti", d.substring(5));
+				continue;
+			}
+			if(d.indexOf("【综合题】") == 0) {
+				j.put("tmlx", "zonghe");
+				j.put("zsd", strb.substring(5));
+				strb = new StringBuilder();
+				j.put("wenti", d.substring(5));
+				continue;
+			}
+			if(d.indexOf("【答案】") == 0) {
+				if(xuanxarray.size()>0) {
+					j.put("xuanx", xuanxarray);
+				}
+				j.put("daan", d.substring(4));
+				continue;
+			}
+			if(d.indexOf("【解析】") == 0) {
+				j.put("jiexi", d.substring(4));
+				continue;
+			}
+			if(StringUtil.isNotEmpty(j.getString("tmlx")) && j.getString("tmlx").indexOf("xuan") > 0) {
+				j.put("wenti", strb.substring(5));
+				strb = new StringBuilder();
+				for (String xx:xuanxiang) {
+					if(d.indexOf(xx)>=0) {
+						JSONObject j1 = new JSONObject();
+						j1.put("xuanx", d);
+						xuanxarray.add(j1);
+						break;
+					}
+				}
+			}
+        }
+		if (i == csArray.size() - 1) {
+			return rsArray;
+		}
+	}
+	return rsArray;
+}
+private JSONArray diGuiGao(JSONArray rsArray,JSONArray csArray) {
+	if (null == csArray ||csArray.size() == 0) {
+		return rsArray;
+	}
+	for (Object obj :csArray) {
+		JSONObject obj1 = (JSONObject)obj;
+		if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+        {
+			String d = obj1.get("neirong").toString();
+			ExamChoi examChoi = new ExamChoi();
+			ExamQue examQue = new ExamQue();
+			switch (d.substring(0, 4)) {
+				case "【知识点" :
+					examQue.setZzd(d.substring(5));
+					break;
+				case "【单选题" :
+					break;
+				case "【多选题" :
+					break;
+				case "【计算题" :
+					break;
+				case "【综合题" :
+					break;
+				case "【答案】" :
+					break;
+				case "【解析】" :
+					break;
+			}
+        	csArray.remove(obj1);
+        	diGuiGao(csArray, rsArray);	
+        	break;     	
+        }
+		
+	}
+	return rsArray;
+}
+**/

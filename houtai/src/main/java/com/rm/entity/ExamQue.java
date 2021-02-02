@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.rm.util.StringUtil;
 
@@ -134,11 +135,15 @@ public class ExamQue {
 		this.setWentiLeiXing(examque);
 		this.examanal = getMapString(examanal);
 	}
-	
+	@Transient
 	private String[] timu = new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】"};
+	@Transient
 	private String[] timuleixing = new String[] {"danxuan","duoxuan","jisuan","zonghe","panduan"};
+	@Transient
 	private String zsd = "【知识点】";
-	private String daan = "【答案】";	
+	@Transient
+	private String daan = "【答案】";
+	@Transient
 	private String jiexi = "【解析】";
 	
 	private void setWentiLeiXing(Map<Integer,String> map) {
@@ -169,11 +174,11 @@ public class ExamQue {
         for(Map.Entry<Integer,String> mapping:list){
         	String a = mapping.getValue();
         	for(String tm:this.timu) {
-        		a.replaceAll(tm, "");
+        		a = a.replaceAll(tm, "");
 			}
-        	a.replaceAll(this.zsd, "");
-        	a.replaceAll(this.daan, "");
-        	a.replaceAll(this.jiexi, "");
+        	a = a.replaceAll(this.zsd, "");
+        	a = a.replaceAll(this.daan, "");
+        	a = a.replaceAll(this.jiexi, "");
         	if (StringUtil.isNotEmpty(a)) {
         		sb = sb.append(a);
         	}
