@@ -56,7 +56,7 @@ public class SzWenZhangController {
 		String path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
 				+"uploadfiles";
-	    up.setSavePath(path);
+	    up.setSavePath(path,"szjichu");
 	    String[] fileType = {".docx"};
 	    up.setAllowFiles(fileType);
 	    up.upload();

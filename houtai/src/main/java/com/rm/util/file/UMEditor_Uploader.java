@@ -30,6 +30,8 @@ public class UMEditor_Uploader {
 	private HttpServletRequest request = null;
 	private String title = "";
 
+	//szfile szzhuanlan 还是szexam
+	private String savePath_sz = "";
 	// 保存路径
 	private String savePath = "";
 	// 文件允许格式
@@ -229,7 +231,7 @@ public class UMEditor_Uploader {
 	 */
 	private String getFolder(String path) {
 		SimpleDateFormat formater = new SimpleDateFormat("yyyyMMdd");
-		path += File.separator + formater.format(new Date())+File.separator+"szfile";
+		path += File.separator + formater.format(new Date())+File.separator+this.savePath_sz;
 		File dir = new File(this.getPhysicalPath(path));
 		if (!dir.exists()) {
 			try {
@@ -255,8 +257,9 @@ public class UMEditor_Uploader {
 		return new File(realPath).getParent() +"/" +path;
 	}
 
-	public void setSavePath(String savePath) {
+	public void setSavePath(String savePath,String savePathsz) {
 		this.savePath = savePath;
+		this.savePath_sz = savePathsz;
 	}
 
 	public void setAllowFiles(String[] allowFiles) {

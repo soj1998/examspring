@@ -3,15 +3,19 @@ package com.rm.entity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -39,12 +43,35 @@ public class ExamQue {
 	@Column(length=100)
     private String zzd;
      
-    @Column(length=600)
+    @Column(length=1200)
     private String examque;
     
     @Column(length=1)
     private String yxbz;
 	
+    @ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "atcexamqueid",referencedColumnName = "id")
+  	private AtcSjk atcSjk;
+	
+    public AtcSjk getAtcSjk() {
+		return atcSjk;
+	}
+
+	public void setAtcSjk(AtcSjk atcSjk) {
+		this.atcSjk = atcSjk;
+	}
+
+	@Column
+    private Date lrsj;
+		
+	
+	public Date getLrsj() {
+		return lrsj;
+	}
+
+	public void setLrsj(Date lrsj) {
+		this.lrsj = lrsj;
+	}
 	
 
 	public String getYxbz() {
@@ -103,7 +130,7 @@ public class ExamQue {
 		this.examanal = examanal;
 	}
 
-	@Column(length=300)
+	@Column(length=1200)
     private String examans; 
     
     @Column(length=50)
@@ -124,13 +151,15 @@ public class ExamQue {
 		this.examanal = examanal;
 	}
 
-	public ExamQue(Integer szid, Map<Integer,String> zzd, Map<Integer,String> examque, String yxbz, Map<Integer,String> examans,
+	public ExamQue(AtcSjk fid,Integer szid, Map<Integer,String> zzd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
+		this.atcSjk = fid;
 		this.szid = szid;
 		this.zzd = getMapString(zzd);
 		this.examque = getMapString(examque);
 		this.yxbz = yxbz;
+		this.lrsj = lrsj;
 		this.examans = getMapString(examans);
 		this.setWentiLeiXing(examque);
 		this.examanal = getMapString(examanal);
@@ -148,15 +177,16 @@ public class ExamQue {
 	
 	private void setWentiLeiXing(Map<Integer,String> map) {
 		String rs = "weizhi";
-		map.keySet().forEach(key -> {
+		for (Map.Entry<Integer, String> entry : map.entrySet()) {
+            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+            String a = entry.getValue();
 			for(int i = 0; i < timu.length; i++) {
-				if (map.get(key).indexOf(timu[i])>=0) {
+				if (StringUtil.isNotEmpty(a) && a.indexOf(timu[i])>=0) {
 					this.setExamtype(timuleixing[i]);
 					return;
 				}
 			}
-			
-		});
+        }		
 		this.setExamtype(rs);
 	}
 	

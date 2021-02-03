@@ -3,13 +3,17 @@ package com.rm.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -43,6 +47,21 @@ public class ExamQueZongHeDa {
     @Column(length=1)
     private String yxbz;
 	
+    @ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "atcexamquezonghedaid",referencedColumnName = "id")
+  	private AtcSjk atcSjk;
+	
+    @Column
+    private Date lrsj;
+		
+	
+	public Date getLrsj() {
+		return lrsj;
+	}
+
+	public void setLrsj(Date lrsj) {
+		this.lrsj = lrsj;
+	}
 	
 
 	public String getYxbz() {
@@ -90,8 +109,9 @@ public class ExamQueZongHeDa {
 		this.examque = StringUtil.getMapString(examque,list);
 	}
 
-	public ExamQueZongHeDa(Integer szid, String zzd, String examque, String yxbz) {
+	public ExamQueZongHeDa(AtcSjk fid,Integer szid, String zzd, String examque, String yxbz) {
 		super();
+		this.atcSjk = fid;
 		this.szid = szid;
 		this.zzd = zzd;
 		this.examque = examque;
@@ -109,8 +129,9 @@ public class ExamQueZongHeDa {
 	private String zsd_1 = "【知识点】";
 	//private String daan = "【答案】";	
 	//private String jiexi = "【解析】";
-	public ExamQueZongHeDa(Integer szid, Map<Integer,String> zsdd, Map<Integer,String> examque, String yxbz) {
+	public ExamQueZongHeDa(AtcSjk fid,Integer szid, Map<Integer,String> zsdd, Map<Integer,String> examque, String yxbz, Date lrsj) {
 		super();
+		this.atcSjk = fid;
 		this.szid = szid;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(timu));
@@ -118,6 +139,7 @@ public class ExamQueZongHeDa {
 		this.zzd = StringUtil.getMapString(zsdd,list);
 		this.examque = StringUtil.getMapString(examque,list);
 		this.yxbz = yxbz;
+		this.lrsj = lrsj;
 	}
 
 

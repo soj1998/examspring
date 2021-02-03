@@ -21,7 +21,8 @@ public class SzController {
     private SzDao szDao;    
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzController.class);
-    @RequestMapping(value="/listall")
+    
+	@RequestMapping(value="/listall")
     public List<Sz> listall(){    	
         List<Sz> list_glx=szDao.findAll();
         return list_glx;

@@ -289,4 +289,27 @@ public class StringUtil {
        } 
 		return sb.toString();
 	}
+    
+    /**
+     * 生成六位随机数字字母组合的字符串
+     * 
+     */
+    public static String getRandomString(int weishu) {
+    	if (weishu < 6) {
+    		weishu = 6;
+    	}
+    	String rs = "";
+    	for (int i = 0; i <= 100; i++) 
+    	{
+    		String sources = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //一共36位 加上一些字母，就可以生成pc站的验证码了
+    		Random rand = new Random();
+    		StringBuffer flag = new StringBuffer();
+    		for (int j = 0; j < 6; j++) 
+    		{
+    			flag.append(sources.charAt(rand.nextInt(36)) + "");
+    		}
+    		rs = flag.toString();
+    	}
+    	return rs;
+    }
 }
