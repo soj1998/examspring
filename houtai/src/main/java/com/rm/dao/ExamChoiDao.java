@@ -16,6 +16,6 @@ import com.rm.entity.ExamChoi;
  *
  */
 public interface ExamChoiDao extends JpaRepository<ExamChoi, Integer>{
-	@Query(value = "select * from t_examchoisjk where examquechoisjkid = :wid",nativeQuery = true)
+	@Query(value = "select id,xuanxiang, examquechoisjkid from t_examchoisjk where examquechoisjkid = :wid",nativeQuery = true)
 	public List<ExamChoi> getExamChoiListByQue(@Param("wid") int wid);
 }
