@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +22,7 @@ import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
+import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
 import com.rm.util.StringUtil;
 import com.rm.util.file.SzExamFileSaveSql;
@@ -45,11 +48,33 @@ public class SzExamController {
 	
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzExamController.class);
-
-	@RequestMapping(value="/listall")
-    public List<ExamQue> listall(){    	
-        List<ExamQue> list_glx=examQueDao.findAll();
-        return list_glx;
+	
+	@ResponseBody
+	@RequestMapping(value="/listdaican",method=RequestMethod.POST)
+    public List<ExamQue> listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamQue> list_glx=examQueDao.findAll(pageRequest).getContent();
+		return list_glx;        
+    }
+	
+	@ResponseBody
+	@RequestMapping(value="/getcount")
+    public Long listall2(){    	
+		return examQueDao.count();        
+    }
+	
+	@ResponseBody
+	@RequestMapping(value="/listchoi",method=RequestMethod.POST)
+    public List<ExamChoi> listall3(@RequestParam("tid") int glid){    	
+		List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(glid);
+    	return zbchoidel;        
+    }
+	
+	@ResponseBody
+	@RequestMapping(value="/getquebyid",method=RequestMethod.POST)
+    public ExamQue listall4(@RequestParam("tid") int glid){    	
+		ExamQue zbchoidel = examQueDao.findById(glid).get();
+    	return zbchoidel;        
     }
 	
 	//试题没有文章架构
@@ -74,5 +99,17 @@ public class SzExamController {
 	    
 	}
     
+    @RequestMapping(value="/add",method=RequestMethod.POST)
+    public String add(@RequestParam("szid") int szid,@RequestParam("szmc") String szmc){
+    	return "";
+    }  
+    
+    @RequestMapping(path = "delete",method=RequestMethod.POST)
+    public String urlParam(@RequestParam(name = "szid") int  szid) {
+    	List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(szid);
+    	examChoiDao.deleteAll(zbchoidel);
+    	examQueDao.deleteById(szid);
+    	return "ok";
+    }
    
 }

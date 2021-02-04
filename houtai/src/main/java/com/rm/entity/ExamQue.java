@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import com.rm.util.StringUtil;
 
 @Entity
@@ -138,7 +136,9 @@ public class ExamQue {
     
     @Column(length=600)
     private String examanal;
-
+    
+   
+    
 	public ExamQue(Integer szid, String zzd, String examque, String yxbz, String examans, String examtype,
 			String examanal) {
 		super();
