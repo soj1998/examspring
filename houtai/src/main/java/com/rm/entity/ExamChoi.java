@@ -59,6 +59,11 @@ public class ExamChoi {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	@Override
+	public String toString() {
+		return "ExamChoi [id=" + id + ", xuanxiang=" + xuanxiang + ", examQue=" + examQue + "]";
+	}
      
      
 }

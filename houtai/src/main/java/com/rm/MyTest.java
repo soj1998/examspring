@@ -67,7 +67,7 @@ public class MyTest {
 	
 	@ResponseBody
 	@RequestMapping(value="/gettree",method=RequestMethod.GET)
-    public void listerji(@RequestParam("parentid") int pid){    	
+    public void listerji(@RequestParam("pid") int pid){    	
         System.out.println(pid);
     }
 	@ResponseBody

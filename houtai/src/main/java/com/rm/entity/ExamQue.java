@@ -1,6 +1,7 @@
 package com.rm.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -219,6 +220,14 @@ public class ExamQue {
 	public ExamQue() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		return "ExamQue [id=" + id + ", szid=" + szid + ", zzd=" + zzd + ", examque=" + examque + ", yxbz=" + yxbz
+				+ ", atcSjk=" + atcSjk + ", lrsj=" + lrsj + ", examans=" + examans + ", examtype=" + examtype
+				+ ", examanal=" + examanal + ", timu=" + Arrays.toString(timu) + ", timuleixing="
+				+ Arrays.toString(timuleixing) + ", zsd=" + zsd + ", daan=" + daan + ", jiexi=" + jiexi + "]";
 	}
     
     
