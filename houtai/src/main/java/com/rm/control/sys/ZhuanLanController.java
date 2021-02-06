@@ -28,6 +28,7 @@ import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
+import com.rm.dao.ZhuanLanDao;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
 import com.rm.util.SimCalculator;
@@ -37,11 +38,11 @@ import com.rm.util.file.UMEditor_Uploader;
 
 
 @CrossOrigin(origins = "*")
-@RequestMapping(value="/sys/szexam")
+@RequestMapping(value="/sys/zhuanlan")
 @RestController
-public class SzExamController {
+public class ZhuanLanController {
 	@Resource
-    private AtcSjkDao atcSjkDao; 	
+    private ZhuanLanDao zhuanLanDao; 	
 	@Resource
     private ExamQueDao examQueDao;
 	@Resource
@@ -54,7 +55,7 @@ public class SzExamController {
     private ExamChoiZongHeDao examChoiZongHeDao;
 	
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SzExamController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ZhuanLanController.class);
 	
 	@ResponseBody
 	@RequestMapping(value="/listdaican",method=RequestMethod.POST)
@@ -101,7 +102,7 @@ public class SzExamController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
 	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
-	    szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueDao, examChoiDao, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
+	    //szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueDao, examChoiDao, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
 	    return result + "update jieguo ";
 	    
 	}
@@ -159,10 +160,4 @@ public class SzExamController {
     	return "ok";
     }
    
-}
-
-class Param{
-  public Object eque;
-  public Object echoi;
-  public Object duoyuxuanxiang;
 }
