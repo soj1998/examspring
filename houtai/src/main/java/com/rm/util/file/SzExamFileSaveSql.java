@@ -453,8 +453,7 @@ public class SzExamFileSaveSql {
 		Map<Integer,String> zhzsdlist,zhdatimulist,zhtimulist,zhxuanxianglist,zhdaanlist,zhjiexilist;
 		for (Object fd:hzarray) {
 			JSONObject jb = (JSONObject)fd;
-			JSONArray arr = jb.getJSONArray("al");
-			JSONArray hzzharray = new JSONArray();
+			JSONArray arr = jb.getJSONArray("al");			
 			//先进行是否是综合题目的判断 非综合题进入非综合题
 			if(!getpanDuanZonghe(arr,zongheti)) {
 				int maxhangshu  = 0;
@@ -482,7 +481,8 @@ public class SzExamFileSaveSql {
 		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
 		        }
 				saveExamChoi(examChoiDao,examQue,xuanxianglist); 
-			} else {					
+			} else {
+				JSONArray hzzharray = new JSONArray();
 				diGuiHzZhsy(0,hzzharray,arr);
 				ExamQueZongHeDa examQueda = new ExamQueZongHeDa();
 				boolean dadecunhao = false;

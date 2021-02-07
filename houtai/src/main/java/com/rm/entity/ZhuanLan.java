@@ -11,36 +11,44 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="t_examchoisjk")
+@Table(name="t_zhuanlan")
 public class ZhuanLan {
  
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
      
-    @Column(length=1000)
+    //段落存为json bt xl hangshu neirong
+	@Column(length=1000)
     private String zlduanluo;
     
-    @Column(columnDefinition="tinyint default -1")
-    private int btid; //是标题的话 存入-1
-     
-    public int getBtid() {
-		return btid;
+	@Column(length=1000)
+    private String zlxilie;
+	
+    public String getZlxilie() {
+		return zlxilie;
 	}
 
-	public void setBtid(int btid) {
-		this.btid = btid;
+	public void setZlxilie(String zlxilie) {
+		this.zlxilie = zlxilie;
 	}
+
+
+
+	@Column(columnDefinition="tinyint default -1")
+    private int btid; //是标题的话 存入-1
+     
 
 	@ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
     @JoinColumn(name = "zhuanlanctoatcid",referencedColumnName = "id")
   	private AtcSjk atcSjk;
 
-	public ZhuanLan(int btid, String zlduanluo, AtcSjk atcSjk) {
+	public ZhuanLan(int btid, String zlduanluo, String xilie,AtcSjk atcSjk) {
 		super();
 		this.zlduanluo = zlduanluo;
-		this.btid = btid;
 		this.atcSjk = atcSjk;
+		this.btid = btid;
+		this.zlxilie = xilie;
 	}
 
 	public Integer getId() {
@@ -54,6 +62,22 @@ public class ZhuanLan {
 		
 
 	
+	public int getBtid() {
+		return btid;
+	}
+
+	public void setBtid(int btid) {
+		this.btid = btid;
+	}
+
+	public AtcSjk getAtcSjk() {
+		return atcSjk;
+	}
+
+	public void setAtcSjk(AtcSjk atcSjk) {
+		this.atcSjk = atcSjk;
+	}
+
 	public String getZlduanluo() {
 		return zlduanluo;
 	}
@@ -62,13 +86,33 @@ public class ZhuanLan {
 		this.zlduanluo = zlduanluo;
 	}
 
-	
+	@Column(columnDefinition="tinyint default -1")
+    private int hangshu; 
 
 	public ZhuanLan() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
+	public ZhuanLan(int btid, int hangshu,String zlduanluo, String xilie,AtcSjk atcSjk) {
+		super();
+		this.zlduanluo = zlduanluo;
+		this.atcSjk = atcSjk;
+		this.btid = btid;
+		this.zlxilie = xilie;
+		this.hangshu = hangshu;
+	}
+
+	
+	
+	public int getHangshu() {
+		return hangshu;
+	}
+
+	public void setHangshu(int hangshu) {
+		this.hangshu = hangshu;
+	}
+	
 	
      
 }

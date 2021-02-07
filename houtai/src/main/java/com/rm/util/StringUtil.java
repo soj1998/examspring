@@ -286,7 +286,7 @@ public class StringUtil {
         	if (StringUtil.isNotEmpty(a)) {
         		sb = sb.append(a);
         	}
-       } 
+        } 
 		return sb.toString();
 	}
     
