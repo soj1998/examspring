@@ -35,7 +35,7 @@ public class ZhuanLan {
 
 
 
-	@Column(columnDefinition="tinyint default -1")
+	@Column(columnDefinition="int default -1")
     private int btid; //是标题的话 存入-1
      
 
@@ -86,7 +86,7 @@ public class ZhuanLan {
 		this.zlduanluo = zlduanluo;
 	}
 
-	@Column(columnDefinition="tinyint default -1")
+	@Column(columnDefinition="int default -1")
     private int hangshu; 
 
 	public ZhuanLan() {

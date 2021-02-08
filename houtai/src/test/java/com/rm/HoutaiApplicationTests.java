@@ -147,7 +147,9 @@ class HoutaiApplicationTests {
 				if("".equals(paras.get(i).getParagraphText())) {
 					continue;
 				}else {
-					jsonDuan.put("neirong", paras.get(i).getParagraphText().trim());
+					String abc = paras.get(i).getParagraphText().trim();
+					abc = abc.replace(" ","");
+					jsonDuan.put("neirong", abc);
 					jsonDuan.put("hangshu", i);
 					jsonDuanArray.add(jsonDuan);	
 				}		
@@ -209,6 +211,7 @@ class HoutaiApplicationTests {
 			        	}
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs == minhstimu) {
+			        			System.out.println("1----" + hs + ":" + a1);
 			        			ZhuanLan zlan = new ZhuanLan(-1,hs,a1,xl,atcSjk);
 			        			btid = zhuanLanDao.save(zlan).getId();
 			        		}
@@ -222,6 +225,7 @@ class HoutaiApplicationTests {
 				        	int hs = mapping.getKey();		        	
 				        	if (StringUtil.isNotEmpty(a1)) {
 				        		if(hs != minhstimu) {
+				        			System.out.println("2----" + hs+ ":" + a1);
 				        			ZhuanLan zlan = new ZhuanLan(btid,hs,a1,xl,atcSjk);
 				        			zhuanLanDao.save(zlan).getId();
 				        		}
@@ -229,7 +233,7 @@ class HoutaiApplicationTests {
 				        }
 					}				
 		        }catch (Exception e){
-		            LOG.error("添加examQueDao 失败!"+e.getMessage());
+		            LOG.error("添加zhuanLanDao 失败!"+e.getMessage());
 		        }
 			}
 			System.out.println(hzarray.size());
@@ -402,7 +406,7 @@ class HoutaiApplicationTests {
 					}
 				}
 				if (!czxl) {
-					return new int[] {ksd,jsd};
+					return new int[] {-1,-1};
 				}
 				for (Object fd:crArray) {
 					JSONObject jb = (JSONObject)fd;
