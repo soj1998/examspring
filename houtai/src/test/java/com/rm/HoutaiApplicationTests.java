@@ -153,9 +153,9 @@ class HoutaiApplicationTests {
 				}		
 			}
 			JSONArray hzarray = new JSONArray();
-			diGuiHz(0,hzarray,jsonDuanArray);
-			Map<Integer,String> szlist,laiyuanlist,shijianlist,xilielist,zwlist;
+			diGuiHz(0,hzarray,jsonDuanArray);			
 			for (Object fd:hzarray) {
+				Map<Integer,String> szlist,laiyuanlist,shijianlist,xilielist,zwlist =null;
 				JSONObject jb = (JSONObject)fd;
 				JSONArray arr = jb.getJSONArray("al");
 				//先进行是否是综合题目的判断 非综合题进入非综合题				
@@ -192,10 +192,10 @@ class HoutaiApplicationTests {
 				for(Map.Entry<Integer,String> mapping:listmap){
 		        	String a1 = mapping.getValue();
 		        	a1 = a1.replace(zhengwen, "");
-		        	int hs = mapping.getKey();
-		        	minhstimu = minhstimu == 0? hs: minhstimu;
+		        	int hs = mapping.getKey();		        	
 		        	if (StringUtil.isNotEmpty(a1)) {
-		        		minhstimu = minhstimu <= hs? hs: minhstimu;
+		        		minhstimu = minhstimu == 0? hs: minhstimu;
+		        		minhstimu = minhstimu >= hs? hs: minhstimu;
 		        	}
 		        }
 				try{
@@ -203,13 +203,17 @@ class HoutaiApplicationTests {
 					for(Map.Entry<Integer,String> mapping:listmap){
 			        	String a1 = mapping.getValue();
 			        	a1 = a1.replace(zhengwen, "");
-			        	int hs = mapping.getKey();		        	
+			        	int hs = mapping.getKey();
+			        	if(btid !=-1) {
+			        		break;
+			        	}
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs == minhstimu) {
 			        			ZhuanLan zlan = new ZhuanLan(-1,hs,a1,xl,atcSjk);
 			        			btid = zhuanLanDao.save(zlan).getId();
 			        		}
 			        	}
+			        	
 			        }
 					if(btid !=-1) {
 						for(Map.Entry<Integer,String> mapping:listmap){
@@ -320,7 +324,8 @@ class HoutaiApplicationTests {
 	
 	private int[] getpanDuanGuiShuDian(String pdKey,JSONArray crArray,int maxhangshu) {
 		int ksd = 0;
-		int jsd = 0;		
+		int jsd = 0;
+		boolean czxl = false;
 		switch(pdKey) {
 			case "sz":{
 				for (Object fd:crArray) {
@@ -360,7 +365,7 @@ class HoutaiApplicationTests {
 				}
 				break;
 			}
-			case "shijian":{
+			case "riqi":{
 				for (Object fd:crArray) {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
@@ -375,11 +380,30 @@ class HoutaiApplicationTests {
 							}
 							return new int[] {ksd,jsd};
 						}
+						if (gets.indexOf(zhengwen)>= 0) {
+							jsd = jb.getIntValue("hangshu");
+							if (jsd-ksd > 0) {
+								jsd = jsd -1;
+							}
+							return new int[] {ksd,jsd};
+						}
 					}
 				}
 				break;
 			}
 			case "xilie":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(xilie)>= 0) {
+							czxl = true;
+						}						
+					}
+				}
+				if (!czxl) {
+					return new int[] {ksd,jsd};
+				}
 				for (Object fd:crArray) {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
@@ -444,7 +468,7 @@ class HoutaiApplicationTests {
 				String d = obj1.get("neirong").toString();
 				jarray.add(obj1);
 				if(d.indexOf(szbz) >= 0 || i == csArray.size() - 1) {
-					if(StringUtil.isNotEmpty(j.getString("zsd"))) {
+					if(StringUtil.isNotEmpty(j.getString("szbz"))) {
 						if (i != csArray.size() - 1) {
 							jarray.remove(jarray.size()-1);
 						}
