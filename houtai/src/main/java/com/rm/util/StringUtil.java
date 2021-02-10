@@ -290,6 +290,29 @@ public class StringUtil {
 		return sb.toString();
 	}
     
+    public static String getMapString(Map<Integer,String> map,String tihuan) {
+		StringBuilder sb = new StringBuilder();		
+		//这里将map.entrySet转换为List
+        List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
+            //升序排序
+            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+        for(Map.Entry<Integer,String> mapping:list){
+        	String a = mapping.getValue().trim();        	
+        	a = a.replaceAll(tihuan, "");
+        	a = a.replaceAll(" ", "");
+        	if (StringUtil.isNotEmpty(a)) {
+        		sb = sb.append(a);
+        	}
+        } 
+		return sb.toString();
+	}
+    
+    
     /**
      * 生成六位随机数字字母组合的字符串
      * 
@@ -312,4 +335,74 @@ public class StringUtil {
     	}
     	return rs;
     }
+    
+    /**
+     * 去除string 头部空格 转char 用char iswhitespace判断
+     * 
+     * 
+     **/
+    
+    public static String removeHeadSpace(String crstr) {
+    	String rs = "";
+    	char[] abcchar = crstr.toCharArray();
+		StringBuilder str = new StringBuilder();
+		boolean tb1 = false;
+		if (abcchar.length > 0) {
+			if(Character.isWhitespace(abcchar[0])) {
+				tb1 = true;
+			}	
+		}
+		for(int i =0;i<abcchar.length;i++) {			
+			if(tb1 && Character.isWhitespace(abcchar[i])) {
+				continue;
+			}
+			if(!Character.isWhitespace(abcchar[i])) {
+				tb1 = false;
+			}
+			str.append(abcchar[i]);
+		}
+		rs = str.toString();
+    	return rs;
+    }
+    
+    public static String removeTailSpace(String crstr) {
+    	String rs = "";
+    	char[] abcchar = crstr.toCharArray();
+    	List<Character> abclist = new ArrayList<Character>();
+    	for(char aa: abcchar) {
+			abclist.add(aa);
+		}
+    	Collections.reverse(abclist);
+    	List<Character> abclist2 = new ArrayList<Character>();
+    	StringBuilder str = new StringBuilder();
+		boolean tb1 = false;
+		if (abclist.size() > 0) {
+			if(Character.isWhitespace(abclist.get(0))) {
+				tb1 = true;
+			}	
+		}
+		for(int i =0;i<abclist.size();i++) {			
+			if(tb1 && Character.isWhitespace(abclist.get(i))) {
+				continue;
+			}
+			if(!Character.isWhitespace(abclist.get(i))) {
+				tb1 = false;
+			}
+			abclist2.add(abclist.get(i));
+		}
+		Collections.reverse(abclist2);
+		for (char ab: abclist2) {
+			str.append(ab);
+		}
+		rs = str.toString();
+    	return rs;
+    	
+    }
+    
+    public static String myTrim(String crstr) {
+    	String abc = removeHeadSpace(crstr);
+    	String abc2 = removeTailSpace(abc);
+    	return abc2;
+    }
+     
 }

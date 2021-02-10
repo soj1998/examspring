@@ -2,7 +2,12 @@ package com.rm.dao.sys;
 
 
 
+
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.rm.entity.lieju.Sz;
 
 /**
@@ -11,6 +16,8 @@ import com.rm.entity.lieju.Sz;
  *
  */
 public interface SzDao extends JpaRepository<Sz, Integer>{
+	@Query(value = "select * from t_sz where szmc = :szmc limit 0,1",nativeQuery = true)
+    public Sz findSzBymc(@Param("szmc") String mc);
 /**
 	@Query(value = "from GuanLianXing where userId = :userId")
     public List<Book> findGuanLianXingByUserId(@Param("userId") int useId);

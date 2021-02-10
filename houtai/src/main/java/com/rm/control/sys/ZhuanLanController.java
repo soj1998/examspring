@@ -24,17 +24,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ExamChoiDao;
-import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
-import com.rm.dao.ExamQueZongHeDaDao;
-import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.dao.ZhuanLanDao;
+import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
+import com.rm.entity.ZhuanLan;
 import com.rm.util.SimCalculator;
 import com.rm.util.StringUtil;
-import com.rm.util.file.SzExamFileSaveSql;
 import com.rm.util.file.UMEditor_Uploader;
+import com.rm.util.file.ZhuanLanFileSaveSql;
 
 
 @CrossOrigin(origins = "*")
@@ -44,31 +43,27 @@ public class ZhuanLanController {
 	@Resource
     private ZhuanLanDao zhuanLanDao; 	
 	@Resource
+    private AtcSjkDao atcSjkDao;
+	@Resource
+    private SzDao szDao;
+	@Resource
     private ExamQueDao examQueDao;
 	@Resource
     private ExamChoiDao examChoiDao;
-	@Resource
-    private ExamQueZongHeDaDao examQueZongHeDaDao;
-	@Resource
-    private ExamQueZongHeXiaoDao examQueZongHeXiaoDao;
-	@Resource
-    private ExamChoiZongHeDao examChoiZongHeDao;
-	
-	
 	private static final Logger LOG = LoggerFactory.getLogger(ZhuanLanController.class);
 	
 	@ResponseBody
 	@RequestMapping(value="/listdaican",method=RequestMethod.POST)
-    public List<ExamQue> listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+    public List<ZhuanLan> listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
-		List<ExamQue> list_glx=examQueDao.findAll(pageRequest).getContent();
+		List<ZhuanLan> list_glx=zhuanLanDao.getzlbybtidfuyi(pageRequest);
 		return list_glx;        
     }
 	
 	@ResponseBody
 	@RequestMapping(value="/getcount")
-    public Long listall2(){    	
-		return examQueDao.count();        
+    public int listall2(){    	
+		return zhuanLanDao.getCountbybtidfuyi();        
     }
 	
 	@ResponseBody
@@ -88,21 +83,21 @@ public class ZhuanLanController {
 	//试题没有文章架构
     @ResponseBody
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
-	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzlaiyuan") String wzlaiyuan,HttpServletResponse response) throws Exception{
+	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
 		String path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
 				+"uploadfiles";
-	    up.setSavePath(path,"szexam");
+	    up.setSavePath(path,"zhuanlan");
 	    String[] fileType = {".docx"};
 	    up.setAllowFiles(fileType);
 	    up.upload();
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
-	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
-	    //szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueDao, examChoiDao, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
+	    ZhuanLanFileSaveSql zhuanLanFileSaveSql = new ZhuanLanFileSaveSql();
+	    zhuanLanFileSaveSql.asoneinsertToSql(atcSjkDao,szDao,zhuanLanDao,path + up.getUrl(), wzlx);
 	    return result + "update jieguo ";
 	    
 	}
@@ -154,9 +149,11 @@ public class ZhuanLanController {
     
     @RequestMapping(path = "delete",method=RequestMethod.POST)
     public String urlParam(@RequestParam(name = "szid") int  szid) {
-    	List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(szid);
-    	examChoiDao.deleteAll(zbchoidel);
-    	examQueDao.deleteById(szid);
+    	ZhuanLan zl = zhuanLanDao.findById(szid).get();    	
+    	List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
+    	zllist.add(zl);
+    	zhuanLanDao.deleteAll(zllist);
+    	atcSjkDao.delete(zl.getAtcSjk());
     	return "ok";
     }
    

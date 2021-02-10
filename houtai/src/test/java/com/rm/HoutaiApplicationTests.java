@@ -1,32 +1,17 @@
 package com.rm;
 
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.rm.czentity.CzTreeNode;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.BookDao;
 import com.rm.dao.ExamChoiDao;
@@ -41,16 +26,9 @@ import com.rm.dao.XueKeDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
-import com.rm.entity.AtcSjk;
-import com.rm.entity.ExamChoi;
-import com.rm.entity.ExamChoiZongHe;
-import com.rm.entity.ExamQue;
-import com.rm.entity.ExamQueZongHeDa;
-import com.rm.entity.ExamQueZongHeXiao;
-import com.rm.entity.TreeNode;
-import com.rm.entity.TreeNodeSjk;
-import com.rm.entity.ZhuanLan;
+import com.rm.dao.sys.SzDao;
 import com.rm.util.StringUtil;
+import com.rm.util.file.FileXiangGuan;
 
 
 @SpringBootTest
@@ -83,32 +61,32 @@ class HoutaiApplicationTests {
     private AtcSjkDao atcSjkDao;
 	@Resource 
     private ZhuanLanDao zhuanLanDao;
+	@Resource 
+    private SzDao szDao;
 	
-	private String[] timu = new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】"};
-	private String[] xuanxiang = new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
-	private String zsd = "【知识点】";
-	private String wdjs = "【结束】";
-	private String zongheti = "【综合题】";
-	private String daan = "【答案】";	
-	private String jiexi = "【解析】";
+
 	
 	
-	private String szbz = "【税种】";
-	private String laiyuan = "【来源】";
-	private String shijian = "【日期】";
-	private String xilie = "【系列】";
-	private String zhengwen = "【正文】";
+
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HoutaiApplicationTests.class);
     
 	@Test
 	void contextLoads() {
-		String sources = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		LOG.info("【解析】aaaaaaaabbbbbbbb" + "\n" + "aaa");
-		LOG.info(sources.length() + "");
-		for (int i = 0;i<15;i++) {
-			LOG.info(StringUtil.getRandomString(10));
+		FileXiangGuan fileXiangGuan = new FileXiangGuan();
+		JSONArray jsonDuanArray = fileXiangGuan.transFiletoList("d:\\学研社-zzs-zl2.docx");
+		for (Object fd:jsonDuanArray) {
+			JSONObject jb = (JSONObject)fd;
+			String arr = jb.getString("neirong");
+			System.out.println(arr);
+			String abc = arr.replaceAll(" +","|");
+			String abc2 = arr.replaceAll("\\s*", "");
+			String abc3 = arr.replace("\\u0009","--");
+			System.out.println(abc);
+			System.out.println(abc2);
+			System.out.println(abc3);
 		}
+		System.out.println("11");
 	}
 	
 
@@ -123,133 +101,23 @@ class HoutaiApplicationTests {
 	
 	@Test
     public void test(){
-		//已经存入的数据 高一列存下来 还要搞一列记入时间
-		//对数据的长度 最好是有个更为友好的提示 比如 题目的长度 答案 或者解析的长度
-		//对上次提交的数据 可以批量删除
-		//增加题目的验证 已经有的题目就不存了
-		System.out.println("开始啦");
-		InputStream is = null;
-		XWPFDocument doc = null;
-		try {
-			is = new FileInputStream("d:\\学研社-zzs-zl.docx");
-			doc = new XWPFDocument(is);
-			//获取段落
-			List<XWPFParagraph> paras = doc.getParagraphs();
-			int duanLuoZongshu = paras.size();
-			if(duanLuoZongshu <= 0) {
-				System.out.println("当前文档没有读取到的段落数");
-				doc.close();
-				return;
-			}
-			JSONArray jsonDuanArray = new JSONArray();			
-			for (int i = 0;i < duanLuoZongshu ; i++) {
-				JSONObject jsonDuan = new JSONObject();
-				if("".equals(paras.get(i).getParagraphText())) {
-					continue;
-				}else {
-					String abc = paras.get(i).getParagraphText().trim();
-					abc = abc.replace(" ","");
-					jsonDuan.put("neirong", abc);
-					jsonDuan.put("hangshu", i);
-					jsonDuanArray.add(jsonDuan);	
-				}		
-			}
-			JSONArray hzarray = new JSONArray();
-			diGuiHz(0,hzarray,jsonDuanArray);			
-			for (Object fd:hzarray) {
-				Map<Integer,String> szlist,laiyuanlist,shijianlist,xilielist,zwlist =null;
-				JSONObject jb = (JSONObject)fd;
-				JSONArray arr = jb.getJSONArray("al");
-				//先进行是否是综合题目的判断 非综合题进入非综合题				
-				int maxhangshu  = 0;
-				for (Object a1:arr) {
-					JSONObject b1 = (JSONObject)a1;
-					if(b1.getIntValue("hangshu")>= maxhangshu) {
-						maxhangshu = b1.getIntValue("hangshu");
-					}
-				}
-				int[] sz_qz = getpanDuanGuiShuDian("sz",arr,maxhangshu);
-				int[] laiyuan_qz = getpanDuanGuiShuDian("laiyuan",arr,maxhangshu);
-				int[] riqi_qz = getpanDuanGuiShuDian("riqi",arr,maxhangshu);
-				int[] xilie_qz = getpanDuanGuiShuDian("xilie",arr,maxhangshu);
-				int[] zhengwen_qz = getpanDuanGuiShuDian("zhengwen",arr,maxhangshu);
-				szlist = getGuiShu(sz_qz,arr);
-				laiyuanlist = getGuiShu(laiyuan_qz,arr);
-				shijianlist = getGuiShu(riqi_qz,arr);
-				xilielist = getGuiShu(xilie_qz,arr);
-				zwlist = getGuiShu(zhengwen_qz,arr);
-				Date lrsj = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-				AtcSjk atcSjk = new AtcSjk();
-				atcSjk.setLrsj(lrsj);
-				atcSjk.setSzid(3);
-				atcSjk.setWzlxid(4);
-				atcSjk.setWzlaiyuan("abc");
-				Long atcid = atcSjkDao.save(atcSjk).getId();
-				atcSjk.setId(atcid);				
-				List<String> mapzhuan = new ArrayList<String>();
-				mapzhuan.add(xilie);
-				String xl = StringUtil.getMapString(xilielist, mapzhuan);
-				List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
-				int minhstimu  = 0;
-				for(Map.Entry<Integer,String> mapping:listmap){
-		        	String a1 = mapping.getValue();
-		        	a1 = a1.replace(zhengwen, "");
-		        	int hs = mapping.getKey();		        	
-		        	if (StringUtil.isNotEmpty(a1)) {
-		        		minhstimu = minhstimu == 0? hs: minhstimu;
-		        		minhstimu = minhstimu >= hs? hs: minhstimu;
-		        	}
-		        }
-				try{
-					int btid = -1;
-					for(Map.Entry<Integer,String> mapping:listmap){
-			        	String a1 = mapping.getValue();
-			        	a1 = a1.replace(zhengwen, "");
-			        	int hs = mapping.getKey();
-			        	if(btid !=-1) {
-			        		break;
-			        	}
-			        	if (StringUtil.isNotEmpty(a1)) {
-			        		if(hs == minhstimu) {
-			        			System.out.println("1----" + hs + ":" + a1);
-			        			ZhuanLan zlan = new ZhuanLan(-1,hs,a1,xl,atcSjk);
-			        			btid = zhuanLanDao.save(zlan).getId();
-			        		}
-			        	}
-			        	
-			        }
-					if(btid !=-1) {
-						for(Map.Entry<Integer,String> mapping:listmap){
-				        	String a1 = mapping.getValue();
-				        	a1 = a1.replace(zhengwen, "");
-				        	int hs = mapping.getKey();		        	
-				        	if (StringUtil.isNotEmpty(a1)) {
-				        		if(hs != minhstimu) {
-				        			System.out.println("2----" + hs+ ":" + a1);
-				        			ZhuanLan zlan = new ZhuanLan(btid,hs,a1,xl,atcSjk);
-				        			zhuanLanDao.save(zlan).getId();
-				        		}
-				        	}
-				        }
-					}				
-		        }catch (Exception e){
-		            LOG.error("添加zhuanLanDao 失败!"+e.getMessage());
-		        }
-			}
-			System.out.println(hzarray.size());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
-		} finally {
-			try {
-				if (null != is) {
-					is.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		String a = "　  三是  调整    ";
+		String ab = StringUtil.myTrim(a);
+		System.out.println(ab);
+		char[] abc = a.toCharArray();
+		for (char a1 :abc) {
+			System.out.println(a1);
 		}
+		//System.out.println("1---- " + a);
+		a = a.replaceAll(" +","");
+		//a = a.replace("  ","");
+		//a = a.replace("\u00A0", "");
+		abc = a.toCharArray();
+		for (char a1 :abc) {
+			System.out.println(a1);
+		}
+		//System.out.println("2---- " + a);
+		LOG.error("end");
     }
 	
 	
@@ -258,239 +126,7 @@ class HoutaiApplicationTests {
 	
 	
 	 
-	/**
-	 *	用递归，求节点 List<ExamQue> quelist,List<ExamChoi> choilist
-	 */
-	private void saveExamChoi(ExamQue examQue, Map<Integer,String> map) {
-		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
-        //然后通过比较器来实现排序
-        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
-            //升序排序
-            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
-                return o1.getKey().compareTo(o2.getKey());
-            }
-        });
-        for(Map.Entry<Integer,String> mapping:list){
-        	String a = mapping.getValue();
-        	if (StringUtil.isNotEmpty(a)) {
-        		ExamChoi examChoi = new ExamChoi(a,examQue);        		
-        		try{
-        			examChoiDao.save(examChoi);
-		        }catch (Exception e){
-		            LOG.error("添加examChoiDao 失败!"+e.getMessage());
-		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
-		        }
-        	}
-        }
-	}
 	
-	private void saveExamZongHeXiaoChoi(ExamQueZongHeXiao examQueZongHeXiao, Map<Integer,String> map) {
-		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
-        //然后通过比较器来实现排序
-        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
-            //升序排序
-            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
-                return o1.getKey().compareTo(o2.getKey());
-            }
-        });
-        for(Map.Entry<Integer,String> mapping:list){
-        	String a = mapping.getValue();
-        	if (StringUtil.isNotEmpty(a)) {
-        		ExamChoiZongHe examChoi = new ExamChoiZongHe(a,examQueZongHeXiao);
-        		try{
-        			examChoiZongHeDao.save(examChoi);
-		        }catch (Exception e){
-		            LOG.error("添加examChoiZongHeDao 失败!"+e.getMessage());
-		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
-		        }
-        	}
-        }
-	}
-	
-	
-		
-    
-	private boolean getpanDuanZonghe(JSONArray crArray,String zongheti) {
-		boolean rs= false;
-		for (Object fd:crArray) {
-			JSONObject jb = (JSONObject)fd;
-			if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-				String gets = jb.getString("neirong");
-				if (gets.indexOf(zongheti)>= 0) {
-					rs = true;
-					break;
-				}
-			}
-		}
-		return rs;
-	}
-	
-	
-	private int[] getpanDuanGuiShuDian(String pdKey,JSONArray crArray,int maxhangshu) {
-		int ksd = 0;
-		int jsd = 0;
-		boolean czxl = false;
-		switch(pdKey) {
-			case "sz":{
-				for (Object fd:crArray) {
-					JSONObject jb = (JSONObject)fd;
-					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-						String gets = jb.getString("neirong");
-						if (gets.indexOf(szbz)>= 0) {
-							ksd = jb.getIntValue("hangshu");
-						}
-						if (gets.indexOf(laiyuan)>= 0) {
-							jsd = jb.getIntValue("hangshu");
-							if (jsd-ksd > 0) {
-								jsd = jsd -1;
-							}
-							return new int[] {ksd,jsd};
-						}						
-					}
-				}
-				break;
-			}
-			case "laiyuan":{
-				for (Object fd:crArray) {
-					JSONObject jb = (JSONObject)fd;
-					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-						String gets = jb.getString("neirong");
-						if (gets.indexOf(laiyuan)>= 0) {
-							ksd = jb.getIntValue("hangshu");
-						}
-						if (gets.indexOf(shijian)>= 0) {
-							jsd = jb.getIntValue("hangshu");
-							if (jsd-ksd > 0) {
-								jsd = jsd -1;
-							}
-							return new int[] {ksd,jsd};
-						}
-					}
-				}
-				break;
-			}
-			case "riqi":{
-				for (Object fd:crArray) {
-					JSONObject jb = (JSONObject)fd;
-					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-						String gets = jb.getString("neirong");
-						if (gets.indexOf(shijian)>= 0) {
-							ksd = jb.getIntValue("hangshu");
-						}
-						if (gets.indexOf(xilie)>= 0) {
-							jsd = jb.getIntValue("hangshu");
-							if (jsd-ksd > 0) {
-								jsd = jsd -1;
-							}
-							return new int[] {ksd,jsd};
-						}
-						if (gets.indexOf(zhengwen)>= 0) {
-							jsd = jb.getIntValue("hangshu");
-							if (jsd-ksd > 0) {
-								jsd = jsd -1;
-							}
-							return new int[] {ksd,jsd};
-						}
-					}
-				}
-				break;
-			}
-			case "xilie":{
-				for (Object fd:crArray) {
-					JSONObject jb = (JSONObject)fd;
-					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-						String gets = jb.getString("neirong");
-						if (gets.indexOf(xilie)>= 0) {
-							czxl = true;
-						}						
-					}
-				}
-				if (!czxl) {
-					return new int[] {-1,-1};
-				}
-				for (Object fd:crArray) {
-					JSONObject jb = (JSONObject)fd;
-					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-						String gets = jb.getString("neirong");
-						if (gets.indexOf(xilie)>= 0) {
-							ksd = jb.getIntValue("hangshu");
-						}
-						if (gets.indexOf(zhengwen)>= 0) {
-							jsd = jb.getIntValue("hangshu");
-							if (jsd-ksd > 0) {
-								jsd = jsd -1;
-							}
-							return new int[] {ksd,jsd};
-						}
-					}
-				}
-				break;
-			}			
-			case "zhengwen":{
-				for (Object fd:crArray) {
-					JSONObject jb = (JSONObject)fd;
-					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
-						String gets = jb.getString("neirong");
-						if (gets.indexOf(zhengwen)>= 0) {
-							ksd = jb.getIntValue("hangshu");
-						}
-					}
-				}
-				break;
-			}
-		}		
-		jsd = jsd==0?maxhangshu:jsd;
-		return new int[] {ksd,jsd};
-	}
-	private Map<Integer,String> getGuiShu(int[]qizhi,JSONArray crArray) {
-		Map<Integer,String> rs = new HashMap<Integer,String>();
-		int qi = qizhi[0];
-		int zhi = qizhi[1];
-		for (Object fd:crArray) {
-			JSONObject jb = (JSONObject)fd;
-			int a = jb.getIntValue("hangshu");
-			if (qi>=0 && a >= qi && a <= zhi) {
-				Map<Integer,String> hashmap = new HashMap<Integer,String>();
-				hashmap.put(a, jb.getString("neirong"));
-				rs.put(a, jb.getString("neirong"));
-			}
-		}
-		return rs;
-	}
-	
-	
-	private JSONArray diGuiHz(int hs,JSONArray rsArray,JSONArray csArray) {
-		if (null == rsArray) {
-			rsArray = new JSONArray();			
-		}
-		JSONObject j = new JSONObject();
-		JSONArray jarray = new JSONArray();
-		for (int i = hs;i<csArray.size();i++) {
-			JSONObject obj1 = (JSONObject)csArray.get(i);
-			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
-	        {
-				String d = obj1.get("neirong").toString();
-				jarray.add(obj1);
-				if(d.indexOf(szbz) >= 0 || i == csArray.size() - 1) {
-					if(StringUtil.isNotEmpty(j.getString("szbz"))) {
-						if (i != csArray.size() - 1) {
-							jarray.remove(jarray.size()-1);
-						}
-						rsArray.add(j);
-						diGuiHz(i,rsArray,csArray);
-						break;
-					}
-					j.put("al", jarray);
-					j.put("szbz", "1");
-					continue;
-				}				
-	        }			
-			if (i == csArray.size() - 1) {
-				return rsArray;
-			}
-		}
-		return rsArray;
-	}
 	
 	
 }

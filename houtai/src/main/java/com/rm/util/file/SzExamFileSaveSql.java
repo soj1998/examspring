@@ -68,10 +68,12 @@ public class SzExamFileSaveSql {
 			}				
 			for (int i = 0;i < duanLuoZongshu ; i++) {
 				JSONObject jsonDuan = new JSONObject();
-				if("".equals(paras.get(i).getParagraphText())) {
+				String abc = paras.get(i).getParagraphText().trim();
+				abc = StringUtil.myTrim(abc);
+				if("".equals(abc)) {
 					continue;
 				}else {
-					jsonDuan.put("neirong", paras.get(i).getParagraphText().trim());
+					jsonDuan.put("neirong", abc);
 					jsonDuan.put("hangshu", i);
 					jsonDuanArray.add(jsonDuan);	
 				}

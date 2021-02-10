@@ -18,6 +18,7 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.entity.AtcSjk;
+import com.rm.util.StringUtil;
 
 public class FileSaveSql {
 
@@ -120,11 +121,12 @@ public class FileSaveSql {
 			JSONArray jsonDuanArray = new JSONArray();			
 			for (int i = 0;i < duanLuoZongshu ; i++) {
 				JSONObject jsonDuan = new JSONObject();
-				if("".equals(paras.get(i).getParagraphText())) {
-					//jsonDuan.put("neirong", "");
+				String abc = paras.get(i).getParagraphText().trim();
+				abc = StringUtil.myTrim(abc);
+				if("".equals(abc)) {
 					continue;
 				}else {
-					jsonDuan.put("neirong", paras.get(i).getParagraphText());
+					jsonDuan.put("neirong", abc);
 				}
 				String titleLvl = getDocTitleLvl(doc, paras.get(i));// 获取段落级别
 				jsonDuan.put("hangshu", i);
