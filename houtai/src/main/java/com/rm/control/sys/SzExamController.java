@@ -65,6 +65,14 @@ public class SzExamController {
     }
 	
 	@ResponseBody
+	@RequestMapping(value="/listdaicanzhanshi",method=RequestMethod.POST)
+    public List<ExamQue> listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("sid") int szid){    	
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamQue> list_glx=examQueDao.getexamquezhanshi(pageRequest,szid);
+		return list_glx;        
+    }
+	
+	@ResponseBody
 	@RequestMapping(value="/getcount")
     public Long listall2(){    	
 		return examQueDao.count();        

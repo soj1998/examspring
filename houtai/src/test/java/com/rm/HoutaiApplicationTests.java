@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
@@ -27,10 +29,10 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
-import com.rm.util.StringUtil;
+import com.rm.entity.linshi.Author;
 import com.rm.util.file.FileXiangGuan;
 
-
+@EnableTransactionManagement
 @SpringBootTest
 class HoutaiApplicationTests {
 	@Resource
@@ -86,7 +88,7 @@ class HoutaiApplicationTests {
 			System.out.println(abc2);
 			System.out.println(abc3);
 		}
-		System.out.println("11");
+		LOG.info("11");
 	}
 	
 
@@ -98,26 +100,21 @@ class HoutaiApplicationTests {
 	}
 	
 
-	
+	@Transactional
 	@Test
     public void test(){
-		String a = "　  三是  调整    ";
-		String ab = StringUtil.myTrim(a);
-		System.out.println(ab);
-		char[] abc = a.toCharArray();
-		for (char a1 :abc) {
-			System.out.println(a1);
-		}
-		//System.out.println("1---- " + a);
-		a = a.replaceAll(" +","");
-		//a = a.replace("  ","");
-		//a = a.replace("\u00A0", "");
-		abc = a.toCharArray();
-		for (char a1 :abc) {
-			System.out.println(a1);
-		}
-		//System.out.println("2---- " + a);
-		LOG.error("end");
+		for (int i = 1;i<10;i++) {
+			if (i!=5) {
+				Author au = new Author();
+				au.setName("abcd" + i);
+				authorDao.save(au);
+			}
+			if (i==5) {
+				Author au = new Author();
+				au.setName("abcd885444555552225544455214452144111444");
+				authorDao.save(au);
+			}
+		}		
     }
 	
 	

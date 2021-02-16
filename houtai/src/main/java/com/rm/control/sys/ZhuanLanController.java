@@ -61,9 +61,32 @@ public class ZhuanLanController {
     }
 	
 	@ResponseBody
+	@RequestMapping(value="/listdaicanzhanshi",method=RequestMethod.POST)
+    public List<ZhuanLan> listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("szid") int szid){    	
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ZhuanLan> list_glx=zhuanLanDao.getzlbybtidfuyizhanshi(pageRequest,szid);
+		return list_glx;        
+    }
+	
+	@ResponseBody
 	@RequestMapping(value="/getcount")
     public int listall2(){    	
 		return zhuanLanDao.getCountbybtidfuyi();        
+    }
+	
+	@ResponseBody
+	@RequestMapping(value="/getcountbysz")
+    public int listall5(@RequestParam("szid") int szid){    	
+		return zhuanLanDao.getCountbybtidfuyizhanshi(szid);        
+    }
+	
+	@ResponseBody
+	@RequestMapping(value="/getzlbyid",method=RequestMethod.POST)
+    public List<ZhuanLan> listall6(@RequestParam("tid") int glid){  
+		ZhuanLan zl = zhuanLanDao.findById(glid).get();    	
+    	List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
+    	zllist.add(zl);
+		return zllist;        
     }
 	
 	@ResponseBody

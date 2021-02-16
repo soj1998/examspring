@@ -23,8 +23,14 @@ public interface ZhuanLanDao extends JpaRepository<ZhuanLan, Integer>{
 	@Query(value = "select count(*) from t_zhuanlan where btid = -1 ",nativeQuery = true)
 	public int getCountbybtidfuyi();
 	
-	@Query(value = "select * from t_zhuanlan where btid = -1  order by id",nativeQuery = true)
+	@Query(value = "select count(*) from t_zhuanlan where btid = -1 and szid = :sid and yxbz ='Y' ",nativeQuery = true)
+	public int getCountbybtidfuyizhanshi(@Param("sid") int ssid);
+	
+	@Query(value = "select * from t_zhuanlan where btid = -1 order by id",nativeQuery = true)
 	public List<ZhuanLan> getzlbybtidfuyi(Pageable pageable);
+	
+	@Query(value = "select * from t_zhuanlan where btid = -1 and szid = :sid and yxbz ='Y' order by id",nativeQuery = true)
+	public List<ZhuanLan> getzlbybtidfuyizhanshi(Pageable pageable,@Param("sid") int ssid);
 	
 	@Query(value = "select * from t_zhuanlan where btid = :rid",nativeQuery = true)
 	public List<ZhuanLan> getzlbyid(@Param("rid") int rootid);

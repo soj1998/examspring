@@ -49,6 +49,10 @@ public class ZhuanLanFileSaveSql {
 		FileXiangGuan fileXiangGuan = new FileXiangGuan();
 		JSONArray jsonDuanArray = fileXiangGuan.transFiletoList(fileweizhi);
 		JSONArray hzarray = new JSONArray();
+		AtcSjk atcSjk = new AtcSjk();		
+		atcSjk.setFileweizhi(fileweizhi);
+		atcSjk.setWzlxid(wzlx);
+		Long atcid = atcSjkDao.save(atcSjk).getId();		
 		fileXiangGuan.diGuiHz(0,hzarray,jsonDuanArray,sz);
 		for (Object fd:hzarray) {
 			//Map<Integer,String> szlist = null;
@@ -90,22 +94,20 @@ public class ZhuanLanFileSaveSql {
 				continue;
 			}
 			Date lrsj = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-			AtcSjk atcSjk = new AtcSjk();
 			Date lrsj2 = null!=wddate?wddate:lrsj;
-			atcSjk.setLrsj(lrsj2);
-			atcSjk.setFileweizhi(fileweizhi);
+			//atcSjk.setLrsj(lrsj2);
+			//atcSjk.setFileweizhi(fileweizhi);
 			String sz1 = StringUtil.getMapString(szlist, sz);
 			Sz sza =szDao.findSzBymc(sz1);
 			if (null == sza) {
 				LOG.info("---税种错误，无法对应");
 				continue;
 			}
-			atcSjk.setSzid(sza.getId());
+			//atcSjk.setSzid(sza.getId());
 			atcSjk.setWzlxid(wzlx);
 			String ly = StringUtil.getMapString(laiyuanlist, laiyuan);
-			atcSjk.setWzlaiyuan(ly);
-			atcSjk.setYxbz("Y");
-			Long atcid = atcSjkDao.save(atcSjk).getId();
+			//atcSjk.setWzlaiyuan(ly);
+			//atcSjk.setYxbz("Y");
 			atcSjk.setId(atcid);				
 			String xl = StringUtil.getMapString(xilielist, xilie);
 			List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
@@ -131,6 +133,10 @@ public class ZhuanLanFileSaveSql {
 		        	if (StringUtil.isNotEmpty(a1)) {
 		        		if(hs == minhstimu) {
 		        			ZhuanLan zlan = new ZhuanLan(-1,hs,a1,xl,atcSjk);
+		        			zlan.setLrsj(lrsj2);
+		        			zlan.setWzlaiyuan(ly);
+		        			zlan.setSzid(sza.getId());
+		        			zlan.setYxbz("Y");
 		        			btid = zhuanLanDao.save(zlan).getId();
 		        		}
 		        	}
@@ -144,6 +150,10 @@ public class ZhuanLanFileSaveSql {
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs != minhstimu) {
 			        			ZhuanLan zlan = new ZhuanLan(btid,hs,a1,xl,atcSjk);
+			        			zlan.setLrsj(lrsj2);
+			        			zlan.setWzlaiyuan(ly);
+			        			zlan.setSzid(sza.getId());
+			        			zlan.setYxbz("Y");
 			        			zhuanLanDao.save(zlan).getId();
 			        		}
 			        	}

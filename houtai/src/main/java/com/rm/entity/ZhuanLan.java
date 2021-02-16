@@ -1,5 +1,7 @@
 package com.rm.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,6 +40,52 @@ public class ZhuanLan {
 	@Column(columnDefinition="int default -1")
     private int btid; //是标题的话 存入-1
      
+	@Column(length=1)
+    private String yxbz;
+	
+	@Column
+    private int szid;
+	
+	public String getYxbz() {
+		return yxbz;
+	}
+
+	public void setYxbz(String yxbz) {
+		this.yxbz = yxbz;
+	}
+
+	public int getSzid() {
+		return szid;
+	}
+
+	public void setSzid(int szid) {
+		this.szid = szid;
+	}
+
+	public String getWzlaiyuan() {
+		return wzlaiyuan;
+	}
+
+	public void setWzlaiyuan(String wzlaiyuan) {
+		this.wzlaiyuan = wzlaiyuan;
+	}
+
+	@Column
+    private Date lrsj;
+		
+
+	public Date getLrsj() {
+		return lrsj;
+	}
+
+	public void setLrsj(Date lrsj) {
+		this.lrsj = lrsj;
+	}
+
+
+
+	@Column(length=1000)
+    private String wzlaiyuan;
 
 	@ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
     @JoinColumn(name = "zhuanlanctoatcid",referencedColumnName = "id")

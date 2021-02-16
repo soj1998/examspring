@@ -46,9 +46,9 @@ public class ExamQue {
     private String examque;
     
     @Column(length=1)
-    private String yxbz;
-	
-    @ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
+    private String yxbz;	
+    
+	@ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
   	@JoinColumn(name = "atcexamqueid",referencedColumnName = "id")
   	private AtcSjk atcSjk;
 	
