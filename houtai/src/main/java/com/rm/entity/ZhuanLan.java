@@ -82,6 +82,17 @@ public class ZhuanLan {
 		this.lrsj = lrsj;
 	}
 
+	@Column(length=200)
+    private String zlzsd;
+
+	public String getZlzsd() {
+		return zlzsd;
+	}
+
+	public void setZlzsd(String zlzsd) {
+		this.zlzsd = zlzsd;
+	}
+
 
 
 	@Column(length=1000)

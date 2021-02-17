@@ -30,6 +30,7 @@ public class ZhuanLanFileSaveSql {
 
 	
 	private String sz = "【税种】";
+	private String zsd = "【知识点】";
 	private String laiyuan = "【来源】";
 	private String riqi = "【日期】";
 	private String xilie = "【系列】";
@@ -71,16 +72,19 @@ public class ZhuanLanFileSaveSql {
 				}
 			}
 			int[] sz_qz = getpanDuanGuiShuDian("sz",arr,maxhangshu);
+			int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
 			int[] laiyuan_qz = getpanDuanGuiShuDian("laiyuan",arr,maxhangshu);
 			int[] riqi_qz = getpanDuanGuiShuDian("riqi",arr,maxhangshu);
 			int[] xilie_qz = getpanDuanGuiShuDian("xilie",arr,maxhangshu);
 			int[] zhengwen_qz = getpanDuanGuiShuDian("zhengwen",arr,maxhangshu);
 			Map<Integer,String> szlist = getGuiShu(sz_qz,arr);
+			Map<Integer,String> zsdlist = getGuiShu(zsd_qz,arr);
 			Map<Integer,String> laiyuanlist = getGuiShu(laiyuan_qz,arr);
 			Map<Integer,String> riqilist = getGuiShu(riqi_qz,arr);
 			Map<Integer,String> xilielist = getGuiShu(xilie_qz,arr);
 			Map<Integer,String> zwlist = getGuiShu(zhengwen_qz,arr);
 			String riqi2 = StringUtil.getMapString(riqilist, riqi);
+			String zsd2 = StringUtil.getMapString(zsdlist, zsd);
 			riqi2 = riqi2.replace("年", "-").replace("月", "-").replace("日", "");
 			Date wddate = null;
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -137,6 +141,7 @@ public class ZhuanLanFileSaveSql {
 		        			zlan.setWzlaiyuan(ly);
 		        			zlan.setSzid(sza.getId());
 		        			zlan.setYxbz("Y");
+		        			zlan.setZlzsd(zsd2);
 		        			btid = zhuanLanDao.save(zlan).getId();
 		        		}
 		        	}
@@ -154,6 +159,7 @@ public class ZhuanLanFileSaveSql {
 			        			zlan.setWzlaiyuan(ly);
 			        			zlan.setSzid(sza.getId());
 			        			zlan.setYxbz("Y");
+			        			zlan.setZlzsd(zsd2);
 			        			zhuanLanDao.save(zlan).getId();
 			        		}
 			        	}
@@ -187,6 +193,25 @@ public class ZhuanLanFileSaveSql {
 							}
 							return new int[] {ksd,jsd};
 						}						
+					}
+				}
+				break;
+			}
+			case "zsd":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(zsd)>= 0) {
+							ksd = jb.getIntValue("hangshu");
+						}
+						if (gets.indexOf(laiyuan)>= 0) {
+							jsd = jb.getIntValue("hangshu");
+							if (jsd-ksd > 0) {
+								jsd = jsd -1;
+							}
+							return new int[] {ksd,jsd};
+						}
 					}
 				}
 				break;
