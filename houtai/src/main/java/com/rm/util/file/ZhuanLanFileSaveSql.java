@@ -93,7 +93,7 @@ public class ZhuanLanFileSaveSql {
 				ZonedDateTime zonedDateTime = wddate2.atStartOfDay(ZoneId.systemDefault());
 				wddate = Date.from(zonedDateTime.toInstant());
 			} catch (DateTimeException e) {
-				LOG.info("---时间转换错误，跳过");				
+				LOG.info("---时间转换错误，跳过，输入的时间" + riqi2);				
 				e.printStackTrace();
 				continue;
 			}
@@ -104,7 +104,7 @@ public class ZhuanLanFileSaveSql {
 			String sz1 = StringUtil.getMapString(szlist, sz);
 			Sz sza =szDao.findSzBymc(sz1);
 			if (null == sza) {
-				LOG.info("---税种错误，无法对应");
+				LOG.info("---税种错误，无法对应，输入的税种" + sz1);
 				continue;
 			}
 			//atcSjk.setSzid(sza.getId());
@@ -179,25 +179,55 @@ public class ZhuanLanFileSaveSql {
 		boolean czxl = false;
 		switch(pdKey) {
 			case "sz":{
+				int szbz = 0;
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(zsd)>= 0) {
+							szbz = 1;
+						}						
+					}
+				}
 				for (Object fd:crArray) {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
 						if (gets.indexOf(sz)>= 0) {
 							ksd = jb.getIntValue("hangshu");
-						}
-						if (gets.indexOf(laiyuan)>= 0) {
+						}						
+						if (szbz == 0 && gets.indexOf(laiyuan)>= 0) {
 							jsd = jb.getIntValue("hangshu");
 							if (jsd-ksd > 0) {
 								jsd = jsd -1;
 							}
 							return new int[] {ksd,jsd};
-						}						
+						}
+						if (szbz == 1 && gets.indexOf(zsd)>= 0) {
+							jsd = jb.getIntValue("hangshu");
+							if (jsd-ksd > 0) {
+								jsd = jsd -1;
+							}
+							return new int[] {ksd,jsd};
+						}
+												
 					}
 				}
 				break;
 			}
 			case "zsd":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(zsd)>= 0) {
+							czxl = true;
+						}						
+					}
+				}
+				if (!czxl) {
+					return new int[] {-1,-1};
+				}
 				for (Object fd:crArray) {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
