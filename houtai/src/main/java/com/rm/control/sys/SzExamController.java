@@ -30,7 +30,7 @@ import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
-import com.rm.service.SzExamService;
+import com.rm.service.impl.SzExamServiceImpl;
 import com.rm.util.SimCalculator;
 import com.rm.util.StringUtil;
 import com.rm.util.file.SzExamFileSaveSql;
@@ -54,7 +54,7 @@ public class SzExamController {
 	@Resource
     private ExamChoiZongHeDao examChoiZongHeDao;
 	@Resource
-	private SzExamService examQueService;
+	private SzExamServiceImpl examQueService;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzExamController.class);
 	
@@ -111,7 +111,7 @@ public class SzExamController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
 	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
-	    szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueDao, examChoiDao, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
+	    szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueService, examChoiDao, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
 	    return result + "update jieguo ";
 	    
 	}

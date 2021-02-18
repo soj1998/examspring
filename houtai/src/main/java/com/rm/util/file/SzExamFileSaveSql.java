@@ -23,7 +23,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
-import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.entity.AtcSjk;
@@ -32,6 +31,7 @@ import com.rm.entity.ExamChoiZongHe;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
+import com.rm.service.impl.SzExamServiceImpl;
 import com.rm.util.StringUtil;
 
 
@@ -432,7 +432,7 @@ public class SzExamFileSaveSql {
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(AtcSjkDao atcSjkDao,ExamQueDao examQueDao,ExamChoiDao examChoiDao,ExamQueZongHeDaDao examQueZongHeDaDao,ExamQueZongHeXiaoDao examQueZongHeXiaoDao,ExamChoiZongHeDao examChoiZongHeDao,
+	public void asoneinsertToSql(AtcSjkDao atcSjkDao,SzExamServiceImpl examQueService,ExamChoiDao examChoiDao,ExamQueZongHeDaDao examQueZongHeDaDao,ExamQueZongHeXiaoDao examQueZongHeXiaoDao,ExamChoiZongHeDao examChoiZongHeDao,
 			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
@@ -477,12 +477,16 @@ public class SzExamFileSaveSql {
 				jiexilist = getGuiShu(jiexi_qz,arr);
 				ExamQue examQue = new ExamQue(fid,shuizhong,zsdlist,timulist,"Y",lrsj,daanlist,jiexilist);
 				try{
-					examQueDao.save(examQue);
+					ExamQue examQue2 = examQueService.save(examQue);
+					if (null == examQue2) {
+						LOG.error("添加ExamQue 失败!,问题已存在");
+						continue;
+					}
+					saveExamChoi(examChoiDao,examQue2,xuanxianglist); 
 		        }catch (Exception e){
 		            LOG.error("添加examQueDao 失败!"+e.getMessage());
 		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
-		        }
-				saveExamChoi(examChoiDao,examQue,xuanxianglist); 
+		        }				
 			} else {
 				JSONArray hzzharray = new JSONArray();
 				diGuiHzZhsy(0,hzzharray,arr);

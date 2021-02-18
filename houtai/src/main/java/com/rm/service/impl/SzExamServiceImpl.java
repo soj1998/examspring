@@ -1,25 +1,38 @@
 package com.rm.service.impl;
 
+import java.util.List;
 import javax.annotation.Resource;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.entity.ExamQue;
-import com.rm.service.SzExamService;
+import com.rm.util.SimCalculator;
 
-@Service("examService")
-public class SzExamServiceImpl implements SzExamService  {
+
+@Service
+public class SzExamServiceImpl{
 	@Resource
     private AtcSjkDao atcSjkDao; 	
 	@Resource
     private ExamQueDao examQueDao;
 	@Resource
     private ExamChoiDao examChoiDao;
-	@Override
+	
+	private static final Logger LOG = LoggerFactory.getLogger(SzExamServiceImpl.class);
+	
 	public ExamQue save(ExamQue examQue) {
+		SimCalculator sc=new SimCalculator();
+		List<ExamQue> szall=examQueDao.findAll();
+    	for(ExamQue b:szall) {    		
+			double bl=sc.calculate(b.getExamque(), examQue.getExamque(), 40);    
+    		if(bl>0.8) {
+    			LOG.info("already have same question");
+    			return null;  			
+    		}
+    	}    	
 		ExamQue rs = examQueDao.save(examQue);
 		return rs;
 	}
