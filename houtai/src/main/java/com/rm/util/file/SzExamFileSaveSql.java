@@ -20,10 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.rm.dao.AtcSjkDao;
-import com.rm.dao.ExamChoiZongHeDao;
-import com.rm.dao.ExamQueZongHeDaDao;
-import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.entity.AtcSjk;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
@@ -115,7 +111,7 @@ public class SzExamFileSaveSql {
         }
 	}
 	
-	private void saveExamZongHeXiaoChoi(ExamChoiZongHeDao examChoiZongHeDao,ExamQueZongHeXiao examQueZongHeXiao, Map<Integer,String> map) {
+	private void saveExamZongHeXiaoChoi(SzExamServiceImpl examQueService,ExamQueZongHeXiao examQueZongHeXiao, Map<Integer,String> map) {
 		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
         Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
@@ -129,7 +125,7 @@ public class SzExamFileSaveSql {
         	if (StringUtil.isNotEmpty(a)) {
         		ExamChoiZongHe examChoi = new ExamChoiZongHe(a,examQueZongHeXiao);
         		try{
-        			examChoiZongHeDao.save(examChoi);
+        			examQueService.saveExamChoiZongHe(examChoi);
 		        }catch (Exception e){
 		            LOG.error("添加examChoiZongHeDao 失败!"+e.getMessage());
 		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
@@ -431,7 +427,7 @@ public class SzExamFileSaveSql {
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(AtcSjkDao atcSjkDao,SzExamServiceImpl examQueService,ExamQueZongHeDaDao examQueZongHeDaDao,ExamQueZongHeXiaoDao examQueZongHeXiaoDao,ExamChoiZongHeDao examChoiZongHeDao,
+	public void asoneinsertToSql(SzExamServiceImpl examQueService,
 			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
@@ -446,7 +442,7 @@ public class SzExamFileSaveSql {
 		asjk.setWzlxid(wzlx);
 		asjk.setWzlaiyuan(wzlaiyuan);
 		asjk.setYxbz("Y");
-		AtcSjk fid = atcSjkDao.save(asjk);
+		AtcSjk fid = examQueService.saveAtcSjk(asjk);
 		JSONArray yuanshiarray =fileToDuanLuo(fileweizhi);
 		JSONArray hzarray = new JSONArray();
 		diGuiHz(0,hzarray,yuanshiarray);
@@ -508,7 +504,11 @@ public class SzExamFileSaveSql {
 					if(zhdatimulist.size()>0) {
 						examQueda = new ExamQueZongHeDa(fid,shuizhong,zhzsdlist,zhdatimulist,"Y",lrsj);
 						try{
-							examQueZongHeDaDao.save(examQueda);
+							ExamQueZongHeDa examQueda2 = examQueService.saveExamQueZongHeDa(examQueda);
+							if(null == examQueda2) {
+								LOG.error("添加ExamQueZongHeDa 失败!,问题已存在");
+								continue;
+							}
 							dadecunhao = true;
 				        }catch (Exception e){
 				            LOG.error("添加examQueZongHeDaDao 失败!"+e.getMessage());
@@ -543,12 +543,12 @@ public class SzExamFileSaveSql {
 						zhjiexilist = getGuiShu(jiexi_qz1,arr1);
 						ExamQueZongHeXiao examQueXiao = new ExamQueZongHeXiao(zhtimulist,zhdaanlist,zhjiexilist,examQueda);
 						try{
-							examQueZongHeXiaoDao.save(examQueXiao);
+							examQueService.saveExamQueZongHeXiao(examQueXiao);
 				        }catch (Exception e){
 				            LOG.error("添加examQueZongHeXiaoDao 失败!"+e.getMessage());
 				            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
 				        }						
-						saveExamZongHeXiaoChoi(examChoiZongHeDao,examQueXiao,zhxuanxianglist); 
+						saveExamZongHeXiaoChoi(examQueService,examQueXiao,zhxuanxianglist); 
 					}
 				}
 			}
