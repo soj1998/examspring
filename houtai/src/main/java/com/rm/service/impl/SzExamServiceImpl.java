@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamQueDao;
+import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
 import com.rm.util.SimCalculator;
 
@@ -23,7 +24,7 @@ public class SzExamServiceImpl{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzExamServiceImpl.class);
 	
-	public ExamQue save(ExamQue examQue) {
+	public ExamQue saveExamQue(ExamQue examQue) {
 		SimCalculator sc=new SimCalculator();
 		List<ExamQue> szall=examQueDao.findAll();
     	for(ExamQue b:szall) {    		
@@ -34,6 +35,11 @@ public class SzExamServiceImpl{
     		}
     	}    	
 		ExamQue rs = examQueDao.save(examQue);
+		return rs;
+	}
+	
+	public ExamChoi saveExamChoi(ExamChoi examChoi) {		    	
+		ExamChoi rs = examChoiDao.save(examChoi);
 		return rs;
 	}
 

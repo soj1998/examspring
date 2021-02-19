@@ -111,7 +111,7 @@ public class SzExamController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
 	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
-	    szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueService, examChoiDao, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
+	    szExamFileSaveSql.asoneinsertToSql(atcSjkDao,examQueService, examQueZongHeDaDao,examQueZongHeXiaoDao,examChoiZongHeDao,path + up.getUrl(), wzlx, sz,wzlaiyuan);
 	    return result + "update jieguo ";
 	    
 	}

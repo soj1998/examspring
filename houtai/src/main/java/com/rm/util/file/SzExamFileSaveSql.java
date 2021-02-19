@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
-import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
@@ -93,7 +92,7 @@ public class SzExamFileSaveSql {
 		return jsonDuanArray;
 	}
 	
-	private void saveExamChoi(ExamChoiDao examChoiDao,ExamQue examQue, Map<Integer,String> map) {
+	private void saveExamChoi(SzExamServiceImpl examQueService, ExamQue examQue, Map<Integer,String> map) {
 		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
         Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
@@ -107,7 +106,7 @@ public class SzExamFileSaveSql {
         	if (StringUtil.isNotEmpty(a)) {
         		ExamChoi examChoi = new ExamChoi(a,examQue);        		
         		try{
-        			examChoiDao.save(examChoi);
+        			examQueService.saveExamChoi(examChoi);
 		        }catch (Exception e){
 		            LOG.error("添加examChoiDao 失败!"+e.getMessage());
 		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
@@ -432,7 +431,7 @@ public class SzExamFileSaveSql {
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(AtcSjkDao atcSjkDao,SzExamServiceImpl examQueService,ExamChoiDao examChoiDao,ExamQueZongHeDaDao examQueZongHeDaDao,ExamQueZongHeXiaoDao examQueZongHeXiaoDao,ExamChoiZongHeDao examChoiZongHeDao,
+	public void asoneinsertToSql(AtcSjkDao atcSjkDao,SzExamServiceImpl examQueService,ExamQueZongHeDaDao examQueZongHeDaDao,ExamQueZongHeXiaoDao examQueZongHeXiaoDao,ExamChoiZongHeDao examChoiZongHeDao,
 			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
@@ -477,12 +476,12 @@ public class SzExamFileSaveSql {
 				jiexilist = getGuiShu(jiexi_qz,arr);
 				ExamQue examQue = new ExamQue(fid,shuizhong,zsdlist,timulist,"Y",lrsj,daanlist,jiexilist);
 				try{
-					ExamQue examQue2 = examQueService.save(examQue);
+					ExamQue examQue2 = examQueService.saveExamQue(examQue);
 					if (null == examQue2) {
 						LOG.error("添加ExamQue 失败!,问题已存在");
 						continue;
 					}
-					saveExamChoi(examChoiDao,examQue2,xuanxianglist); 
+					saveExamChoi(examQueService,examQue2,xuanxianglist); 
 		        }catch (Exception e){
 		            LOG.error("添加examQueDao 失败!"+e.getMessage());
 		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
