@@ -26,7 +26,7 @@ import com.rm.entity.ExamChoiZongHe;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
-import com.rm.service.impl.SzExamServiceImpl;
+import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 
 
@@ -88,7 +88,7 @@ public class SzExamFileSaveSql {
 		return jsonDuanArray;
 	}
 	
-	private void saveExamChoi(SzExamServiceImpl examQueService, ExamQue examQue, Map<Integer,String> map) {
+	private void saveExamChoi(SaveServiceImpl examQueService, ExamQue examQue, Map<Integer,String> map) {
 		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
         Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
@@ -111,7 +111,7 @@ public class SzExamFileSaveSql {
         }
 	}
 	
-	private void saveExamZongHeXiaoChoi(SzExamServiceImpl examQueService,ExamQueZongHeXiao examQueZongHeXiao, Map<Integer,String> map) {
+	private void saveExamZongHeXiaoChoi(SaveServiceImpl examQueService,ExamQueZongHeXiao examQueZongHeXiao, Map<Integer,String> map) {
 		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
         Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
@@ -427,7 +427,7 @@ public class SzExamFileSaveSql {
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(SzExamServiceImpl examQueService,
+	public void asoneinsertToSql(SaveServiceImpl examQueService,
 			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空

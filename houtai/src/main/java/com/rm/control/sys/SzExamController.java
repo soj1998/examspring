@@ -30,7 +30,7 @@ import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
-import com.rm.service.impl.SzExamServiceImpl;
+import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.SimCalculator;
 import com.rm.util.StringUtil;
 import com.rm.util.file.SzExamFileSaveSql;
@@ -54,7 +54,7 @@ public class SzExamController {
 	@Resource
     private ExamChoiZongHeDao examChoiZongHeDao;
 	@Resource
-	private SzExamServiceImpl examQueService;
+	private SaveServiceImpl examQueService;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzExamController.class);
 	

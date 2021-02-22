@@ -21,7 +21,7 @@ import com.rm.util.SimCalculator;
 
 
 @Service
-public class SzExamServiceImpl{
+public class SaveServiceImpl{
 	@Resource
     private AtcSjkDao atcSjkDao; 	
 	@Resource
@@ -35,7 +35,7 @@ public class SzExamServiceImpl{
 	@Resource
     private ExamChoiZongHeDao examChoiZongHeDao;
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SzExamServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SaveServiceImpl.class);
 	
 	public AtcSjk saveAtcSjk(AtcSjk atcSjk) {		    	
 		AtcSjk rs = atcSjkDao.save(atcSjk);
