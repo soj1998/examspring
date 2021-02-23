@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class StringUtil {
@@ -404,5 +403,32 @@ public class StringUtil {
     	String abc2 = removeTailSpace(abc);
     	return abc2;
     }
-     
+    
+    /**
+     *转换题目类型，方便保存
+     *
+     */
+    public static String[] getXiTiLeiXingZw() {
+    	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】"};
+    }
+    public static String[] getXiTiLeiXingZwYouXuanXiang() {
+    	return new String[] {"【单选题】","【多选题】","【判断题】"};
+    }
+    public static String[] getXiTiLeiXingYw() {
+    	return new String[] {"danxuan","duoxuan","jisuan","zonghe","panduan","jianda","mcjieshi"};
+    }
+    public static String[] getXuanXiangBz() {
+    	return new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
+    }
+    public static String transExamXiTiLeiXing(String crstr) {
+    	String rs ="weizhi";
+    	String[] timu = getXiTiLeiXingZw();
+    	for(int i = 0; i < timu.length; i++) {
+			if (StringUtil.isNotEmpty(crstr) && crstr.indexOf(timu[i])>=0) {
+				rs = getXiTiLeiXingYw()[i];
+				break;
+			}
+		}
+    	return rs;
+    }
 }

@@ -2,12 +2,9 @@ package com.rm.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -129,13 +126,25 @@ public class ExamQue {
 		this.examanal = examanal;
 	}
 
-	@Column(length=1200)
+	@Column(length=2400)
     private String examans; 
     
-    @Column(length=50)
+	@Column(length=100)
+    private String examxuanxiangans; 
+    
+	
+    public String getExamxuanxiangans() {
+		return examxuanxiangans;
+	}
+
+	public void setExamxuanxiangans(String examxuanxiangans) {
+		this.examxuanxiangans = examxuanxiangans;
+	}
+
+	@Column(length=50)
     private String examtype; 
     
-    @Column(length=600)
+    @Column(length=1200)
     private String examanal;
     
    
@@ -157,18 +166,16 @@ public class ExamQue {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
-		this.zzd = getMapString(zzd);
-		this.examque = getMapString(examque);
+		this.zzd = StringUtil.getMapString(zzd,zsd);
+		List<String> list=new ArrayList<String>();
+		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
+		this.examque = StringUtil.getMapString(examque,list);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
-		this.examans = getMapString(examans);
+		this.examans = StringUtil.getMapString(examans,daan);
 		this.setWentiLeiXing(examque);
-		this.examanal = getMapString(examanal);
+		this.examanal = StringUtil.getMapString(examanal,jiexi);
 	}
-	@Transient
-	private String[] timu = new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】"};
-	@Transient
-	private String[] timuleixing = new String[] {"danxuan","duoxuan","jisuan","zonghe","panduan"};
 	@Transient
 	private String zsd = "【知识点】";
 	@Transient
@@ -181,54 +188,17 @@ public class ExamQue {
 		for (Map.Entry<Integer, String> entry : map.entrySet()) {
             System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
             String a = entry.getValue();
-			for(int i = 0; i < timu.length; i++) {
-				if (StringUtil.isNotEmpty(a) && a.indexOf(timu[i])>=0) {
-					this.setExamtype(timuleixing[i]);
-					return;
-				}
-			}
+            this.setExamtype(StringUtil.transExamXiTiLeiXing(a));
+			return;
         }		
 		this.setExamtype(rs);
-	}
-	
-	private String getMapString(Map<Integer,String> map) {
-		StringBuilder sb = new StringBuilder();		
-		//这里将map.entrySet转换为List
-        List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
-        //然后通过比较器来实现排序
-        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
-            //升序排序
-            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
-                return o1.getKey().compareTo(o2.getKey());
-            }
-        });
-        for(Map.Entry<Integer,String> mapping:list){
-        	String a = mapping.getValue();
-        	for(String tm:this.timu) {
-        		a = a.replaceAll(tm, "");
-			}
-        	a = a.replaceAll(this.zsd, "");
-        	a = a.replaceAll(this.daan, "");
-        	a = a.replaceAll(this.jiexi, "");
-        	if (StringUtil.isNotEmpty(a)) {
-        		sb = sb.append(a);
-        	}
-       } 
-		return sb.toString();
-	}
+	}	
 	
 	public ExamQue() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public String toString() {
-		return "ExamQue [id=" + id + ", szid=" + szid + ", zzd=" + zzd + ", examque=" + examque + ", yxbz=" + yxbz
-				+ ", atcSjk=" + atcSjk + ", lrsj=" + lrsj + ", examans=" + examans + ", examtype=" + examtype
-				+ ", examanal=" + examanal + ", timu=" + Arrays.toString(timu) + ", timuleixing="
-				+ Arrays.toString(timuleixing) + ", zsd=" + zsd + ", daan=" + daan + ", jiexi=" + jiexi + "]";
-	}
-    
+	
     
 }

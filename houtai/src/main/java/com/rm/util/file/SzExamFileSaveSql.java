@@ -33,8 +33,6 @@ import com.rm.util.StringUtil;
 public class SzExamFileSaveSql {
 
 	
-	private String[] timu = new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】"};
-	private String[] xuanxiang = new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
 	private String zsd = "【知识点】";
 	private String wdjs = "【结束】";
 	private String zongheti = "【综合题】";
@@ -165,7 +163,7 @@ public class SzExamFileSaveSql {
 						if (gets.indexOf(zsd)>= 0) {
 							ksd = jb.getIntValue("hangshu");
 						}
-						for(String tm:timu) {
+						for(String tm:StringUtil.getXiTiLeiXingZw()) {
 							if (gets.indexOf(tm)>= 0) {
 								jsd = jb.getIntValue("hangshu");
 								if (jsd-ksd > 0) {
@@ -186,7 +184,7 @@ public class SzExamFileSaveSql {
 						if (gets.indexOf(zongheti)>= 0) {
 							ksd = jb.getIntValue("hangshu");
 						}
-						for(String tm:timu) {
+						for(String tm:StringUtil.getXiTiLeiXingZw()) {
 							if(tm.equals(zongheti)) {
 								continue;
 							}
@@ -227,14 +225,14 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");						
-						for(String tm:timu) {
+						for(String tm:StringUtil.getXiTiLeiXingZw()) {
 							if (gets.indexOf(tm)>= 0) {
 								ksd = jb.getIntValue("hangshu");
 								break;
 							}
 						}
 						if (sfcz) {
-							for(String tm:xuanxiang) {
+							for(String tm:StringUtil.getXuanXiangBz()) {
 								if (gets.indexOf(tm)>= 0) {
 									jsd = jb.getIntValue("hangshu");
 									if (jsd-ksd > 0) {
@@ -258,19 +256,18 @@ public class SzExamFileSaveSql {
 			}
 			case "xuanxiang":{
 				boolean sfcz = false;
+				boolean sfcz1 =false;
 				for (Object fd:crArray) {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						if (gets.indexOf("【单选题】")>= 0) {
-							sfcz = true;
-							break;
+						for (String abc: StringUtil.getXiTiLeiXingZwYouXuanXiang()) {
+							if (gets.indexOf(abc)>= 0) {
+								sfcz1 = true;
+								break;
+							}
 						}
-						if (gets.indexOf("【多选题】")>= 0) {
-							sfcz = true;
-							break;
-						}
-						if (gets.indexOf("【判断题】")>= 0) {
+						if (sfcz1) {
 							sfcz = true;
 							break;
 						}
@@ -281,7 +278,7 @@ public class SzExamFileSaveSql {
 						JSONObject jb = (JSONObject)fd;
 						if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 							String gets = jb.getString("neirong");
-							if (gets.indexOf(xuanxiang[0])>= 0) {
+							if (gets.indexOf(StringUtil.getXuanXiangBz()[0])>= 0) {
 								ksd = jb.getIntValue("hangshu");
 							}
 							if (gets.indexOf(daan)>= 0) {								
@@ -396,7 +393,7 @@ public class SzExamFileSaveSql {
 	        {
 				String d = obj1.get("neirong").toString();
 				jarray.add(obj1);
-				for(String tm:timu) {
+				for(String tm:StringUtil.getXiTiLeiXingZw()) {
 					if (d.indexOf(tm)>= 0 || i == csArray.size() - 1) {
 						if(StringUtil.isNotEmpty(j.getString("zh"))) {
 							if (i != csArray.size() - 1) {
