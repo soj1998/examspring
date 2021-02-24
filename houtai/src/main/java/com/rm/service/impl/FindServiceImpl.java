@@ -11,12 +11,13 @@ import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
-import com.rm.entity.AtcSjk;
+import com.rm.dao.ExamZsdDao;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
+import com.rm.entity.ExamZsd;
 import com.rm.util.SimCalculator;
 
 
@@ -35,10 +36,13 @@ public class FindServiceImpl{
 	@Resource
     private ExamChoiZongHeDao examChoiZongHeDao;
 	
+	@Resource
+    private ExamZsdDao examZsdDao;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(FindServiceImpl.class);
 	
-	public AtcSjk saveAtcSjk(AtcSjk atcSjk) {		    	
-		AtcSjk rs = atcSjkDao.save(atcSjk);
+	public List<ExamZsd> findExamZsdYi(ExamZsd examZsd) {		    	
+		List<ExamZsd> rs = examZsdDao.getZsdYiJi();
 		return rs;
 	}
 	
@@ -46,7 +50,7 @@ public class FindServiceImpl{
 		SimCalculator sc=new SimCalculator();
 		List<ExamQue> szall=examQueDao.findAll();
     	for(ExamQue b:szall) {    		
-			double bl=sc.calculate(b.getExamque(), examQue.getExamque(), 40);    
+			double bl=sc.calculate(b.getQue(), examQue.getQue(), 40);    
     		if(bl>0.8) {
     			LOG.info("already have same question");
     			return null;  			

@@ -40,7 +40,7 @@ public class ExamQue {
     private String zzd;
      
     @Column(length=1200)
-    private String examque;
+    private String que;
     
     @Column(length=1)
     private String yxbz;	
@@ -94,12 +94,12 @@ public class ExamQue {
 		this.zzd = zzd;
 	}
 
-	public String getExamque() {
-		return examque;
+	public String getQue() {
+		return que;
 	}
 
-	public void setExamque(String examque) {
-		this.examque = examque;
+	public void setQue(String que) {
+		this.que = que;
 	}
 
 	
@@ -112,32 +112,26 @@ public class ExamQue {
 		this.examtype = examtype;
 	}
 
-	public String getExamanal() {
-		return examanal;
-	}
-
-	public void setExamanal(String examanal) {
-		this.examanal = examanal;
-	}
+	
 
     
 	@Column(length=100)
-    private String examxuanxiangans; 
+    private String ans; 
     
 	
-    public String getExamxuanxiangans() {
-		return examxuanxiangans;
+    public String getAns() {
+		return ans;
 	}
 
-	public void setExamxuanxiangans(String examxuanxiangans) {
-		this.examxuanxiangans = examxuanxiangans;
+	public void setAns(String ans) {
+		this.ans = ans;
 	}
 
 	@Column(length=50)
     private String examtype; 
     
     @Column(length=1200)
-    private String examanal;
+    private String jiexi;
     
    
     
@@ -146,11 +140,11 @@ public class ExamQue {
 		super();
 		this.szid = szid;
 		this.zzd = zzd;
-		this.examque = examque;
+		this.que = examque;
 		this.yxbz = yxbz;
-		this.examxuanxiangans = examans;
+		this.ans = examans;
 		this.examtype = examtype;
-		this.examanal = examanal;
+		this.jiexi = examanal;
 	}
 
 	public ExamQue(AtcSjk fid,Integer szid, Map<Integer,String> zzd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
@@ -161,20 +155,28 @@ public class ExamQue {
 		this.zzd = StringUtil.getMapString(zzd,zsd);
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
-		this.examque = StringUtil.getMapString(examque,list);
+		this.que = StringUtil.getMapString(examque,list);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
-		this.examxuanxiangans = StringUtil.getMapString(examans,daan);
+		this.ans = StringUtil.getMapString(examans,daan);
 		this.setWentiLeiXing(examque);
-		this.examanal = StringUtil.getMapString(examanal,jiexi);
+		this.jiexi = StringUtil.getMapString(examanal,jiexi2);
 	}
 	@Transient
 	private String zsd = "【知识点】";
 	@Transient
 	private String daan = "【答案】";
 	@Transient
-	private String jiexi = "【解析】";
+	private String jiexi2 = "【解析】";
 	
+	public String getJiexi() {
+		return jiexi;
+	}
+
+	public void setJiexi(String jiexi) {
+		this.jiexi = jiexi;
+	}
+
 	private void setWentiLeiXing(Map<Integer,String> map) {
 		String rs = "weizhi";
 		for (Map.Entry<Integer, String> entry : map.entrySet()) {
@@ -188,7 +190,6 @@ public class ExamQue {
 	
 	public ExamQue() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	

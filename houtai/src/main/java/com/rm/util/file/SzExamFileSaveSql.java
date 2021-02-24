@@ -431,6 +431,7 @@ public class SzExamFileSaveSql {
 		//对数据的长度 最好是有个更为友好的提示 比如 题目的长度 答案 或者解析的长度
 		//对上次提交的数据 可以批量删除
 		//增加题目的验证 已经有的题目就不存了
+		//多选 判断 单选 以外的题 放到 examansda 里面
 		AtcSjk asjk =new AtcSjk();
 		asjk.setFileweizhi(fileweizhi);
 		Date lrsj = Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant());

@@ -6,17 +6,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.rm.dao.AtcSjkDao;
+import com.rm.dao.ExamAnsDaDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
+import com.rm.dao.ExamZsdDao;
 import com.rm.entity.AtcSjk;
+import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
+import com.rm.entity.ExamZsd;
 import com.rm.util.SimCalculator;
 
 
@@ -35,6 +39,11 @@ public class SaveServiceImpl{
 	@Resource
     private ExamChoiZongHeDao examChoiZongHeDao;
 	
+	@Resource
+    private ExamAnsDaDao examAnsDaDao;
+	@Resource
+    private ExamZsdDao examZsdDao;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(SaveServiceImpl.class);
 	
 	public AtcSjk saveAtcSjk(AtcSjk atcSjk) {		    	
@@ -46,13 +55,41 @@ public class SaveServiceImpl{
 		SimCalculator sc=new SimCalculator();
 		List<ExamQue> szall=examQueDao.findAll();
     	for(ExamQue b:szall) {    		
-			double bl=sc.calculate(b.getExamque(), examQue.getExamque(), 40);    
+			double bl=sc.calculate(b.getQue(), examQue.getQue(), 40);    
     		if(bl>0.8) {
     			LOG.info("already have same question");
     			return null;  			
     		}
     	}    	
 		ExamQue rs = examQueDao.save(examQue);
+		return rs;
+	}
+	
+	public ExamZsd saveExamZsd(ExamZsd examZsd) {
+		List<ExamZsd> zsdList =  examZsdDao.getZsdByNeiRong(examZsd.getNeirong());
+		if (zsdList.size() > 0) {
+			ExamZsd fu = zsdList.get(0);
+			examZsd.setSjid(fu.getId());
+			examZsd.setJibie(fu.getJibie() +1);
+		} else {
+			examZsd.setSjid(-1L);
+			examZsd.setJibie(1);
+		}
+		ExamZsd rs = examZsdDao.save(examZsd);
+		return rs;
+	}
+	
+	public ExamAnsDa saveExamAnsDa(ExamAnsDa eExamAnsDa) {
+		SimCalculator sc=new SimCalculator();
+		List<ExamAnsDa> szall=examAnsDaDao.findAll();
+    	for(ExamAnsDa b:szall) {    		
+			double bl=sc.calculate(b.getQue(), eExamAnsDa.getQue(), 40);    
+    		if(bl>0.8) {
+    			LOG.info("already have same question");
+    			return null;  			
+    		}
+    	}    	
+    	ExamAnsDa rs = examAnsDaDao.save(eExamAnsDa);
 		return rs;
 	}
 	

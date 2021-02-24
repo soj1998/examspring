@@ -28,7 +28,7 @@ public class ExamZsd implements Serializable{
 	@Column(length=50)
 	private String neirong;
 	
-	private int sjid;
+	private Long sjid;
 
 	public Long getId() {
 		return id;
@@ -54,11 +54,11 @@ public class ExamZsd implements Serializable{
 		this.neirong = neirong;
 	}
 
-	public int getSjid() {
+	public Long getSjid() {
 		return sjid;
 	}
 
-	public void setSjid(int sjid) {
+	public void setSjid(Long sjid) {
 		this.sjid = sjid;
 	}
 	
