@@ -3,7 +3,10 @@ package com.rm.dao;
 
 
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import com.rm.entity.ExamZsd;
 
 
@@ -14,6 +17,8 @@ import com.rm.entity.ExamZsd;
  */
 public interface ExamZsdDao extends JpaRepository<ExamZsd, Integer>{
 	
+	@Query(value = "select * from t_examquezsd where neirong= :nr",nativeQuery = true)
+	public List<ExamZsd> getZsdByNeiRong(@Param("nr") String neirong);
 	
 	
 }

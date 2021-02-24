@@ -102,13 +102,7 @@ public class ExamQue {
 		this.examque = examque;
 	}
 
-	public String getExamans() {
-		return examans;
-	}
-
-	public void setExamans(String examans) {
-		this.examans = examans;
-	}
+	
 
 	public String getExamtype() {
 		return examtype;
@@ -126,8 +120,6 @@ public class ExamQue {
 		this.examanal = examanal;
 	}
 
-	@Column(length=2400)
-    private String examans; 
     
 	@Column(length=100)
     private String examxuanxiangans; 
@@ -156,7 +148,7 @@ public class ExamQue {
 		this.zzd = zzd;
 		this.examque = examque;
 		this.yxbz = yxbz;
-		this.examans = examans;
+		this.examxuanxiangans = examans;
 		this.examtype = examtype;
 		this.examanal = examanal;
 	}
@@ -172,7 +164,7 @@ public class ExamQue {
 		this.examque = StringUtil.getMapString(examque,list);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
-		this.examans = StringUtil.getMapString(examans,daan);
+		this.examxuanxiangans = StringUtil.getMapString(examans,daan);
 		this.setWentiLeiXing(examque);
 		this.examanal = StringUtil.getMapString(examanal,jiexi);
 	}

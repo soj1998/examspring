@@ -424,7 +424,7 @@ public class StringUtil {
     	String rs ="weizhi";
     	String[] timu = getXiTiLeiXingZw();
     	for(int i = 0; i < timu.length; i++) {
-			if (StringUtil.isNotEmpty(crstr) && crstr.indexOf(timu[i])>=0) {
+			if (isNotEmpty(crstr) && crstr.indexOf(timu[i])>=0) {
 				rs = getXiTiLeiXingYw()[i];
 				break;
 			}
