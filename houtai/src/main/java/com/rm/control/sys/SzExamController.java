@@ -125,7 +125,7 @@ public class SzExamController {
     	}
     	JSONObject jsonque = new JSONObject((Map<String,Object>)data.eque);
     	ExamQue equ = JSON.toJavaObject(jsonque,ExamQue.class);
-    	if (StringUtil.isEmpty(equ.getExamque())) {
+    	if (StringUtil.isEmpty(equ.getQue())) {
     		LOG.info("que is null,not save");
 			return "que is null,not save";
     	}
@@ -134,7 +134,7 @@ public class SzExamController {
     	System.out.println(equ);
     	if (null == equ.getId() || equ.getId() < 0) {
 	    	for(ExamQue b:szall) {    		
-				double bl=sc.calculate(b.getExamque(), equ.getExamque(), 40);    
+				double bl=sc.calculate(b.getQue(), equ.getQue(), 40);    
 	    		if(bl>0.8) {
 	    			LOG.info("already have same question");
 	    			return "question exists same,not save";  			

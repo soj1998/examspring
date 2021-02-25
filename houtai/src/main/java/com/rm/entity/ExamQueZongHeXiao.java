@@ -66,11 +66,11 @@ public class ExamQueZongHeXiao {
 		this.examanal = examanal;
 	}
 
-	@Column(length=300)
+	@Column(length=1200)
     private String examans; 
     
     
-    @Column(length=600)
+    @Column(length=1200)
     private String examanal;
     
     @ManyToOne(targetEntity = ExamQueZongHeDa.class,fetch = FetchType.EAGER)

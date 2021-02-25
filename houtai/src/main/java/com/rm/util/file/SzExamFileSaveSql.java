@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.entity.AtcSjk;
+import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
 import com.rm.entity.ExamQue;
@@ -150,6 +151,27 @@ public class SzExamFileSaveSql {
 		return rs;
 	}
 	
+	private boolean getpanDuanXuanXiang(JSONArray crArray,String[] danxuan) {
+		boolean rs= false;
+		boolean tc = false;
+		for (Object fd:crArray) {
+			JSONObject jb = (JSONObject)fd;
+			if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+				String gets = jb.getString("neirong");
+				for (String d : danxuan) {
+					if (gets.indexOf(d)>= 0) {
+						tc = true;
+						break;
+					}
+				}
+			}
+			if(tc) {
+				rs = true;
+				break;
+			} 
+		}
+		return rs;
+	}
 	
 	private int[] getpanDuanGuiShuDian(String pdKey,JSONArray crArray,int maxhangshu) {
 		int ksd = 0;
@@ -261,7 +283,7 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						for (String abc: StringUtil.getXiTiLeiXingZwYouXuanXiang()) {
+						for (String abc: StringUtil.getXiTiLeiXingZwYouXuanXiangZw()) {
 							if (gets.indexOf(abc)>= 0) {
 								sfcz1 = true;
 								break;
@@ -450,6 +472,136 @@ public class SzExamFileSaveSql {
 			JSONObject jb = (JSONObject)fd;
 			JSONArray arr = jb.getJSONArray("al");			
 			//先进行是否是综合题目的判断 非综合题进入非综合题
+			if(getpanDuanZonghe(arr,zongheti)) {
+				JSONArray hzzharray = new JSONArray();
+				diGuiHzZhsy(0,hzzharray,arr);
+				ExamQueZongHeDa examQueda = new ExamQueZongHeDa();
+				boolean dadecunhao = false;
+				for (Object fd1:hzzharray) {
+					JSONObject jb1 = (JSONObject)fd1;
+					JSONArray arr1 = jb1.getJSONArray("al");
+					int maxhangshu  = 0;
+					for (Object a1:arr1) {
+						JSONObject b1 = (JSONObject)a1;
+						if(b1.getIntValue("hangshu")>= maxhangshu) {
+							maxhangshu = b1.getIntValue("hangshu");
+						}
+					}
+					int[] zsd_qz1 = getpanDuanGuiShuDian("zsd",arr1,maxhangshu);
+					int[] datimu_qz1 = getpanDuanGuiShuDian("datimu",arr1,maxhangshu);
+					zhzsdlist = getGuiShu(zsd_qz1,arr1);
+					zhdatimulist = getGuiShu(datimu_qz1,arr1);
+					if(zhdatimulist.size()>0) {
+						examQueda = new ExamQueZongHeDa(fid,shuizhong,zhzsdlist,zhdatimulist,"Y",lrsj);
+						try{
+							ExamQueZongHeDa examQueda2 = examQueService.saveExamQueZongHeDa(examQueda);
+							if(null == examQueda2) {
+								LOG.error("添加ExamQueZongHeDa 失败!,问题已存在");
+								continue;
+							}
+							dadecunhao = true;
+				        }catch (Exception e){
+				            LOG.error("添加examQueZongHeDaDao 失败!"+e.getMessage());      
+				        }
+					}
+				}
+				if (dadecunhao) {
+					for (Object fd1:hzzharray) {
+						JSONObject jb1 = (JSONObject)fd1;
+						JSONArray arr1 = jb1.getJSONArray("al");
+						if(getpanDuanZonghe(arr1,zongheti)) {
+							continue;
+						}
+						if(getpanDuanZonghe(arr1,zsd)) {
+							continue;
+						}
+						int maxhangshu  = 0;
+						for (Object a1:arr1) {
+							JSONObject b1 = (JSONObject)a1;
+							if(b1.getIntValue("hangshu")>= maxhangshu) {
+								maxhangshu = b1.getIntValue("hangshu");
+							}
+						}
+						int[] timu_qz1 = getpanDuanGuiShuDian("timu",arr1,maxhangshu);
+						int[] xuanxiang_qz1 = getpanDuanGuiShuDian("xuanxiang",arr1,maxhangshu);
+						int[] daan_qz1 = getpanDuanGuiShuDian("daan",arr1,maxhangshu);
+						int[] jiexi_qz1 = getpanDuanGuiShuDian("jiexi",arr1,maxhangshu);
+						zhtimulist = getGuiShu(timu_qz1,arr1);
+						zhxuanxianglist = getGuiShu(xuanxiang_qz1,arr1);
+						zhdaanlist = getGuiShu(daan_qz1,arr1);
+						zhjiexilist = getGuiShu(jiexi_qz1,arr1);
+						ExamQueZongHeXiao examQueXiao = new ExamQueZongHeXiao(zhtimulist,zhdaanlist,zhjiexilist,examQueda);
+						try{
+							examQueService.saveExamQueZongHeXiao(examQueXiao);
+				        }catch (Exception e){
+				            LOG.error("添加examQueZongHeXiaoDao 失败!"+e.getMessage());
+				        }						
+						saveExamZongHeXiaoChoi(examQueService,examQueXiao,zhxuanxianglist); 
+					}
+				}
+			}
+			else {
+				if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw())) {
+					int maxhangshu  = 0;
+					for (Object a1:arr) {
+						JSONObject b1 = (JSONObject)a1;
+						if(b1.getIntValue("hangshu")>= maxhangshu) {
+							maxhangshu = b1.getIntValue("hangshu");
+						}
+					}
+					int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
+					int[] timu_qz = getpanDuanGuiShuDian("timu",arr,maxhangshu);
+					int[] xuanxiang_qz = getpanDuanGuiShuDian("xuanxiang",arr,maxhangshu);
+					int[] daan_qz = getpanDuanGuiShuDian("daan",arr,maxhangshu);
+					int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr,maxhangshu);
+					zsdlist = getGuiShu(zsd_qz,arr);
+					timulist = getGuiShu(timu_qz,arr);
+					xuanxianglist = getGuiShu(xuanxiang_qz,arr);
+					daanlist = getGuiShu(daan_qz,arr);
+					jiexilist = getGuiShu(jiexi_qz,arr);
+					ExamQue examQue = new ExamQue(fid,shuizhong,zsdlist,timulist,"Y",lrsj,daanlist,jiexilist);
+					try{
+						ExamQue examQue2 = examQueService.saveExamQue(examQue);
+						if (null == examQue2) {
+							LOG.error("添加ExamQue 失败!,问题已存在");
+							continue;
+						}
+						saveExamChoi(examQueService,examQue2,xuanxianglist); 
+			        }catch (Exception e){
+			            LOG.error("添加examQueDao 失败!"+e.getMessage());
+			        }
+				} else {
+					int maxhangshu  = 0;
+					for (Object a1:arr) {
+						JSONObject b1 = (JSONObject)a1;
+						if(b1.getIntValue("hangshu")>= maxhangshu) {
+							maxhangshu = b1.getIntValue("hangshu");
+						}
+					}
+					int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
+					int[] timu_qz = getpanDuanGuiShuDian("timu",arr,maxhangshu);					
+					int[] daan_qz = getpanDuanGuiShuDian("daan",arr,maxhangshu);
+					int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr,maxhangshu);
+					zsdlist = getGuiShu(zsd_qz,arr);
+					timulist = getGuiShu(timu_qz,arr);
+					daanlist = getGuiShu(daan_qz,arr);
+					jiexilist = getGuiShu(jiexi_qz,arr);
+					ExamAnsDa examAnsDa = new ExamAnsDa(fid,shuizhong,zsdlist,timulist,"Y",lrsj,daanlist,jiexilist);
+					try{
+						ExamAnsDa examQue2 = examQueService.saveExamAnsDa(examAnsDa);
+						if (null == examQue2) {
+							LOG.error("添加ExamQue 失败!,问题已存在");
+							continue;
+						} 
+			        }catch (Exception e){
+			            LOG.error("添加examQueDao 失败!"+e.getMessage());
+			        }
+				}
+			}
+			if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw())
+					&& !getpanDuanZonghe(arr,zongheti)) {
+				
+			}
 			if(!getpanDuanZonghe(arr,zongheti)) {
 				int maxhangshu  = 0;
 				for (Object a1:arr) {

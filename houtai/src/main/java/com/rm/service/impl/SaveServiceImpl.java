@@ -1,5 +1,6 @@
 package com.rm.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
@@ -65,18 +66,34 @@ public class SaveServiceImpl{
 		return rs;
 	}
 	
-	public ExamZsd saveExamZsd(ExamZsd examZsd) {
-		List<ExamZsd> zsdList =  examZsdDao.getZsdByNeiRong(examZsd.getNeirong());
-		if (zsdList.size() > 0) {
-			ExamZsd fu = zsdList.get(0);
-			examZsd.setSjid(fu.getId());
-			examZsd.setJibie(fu.getJibie() +1);
-		} else {
-			examZsd.setSjid(-1L);
-			examZsd.setJibie(1);
+	public ExamZsd saveExamZsd(ExamZsd[] examzsdzu) {
+		List<ExamZsd> rs = new ArrayList<ExamZsd>();
+		for(int i = 0; i < examzsdzu.length; i++) {
+			ExamZsd dq = examzsdzu[i];
+			int jibie = i;
+			Long sjid = -1L;
+			List<ExamZsd> zsdList =  examZsdDao.getZsdByNeiRong(dq.getNeirong());
+			if (zsdList.size() > 0) {
+				ExamZsd fu = zsdList.get(0);
+				sjid = fu.getId();
+				continue;
+			}
+			dq.setSjid(sjid);
+			dq.setJibie(jibie);
+			ExamZsd rs1 = examZsdDao.save(dq);
+			rs.add(rs1);
 		}
-		ExamZsd rs = examZsdDao.save(examZsd);
-		return rs;
+		if (rs.size() > 0) {
+			rs.sort((x,y) -> {
+			  if (x.getJibie() >= y.getJibie())
+	              return 1; //-1 降序 1 升序
+	          else
+	              return -1;
+	        });
+			return rs.get(rs.size() - 1);
+		}
+		return null;
+		
 	}
 	
 	public ExamAnsDa saveExamAnsDa(ExamAnsDa eExamAnsDa) {

@@ -301,9 +301,7 @@ public class StringUtil {
             }
         });
         for(Map.Entry<Integer,String> mapping:list){
-        	String a = mapping.getValue().trim();        	
-        	a = a.replaceAll(tihuan, "");
-        	a = a.replaceAll(" ", "");
+        	String a = myTrim(mapping.getValue().trim());
         	if (StringUtil.isNotEmpty(a)) {
         		sb = sb.append(a);
         	}
@@ -411,9 +409,24 @@ public class StringUtil {
     public static String[] getXiTiLeiXingZw() {
     	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】"};
     }
-    public static String[] getXiTiLeiXingZwYouXuanXiang() {
+    public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
     	return new String[] {"【单选题】","【多选题】","【判断题】"};
     }
+    
+    public static String[] getXiTiLeiXingZwYouXuanXiangYw() {
+    	return new String[] {"danxuan","duoxuan","panduan"};
+    }
+    
+    public static boolean panduanYouXuanXiangZw(String a) {
+    	List<String> s = Arrays.asList(getXiTiLeiXingZwYouXuanXiangZw());
+    	return s.contains(a);
+    }
+    
+    public static boolean panduanYouXuanXiangYw(String a) {
+    	List<String> s = Arrays.asList(getXiTiLeiXingZwYouXuanXiangYw());
+    	return s.contains(a);
+    }
+    
     public static String[] getXiTiLeiXingYw() {
     	return new String[] {"danxuan","duoxuan","jisuan","zonghe","panduan","jianda","mcjieshi"};
     }
