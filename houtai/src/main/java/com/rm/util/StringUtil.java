@@ -301,7 +301,8 @@ public class StringUtil {
             }
         });
         for(Map.Entry<Integer,String> mapping:list){
-        	String a = myTrim(mapping.getValue().trim());
+        	String a1 = mapping.getValue().replaceAll(tihuan, "");
+        	String a = myTrim(a1);
         	if (StringUtil.isNotEmpty(a)) {
         		sb = sb.append(a);
         	}
@@ -339,21 +340,32 @@ public class StringUtil {
      * 
      **/
     
+    public static boolean myIsWhitespace(char crstr) {
+    	//全角空格（unicode = 12288 ），不间断空格（unicode=160）
+    	boolean tb1 = Character.isWhitespace(crstr);
+    	int a = (int)crstr;
+		if (a==12288 || a==160) {
+			tb1 = true;
+		}
+		return tb1;
+    }
+    
     public static String removeHeadSpace(String crstr) {
-    	String rs = "";
+    	String rs = "";    	
     	char[] abcchar = crstr.toCharArray();
 		StringBuilder str = new StringBuilder();
 		boolean tb1 = false;
 		if (abcchar.length > 0) {
-			if(Character.isWhitespace(abcchar[0])) {
+			if(myIsWhitespace(abcchar[0])) {
 				tb1 = true;
-			}	
+			}
 		}
-		for(int i =0;i<abcchar.length;i++) {			
-			if(tb1 && Character.isWhitespace(abcchar[i])) {
+		for(int i =0;i<abcchar.length;i++) {
+			if(tb1 && 
+			   (myIsWhitespace(abcchar[i]))) {
 				continue;
 			}
-			if(!Character.isWhitespace(abcchar[i])) {
+			if(!myIsWhitespace(abcchar[i])) {
 				tb1 = false;
 			}
 			str.append(abcchar[i]);
@@ -374,15 +386,15 @@ public class StringUtil {
     	StringBuilder str = new StringBuilder();
 		boolean tb1 = false;
 		if (abclist.size() > 0) {
-			if(Character.isWhitespace(abclist.get(0))) {
+			if(myIsWhitespace(abclist.get(0))) {
 				tb1 = true;
 			}	
 		}
 		for(int i =0;i<abclist.size();i++) {			
-			if(tb1 && Character.isWhitespace(abclist.get(i))) {
+			if(tb1 && myIsWhitespace(abclist.get(i))) {
 				continue;
 			}
-			if(!Character.isWhitespace(abclist.get(i))) {
+			if(!myIsWhitespace(abclist.get(i))) {
 				tb1 = false;
 			}
 			abclist2.add(abclist.get(i));
@@ -406,6 +418,10 @@ public class StringUtil {
      *转换题目类型，方便保存
      *
      */
+    public static String[] getChuTiMuWaiXinXiQuan() {
+    	return new String[] {"【知识点】","【答案】"};
+    }
+    
     public static String[] getXiTiLeiXingZw() {
     	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】"};
     }

@@ -84,7 +84,7 @@ public class UMEditor_Uploader {
 					path=path+File.separator+this.fileName;
 					this.type = this.getFileExt(this.fileName);
 					this.url=path.substring(path.lastIndexOf("uploadfiles") + 11);
-					this.url = this.url.replaceAll("\\\\","/");
+					//this.url = this.url.replaceAll("\\\\","/");
 					File localFile = new File(path);
 					try {
 						file.transferTo(localFile);

@@ -1,6 +1,8 @@
 package com.rm.util.file;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -93,5 +95,33 @@ public class FileXiangGuan {
 			}
 		}
 		return rsArray;
+	}
+	
+	public void writeLogToFile(String filename,String a) {
+		
+		File file = new File(filename);
+		//String content = "This is the text content";
+
+		try (FileOutputStream fop = new FileOutputStream(file, true)) {
+	
+	    // if file doesn't exists, then create it
+	    if (!file.exists()) {
+	    	file.createNewFile();
+	    }
+
+	    // get the content in bytes
+	    byte[] contentInBytes = a.getBytes();
+
+	    fop.write(contentInBytes);
+	    fop.write("\r\n".getBytes());
+	    fop.flush();
+	    fop.close();
+
+	    System.out.println("Done");
+
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+	 
 	}
 }

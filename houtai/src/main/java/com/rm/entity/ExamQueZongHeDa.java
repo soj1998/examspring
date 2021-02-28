@@ -38,8 +38,7 @@ public class ExamQueZongHeDa {
 		this.szid = szid;
 	}
 
-	@Column(length=100)
-    private String zzd;
+	
      
     @Column(length=600)
     private String examque;
@@ -63,6 +62,17 @@ public class ExamQueZongHeDa {
 		this.lrsj = lrsj;
 	}
 	
+	@ManyToOne(targetEntity = ExamZsd.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "examquezhdazsdid",referencedColumnName = "id")
+  	private ExamZsd examZsd;
+	
+	public ExamZsd getExamZsd() {
+		return examZsd;
+	}
+
+	public void setExamZsd(ExamZsd examZsd) {
+		this.examZsd = examZsd;
+	}
 
 	public String getYxbz() {
 		return yxbz;
@@ -80,20 +90,9 @@ public class ExamQueZongHeDa {
 		this.id = id;
 	}
 
-	public String getZzd() {
-		return zzd;
-	}
+	
 
-	public void setZzd(String zzd) {
-		this.zzd = zzd;
-	}
-
-	public void setZzd(Map<Integer,String> zsdd) {
-		List<String> list=new ArrayList<String>();
-		list.addAll(Arrays.asList(timu));
-		list.add(zsd_1);		
-		this.zzd = StringUtil.getMapString(zsdd,list);
-	}
+	
 	public String getExamque() {
 		return examque;
 	}
@@ -109,18 +108,10 @@ public class ExamQueZongHeDa {
 		this.examque = StringUtil.getMapString(examque,list);
 	}
 
-	public ExamQueZongHeDa(AtcSjk fid,Integer szid, String zzd, String examque, String yxbz) {
-		super();
-		this.atcSjk = fid;
-		this.szid = szid;
-		this.zzd = zzd;
-		this.examque = examque;
-		this.yxbz = yxbz;
-	}
+	
 
 	public ExamQueZongHeDa() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Transient
@@ -129,14 +120,14 @@ public class ExamQueZongHeDa {
 	private String zsd_1 = "【知识点】";
 	//private String daan = "【答案】";	
 	//private String jiexi = "【解析】";
-	public ExamQueZongHeDa(AtcSjk fid,Integer szid, Map<Integer,String> zsdd, Map<Integer,String> examque, String yxbz, Date lrsj) {
+	public ExamQueZongHeDa(AtcSjk fid,Integer szid, ExamZsd examZsd1, Map<Integer,String> examque, String yxbz, Date lrsj) {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(timu));
 		list.add(zsd_1);
-		this.zzd = StringUtil.getMapString(zsdd,list);
+		this.examZsd = examZsd1;
 		this.examque = StringUtil.getMapString(examque,list);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;

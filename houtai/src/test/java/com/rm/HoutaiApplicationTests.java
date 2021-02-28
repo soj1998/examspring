@@ -3,6 +3,9 @@ package com.rm;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -11,9 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.BookDao;
 import com.rm.dao.ExamChoiDao;
@@ -30,7 +30,7 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.linshi.Author;
-import com.rm.util.file.FileXiangGuan;
+
 
 @EnableTransactionManagement
 @SpringBootTest
@@ -75,20 +75,10 @@ class HoutaiApplicationTests {
     
 	@Test
 	void contextLoads() {
-		FileXiangGuan fileXiangGuan = new FileXiangGuan();
-		JSONArray jsonDuanArray = fileXiangGuan.transFiletoList("d:\\学研社-zzs-zl2.docx");
-		for (Object fd:jsonDuanArray) {
-			JSONObject jb = (JSONObject)fd;
-			String arr = jb.getString("neirong");
-			System.out.println(arr);
-			String abc = arr.replaceAll(" +","|");
-			String abc2 = arr.replaceAll("\\s*", "");
-			String abc3 = arr.replace("\\u0009","--");
-			System.out.println(abc);
-			System.out.println(abc2);
-			System.out.println(abc3);
-		}
-		LOG.info("11");
+		LOG.info("111111");
+		//String a = "自考***管理会计00157（一）***第一章 管理会计概论";
+		List<String> abc = new ArrayList<String>();	
+		LOG.info("11   " + abc.size());
 	}
 	
 

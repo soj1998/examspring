@@ -36,10 +36,21 @@ public class ExamQue {
 		this.szid = szid;
 	}
 
-	@Column(length=100)
-    private String zzd;
-     
-    @Column(length=1200)
+	
+	@ManyToOne(targetEntity = ExamZsd.class,fetch = FetchType.EAGER)
+  	@JoinColumn(name = "examquezsdid",referencedColumnName = "id")
+  	private ExamZsd examZsd;
+	
+    public ExamZsd getExamZsd() {
+		return examZsd;
+	}
+
+	public void setExamZsd(ExamZsd examZsd) {
+		this.examZsd = examZsd;
+	}
+
+
+	@Column(length=1200)
     private String que;
     
     @Column(length=1)
@@ -86,13 +97,6 @@ public class ExamQue {
 		this.id = id;
 	}
 
-	public String getZzd() {
-		return zzd;
-	}
-
-	public void setZzd(String zzd) {
-		this.zzd = zzd;
-	}
 
 	public String getQue() {
 		return que;
@@ -135,11 +139,10 @@ public class ExamQue {
     
    
     
-	public ExamQue(Integer szid, String zzd, String examque, String yxbz, String examans, String examtype,
+	public ExamQue(Integer szid, String examque, String yxbz, String examans, String examtype,
 			String examanal) {
 		super();
 		this.szid = szid;
-		this.zzd = zzd;
 		this.que = examque;
 		this.yxbz = yxbz;
 		this.ans = examans;
@@ -147,12 +150,12 @@ public class ExamQue {
 		this.jiexi = examanal;
 	}
 
-	public ExamQue(AtcSjk fid,Integer szid, Map<Integer,String> zzd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
+	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
-		this.zzd = StringUtil.getMapString(zzd,zsd);
+		this.examZsd = examZsd;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
 		this.que = StringUtil.getMapString(examque,list);

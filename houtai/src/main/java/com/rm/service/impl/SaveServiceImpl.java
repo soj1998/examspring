@@ -66,22 +66,54 @@ public class SaveServiceImpl{
 		return rs;
 	}
 	
-	public ExamZsd saveExamZsd(ExamZsd[] examzsdzu) {
+	public ExamZsd saveExamZsd(List<ExamZsd> examzsdzu) {
 		List<ExamZsd> rs = new ArrayList<ExamZsd>();
-		for(int i = 0; i < examzsdzu.length; i++) {
-			ExamZsd dq = examzsdzu[i];
-			int jibie = i;
-			Long sjid = -1L;
+		Long sjid = -1L;
+		//知识点 一个也没有 每一个都要存一下
+		//知识点 前一个没有 后面的有 不保存
+		//知识点 前一个有 后面的保存
+		int yigemeiyou = 0;
+		for(int i = 0; i < examzsdzu.size(); i++) {
+			ExamZsd dq = examzsdzu.get(i);
 			List<ExamZsd> zsdList =  examZsdDao.getZsdByNeiRong(dq.getNeirong());
 			if (zsdList.size() > 0) {
-				ExamZsd fu = zsdList.get(0);
-				sjid = fu.getId();
-				continue;
+				yigemeiyou++;
+				if (yigemeiyou <= i) {
+					//这是前一个没有，后一个有了
+					return null;
+				}
+			}			
+		}
+		if (yigemeiyou ==0) {
+			Long qianyigeid = -1L;
+			for(int i = 0; i < examzsdzu.size(); i++) {
+				ExamZsd dq = examzsdzu.get(i);
+				int jibie = i;
+				dq.setSjid(qianyigeid);
+				dq.setJibie(jibie);
+				ExamZsd rs1 = examZsdDao.save(dq);
+				qianyigeid = rs1.getId();
+				rs.add(rs1);
 			}
-			dq.setSjid(sjid);
-			dq.setJibie(jibie);
-			ExamZsd rs1 = examZsdDao.save(dq);
-			rs.add(rs1);
+		}else {
+			for(int i = 0; i < examzsdzu.size(); i++) {
+				ExamZsd dq = examzsdzu.get(i);
+				int jibie = i;			
+				List<ExamZsd> zsdList =  examZsdDao.getZsdByNeiRong(dq.getNeirong());
+				if (zsdList.size() > 0) {
+					ExamZsd fu = zsdList.get(0);
+					sjid = fu.getId();
+					jibie = fu.getJibie() + 1;
+					if (i == examzsdzu.size() - 1) {
+						return fu;
+					}
+					continue;
+				}
+				dq.setSjid(sjid);
+				dq.setJibie(jibie);
+				ExamZsd rs1 = examZsdDao.save(dq);
+				rs.add(rs1);
+			}
 		}
 		if (rs.size() > 0) {
 			rs.sort((x,y) -> {
