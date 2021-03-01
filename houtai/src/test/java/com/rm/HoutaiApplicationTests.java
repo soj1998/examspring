@@ -3,15 +3,14 @@ package com.rm;
 
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.rm.dao.AtcSjkDao;
@@ -29,6 +28,7 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
+import com.rm.entity.AtcSjk;
 import com.rm.entity.linshi.Author;
 
 
@@ -76,9 +76,20 @@ class HoutaiApplicationTests {
 	@Test
 	void contextLoads() {
 		LOG.info("111111");
-		//String a = "自考***管理会计00157（一）***第一章 管理会计概论";
-		List<String> abc = new ArrayList<String>();	
-		LOG.info("11   " + abc.size());
+		AtcSjk atcSjk = new AtcSjk();
+		atcSjk.setSzid(32);
+		atcSjk.setYxbz("Y");
+		ExampleMatcher matcher = ExampleMatcher.matching()
+	            //.withMatcher("username", ExampleMatcher.GenericPropertyMatchers.startsWith())//模糊查询匹配开头，即{username}%
+	            //.withMatcher("address" ,ExampleMatcher.GenericPropertyMatchers.contains())//全部模糊查询，即%{address}%
+	            .withIgnorePaths("wzlxid");//忽略字段，即不管password是什么值都不加入查询条件
+	
+		Example<AtcSjk> example = Example.of(atcSjk, matcher);
+		
+		//AtcSjk atcSjk1 =atcSjkDao.findOne(example).get();
+		Long a = atcSjkDao.count(example);
+		LOG.info("11   " + a);
+		//LOG.info("12   " + atcSjk1.getId());
 	}
 	
 
