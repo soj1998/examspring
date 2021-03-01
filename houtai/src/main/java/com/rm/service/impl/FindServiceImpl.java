@@ -51,12 +51,13 @@ public class FindServiceImpl{
 		return rs;
 	}
 	
-	public List<JSONObject> findYiYouWZGeShu(int szid, int wzlxid) {
+	public Long getJiChuShuLiang(int szid, int wzlxid) {
 		AtcSjk atcSjk = new AtcSjk();
 		atcSjk.setSzid(szid);
 		atcSjk.setWzlxid(wzlxid);
 		Example<AtcSjk> example = Example.of(atcSjk);
 		Long examsl = atcSjkDao.count(example);
+		LOG.info(examsl + "");
 		return null;
 	}
 }
