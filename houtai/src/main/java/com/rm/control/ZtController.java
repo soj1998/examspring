@@ -35,7 +35,7 @@ public class ZtController {
     
     @RequestMapping(value="/getquanbuxitibyszid")
     public JSONObject listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("sid") int szid){    	
-    	//
+    	//123
     	//danxuan
     	//duoxuan
     	//panduan
