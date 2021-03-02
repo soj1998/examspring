@@ -91,6 +91,10 @@ public class SaveServiceImpl{
 				int jibie = i;
 				dq.setSjid(qianyigeid);
 				dq.setJibie(jibie);
+				if(dq.getNeirong().length() > 50) {
+					LOG.error("1   "+dq.getNeirong());
+					continue;
+				}
 				ExamZsd rs1 = examZsdDao.save(dq);
 				qianyigeid = rs1.getId();
 				rs.add(rs1);
@@ -107,6 +111,10 @@ public class SaveServiceImpl{
 					if (i == examzsdzu.size() - 1) {
 						return fu;
 					}
+					continue;
+				}
+				if(dq.getNeirong().length() > 50) {
+					LOG.error("2   "+dq.getNeirong());
 					continue;
 				}
 				dq.setSjid(sjid);

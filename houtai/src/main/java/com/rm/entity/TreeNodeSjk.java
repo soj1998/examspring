@@ -63,7 +63,29 @@ public class TreeNodeSjk implements Serializable{
 		this.btneirong = btneirong;
 	}	
 	
+	@Column
+    private int szid;
 
+	public int getSzid() {
+		return szid;
+	}
+
+	public void setSzid(int szid) {
+		this.szid = szid;
+	}
+	
+	@Column(length=1)
+    private String yxbz;
+	
+	
+
+	public String getYxbz() {
+		return yxbz;
+	}
+
+	public void setYxbz(String yxbz) {
+		this.yxbz = yxbz;
+	}
 	@Override
 	public String toString() {
 		return "TreeNodeSjk [id=" + id + ", rootid=" + rootid + ", parentid=" + parentid + ", biaoti=" + biaoti
@@ -149,9 +171,11 @@ public class TreeNodeSjk implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public TreeNodeSjk(Integer rootid, Integer parentid, Integer biaoti, Integer hangshu, String btneirong,
+	public TreeNodeSjk(Integer szid1, String yxbz1, Integer rootid, Integer parentid, Integer biaoti, Integer hangshu, String btneirong,
 			AtcSjk atcSjk) {
 		super();
+		this.szid = szid1;
+		this.yxbz = yxbz1;
 		this.rootid = rootid;
 		this.parentid = parentid;
 		this.biaoti = biaoti;

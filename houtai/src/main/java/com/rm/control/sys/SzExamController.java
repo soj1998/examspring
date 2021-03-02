@@ -70,7 +70,7 @@ public class SzExamController {
 	@RequestMapping(value="/listdaicanzhanshi",method=RequestMethod.POST)
     public List<ExamQue> listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("sid") int szid){    	
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
-		List<ExamQue> list_glx=examQueDao.getexamquezhanshi(pageRequest,szid);
+		List<ExamQue> list_glx=examQueDao.getexamquezhanshi(pageRequest,szid,"danxuan");
 		return list_glx;        
     }
 	

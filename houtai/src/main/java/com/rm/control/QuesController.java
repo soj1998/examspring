@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rm.dao.QueandAnsDao;
 import com.rm.entity.QueandAns;
 import com.rm.util.SimCalculator;
-@RequestMapping(value="/ques")
+@RequestMapping(value="/sz")
 @RestController
 public class QuesController {
   

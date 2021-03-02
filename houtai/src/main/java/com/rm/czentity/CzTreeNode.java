@@ -214,6 +214,8 @@ public class CzTreeNode {
 			tn.setRootid(item.getId());   
             tn.setParentid(item.getParentId());
             tn.setAtcSjk(fid);
+            tn.setSzid(fid.getSzid());
+            tn.setYxbz(fid.getYxbz());
             //tn.setId(-1);
             //System.out.println(tn.toString());
             tnDao.save(tn);

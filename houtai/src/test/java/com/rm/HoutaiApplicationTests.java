@@ -15,6 +15,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.BookDao;
+import com.rm.dao.ExamAnsDaDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
@@ -29,6 +30,11 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.AtcSjk;
+import com.rm.entity.ExamAnsDa;
+import com.rm.entity.ExamQue;
+import com.rm.entity.ExamQueZongHeDa;
+import com.rm.entity.TreeNodeSjk;
+import com.rm.entity.ZhuanLan;
 import com.rm.entity.linshi.Author;
 
 
@@ -60,6 +66,8 @@ class HoutaiApplicationTests {
 	@Resource
     private ExamChoiZongHeDao examChoiZongHeDao;
 	@Resource
+    private ExamAnsDaDao examAnsDaDao;
+	@Resource
     private AtcSjkDao atcSjkDao;
 	@Resource 
     private ZhuanLanDao zhuanLanDao;
@@ -89,7 +97,46 @@ class HoutaiApplicationTests {
 		//AtcSjk atcSjk1 =atcSjkDao.findOne(example).get();
 		Long a = atcSjkDao.count(example);
 		LOG.info("11   " + a);
+		
+		TreeNodeSjk twz = new TreeNodeSjk();
+		twz.setSzid(1);
+		twz.setYxbz("Y");
+		Example<TreeNodeSjk> example1 = Example.of(twz);
+		Long a1 = tnDao.count(example1);
+		LOG.info("12   " + a1);
 		//LOG.info("12   " + atcSjk1.getId());
+		
+		ZhuanLan zl = new ZhuanLan();
+		zl.setSzid(1);
+		zl.setYxbz("Y");
+		ExampleMatcher matcher2 = ExampleMatcher.matching()
+	            .withIgnorePaths("hangshu")
+	            .withIgnorePaths("btid");
+		Example<ZhuanLan> example2 = Example.of(zl, matcher2);		
+		Long a2 = zhuanLanDao.count(example2);
+		LOG.info("13   " + a2);
+		
+		//搞习题，有三个 普通 问答 综合
+		ExamQue examQue = new ExamQue();
+		examQue.setSzid(2);
+		examQue.setYxbz("Y");
+		Example<ExamQue> example3 = Example.of(examQue);
+		Long a3 = examQueDao.count(example3);
+		LOG.info("14   " + a3);
+		
+		ExamQueZongHeDa examQueZongHeDa = new ExamQueZongHeDa();
+		examQue.setSzid(2);
+		examQue.setYxbz("Y");
+		Example<ExamQueZongHeDa> example4 = Example.of(examQueZongHeDa);
+		Long a4 = examQueZongHeDaDao.count(example4);
+		LOG.info("15   " + a4);
+		
+		ExamAnsDa examAnsDa = new ExamAnsDa();
+		examAnsDa.setSzid(2);
+		examAnsDa.setYxbz("Y");
+		Example<ExamAnsDa> example5 = Example.of(examAnsDa);
+		Long a5 = examAnsDaDao.count(example5);
+		LOG.info("16   " + a5);
 	}
 	
 
