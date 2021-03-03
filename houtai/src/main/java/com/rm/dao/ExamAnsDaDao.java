@@ -21,4 +21,7 @@ public interface ExamAnsDaDao extends JpaRepository<ExamAnsDa, Integer>{
 	@Query(value = "select * from t_examansda where szid = :sid and examtype = :tmlx and yxbz ='Y' order by id",nativeQuery = true)
 	public List<ExamAnsDa> getexamansdazhanshi(Pageable pageable,@Param("sid") int ssid,@Param("tmlx") String examtype);
 	
+	@Query(value = "select count(*) from t_examansda where szid = :sid and examtype = :tmlx and yxbz ='Y' ",nativeQuery = true)
+	public int gettmleixingsl(@Param("sid") int ssid,@Param("tmlx") String examtype);
+	
 }
