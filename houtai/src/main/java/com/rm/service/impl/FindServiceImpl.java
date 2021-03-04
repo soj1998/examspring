@@ -120,7 +120,7 @@ public class FindServiceImpl{
 	 * 根据 pageNum 和 pageSize 得到 起 pageNum * pageSize 止为 pageNum * pageSize + pageSize
 	 * 不考虑 根据pagesize 和pagenum来弄了  一次全都推到前台去 限值在不超过1000道题目的前提下
 	 * 按照 weizhi1 weizhi2 weizhi3 danxuan duoxuan panduan jianda jisuan zonghe 排序
-	 * 
+	 * dd
 	 */
 	// private int xianzhitimu = 1000;
 	public List<ExamQueChuanDi> getTiMuBySqtmSzid(int szid, String sqtm, int zuidashuliang){
