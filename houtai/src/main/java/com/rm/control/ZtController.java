@@ -1,6 +1,8 @@
 package com.rm.control;
 
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
+import com.rm.entity.pt.ExamQueChuanDi;
 import com.rm.service.impl.FindServiceImpl;
 
 @CrossOrigin(origins = "*")
@@ -34,11 +37,9 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getquanbuxitibyszid")
-    public JSONObject listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
-    	//danxuan
-    	//duoxuan
-    	//panduan
-		return null;
+    public List<ExamQueChuanDi> listall2(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
+    	int zuidashu = 1000;    	
+		return service.getTiMuBySqtmSzid(szid, sqtm, zuidashu);
     }
     
 }

@@ -19,5 +19,7 @@ import com.rm.entity.ExamQueZongHeDa;
 public interface ExamQueZongHeDaDao extends JpaRepository<ExamQueZongHeDa, Integer>{
 	@Query(value = "select * from t_examquezhda where szid = :sid and yxbz ='Y' order by id",nativeQuery = true)
 	public List<ExamQueZongHeDa> getexamansdazhanshi(Pageable pageable,@Param("sid") int ssid);
+	@Query(value = "select count(*) from t_examquezhda where szid = :sid and yxbz ='Y' ",nativeQuery = true)
+	public int gettmsl(@Param("sid") int ssid);
 	
 }

@@ -446,6 +446,11 @@ public class StringUtil {
     public static String[] getXiTiLeiXingYw() {
     	return new String[] {"danxuan","duoxuan","jisuan","zonghe","panduan","jianda","mcjieshi"};
     }
+    
+    public static String[] getXiTiLeiXingYwZhanShi() {
+    	return new String[] {"weizhi", "danxuan", "duoxuan", "panduan", "weizhi", "jianda", "jisuan", "mcjieshi"};
+    }
+    
     public static String[] getXuanXiangBz() {
     	return new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
     }

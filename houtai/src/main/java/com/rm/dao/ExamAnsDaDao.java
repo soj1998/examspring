@@ -24,4 +24,7 @@ public interface ExamAnsDaDao extends JpaRepository<ExamAnsDa, Integer>{
 	@Query(value = "select count(*) from t_examansda where szid = :sid and examtype = :tmlx and yxbz ='Y' ",nativeQuery = true)
 	public int gettmleixingsl(@Param("sid") int ssid,@Param("tmlx") String examtype);
 	
+	@Query(value = "select * from t_examansda where szid = :sid and examtype = :tmlx and yxbz ='Y' ",nativeQuery = true)
+	public List<ExamAnsDa> getallbytmleixing(@Param("sid") int ssid,@Param("tmlx") String examtype);
+	
 }
