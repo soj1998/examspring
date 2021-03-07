@@ -3,10 +3,6 @@ package com.rm;
 
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -32,6 +28,7 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.linshi.Author;
+import com.rm.util.StringUtil;
 
 
 @EnableTransactionManagement
@@ -79,19 +76,13 @@ class HoutaiApplicationTests {
     
 	@Test
 	void contextLoads() {
-		List<Integer> intlist = new ArrayList<Integer>();
-		intlist.add(1);
-		intlist.add(4);
-		intlist.add(3);
-		intlist.add(6);
-		intlist.add(1);
-		for (int a : intlist) {
-			System.out.println("1    " + a);
+		String gets = "A．酌量性变动成本";
+		for(String tm:StringUtil.getXuanXiangBz()) {
+			if (gets.indexOf(tm)>= 0) {
+				System.out.println("aaa");
+			}
 		}
-		intlist.sort(Comparator.naturalOrder());
-		for (int a : intlist) {
-			System.out.println("2    " + a);
-		}
+		LOG.info("oooo");
 	}
 	
 

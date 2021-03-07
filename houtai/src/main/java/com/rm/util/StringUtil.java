@@ -452,7 +452,11 @@ public class StringUtil {
     }
     
     public static String[] getXuanXiangBz() {
-    	return new String[] {"A.","B.","C.","D.","E.","F.","G.","H."};
+    	return new String[] {"A．","B．","C．","D．","E．","F．","G．","H．","A.","B.","C.","D.","E.","F.","G.","H."};
+    }
+    
+    public static String[] getXuanXiangBzTou() {
+    	return new String[] {"A．","A."};
     }
     public static String transExamXiTiLeiXing(String crstr) {
     	String rs ="weizhi";

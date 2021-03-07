@@ -183,7 +183,7 @@ public class ExamQue {
 	private void setWentiLeiXing(Map<Integer,String> map) {
 		String rs = "weizhi";
 		for (Map.Entry<Integer, String> entry : map.entrySet()) {
-            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+            //System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
             String a = entry.getValue();
             this.setExamtype(StringUtil.transExamXiTiLeiXing(a));
 			return;

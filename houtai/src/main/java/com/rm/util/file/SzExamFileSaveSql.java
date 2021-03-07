@@ -280,6 +280,9 @@ public class SzExamFileSaveSql {
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");						
 						for(String tm:StringUtil.getXiTiLeiXingZw()) {
+							if (ksd > 0) {
+								break;
+							}
 							if (gets.indexOf(tm)>= 0) {
 								ksd = jb.getIntValue("hangshu");
 								break;
@@ -332,14 +335,21 @@ public class SzExamFileSaveSql {
 						JSONObject jb = (JSONObject)fd;
 						if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 							String gets = jb.getString("neirong");
-							if (gets.indexOf(StringUtil.getXuanXiangBz()[0])>= 0) {
-								ksd = jb.getIntValue("hangshu");
-							}
+							for(String tm:StringUtil.getXuanXiangBzTou()) {
+								if (ksd > 0) {
+									break;
+								}
+								if (gets.indexOf(tm)>= 0) {
+									ksd = jb.getIntValue("hangshu");
+									break;
+								}
+							}							
 							if (gets.indexOf(daan)>= 0) {								
 								jsd = jb.getIntValue("hangshu");
 								if (jsd-ksd > 0) {
 									jsd = jsd -1;
 								}
+								return new int[] {ksd,jsd};
 							}
 						}
 					}

@@ -147,7 +147,11 @@ public class FindServiceImpl{
 					rsb.addAll(rs1);					
 				}
 			}
+			int shezhiid= 1;
 			for (ExamQue examQue: rsa) {
+				if ("danxuan".equals(examQue.getExamtype())) {
+					//continue;
+				}
 				ExamQueChuanDi examcd = new ExamQueChuanDi();
 				examcd.setQue(examQue.getQue());
 				examcd.setExamtype(examQue.getExamtype());
@@ -159,6 +163,8 @@ public class FindServiceImpl{
 				examcd.setXuanxiang(xxs);
 				examcd.setAns(examQue.getAns());
 				examcd.setJiexi(examQue.getJiexi());
+				examcd.setId(shezhiid);
+				shezhiid++;
 				rs.add(examcd);
 			}
 			for (ExamAnsDa examQue: rsb) {
@@ -167,6 +173,8 @@ public class FindServiceImpl{
 				examcd.setExamtype(examQue.getExamtype());
 				examcd.setAns(examQue.getAns());
 				examcd.setJiexi(examQue.getJiexi());
+				examcd.setId(shezhiid);
+				shezhiid++;
 				rs.add(examcd);
 			}
 			return rs;
