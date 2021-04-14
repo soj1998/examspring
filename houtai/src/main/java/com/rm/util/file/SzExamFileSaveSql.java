@@ -1,9 +1,7 @@
 package com.rm.util.file;
 
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -14,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
@@ -32,6 +28,7 @@ import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 
 
+
 public class SzExamFileSaveSql {
 
 	
@@ -43,51 +40,7 @@ public class SzExamFileSaveSql {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzExamFileSaveSql.class);
     
-	/**
-	 1.把文章按照段落转化为jsonarry
-	 * */
-	public JSONArray fileToDuanLuo(String filePath){
-		InputStream is = null;
-		XWPFDocument doc = null;
-		JSONArray jsonDuanArray = new JSONArray();		
-		try {
-			is = new FileInputStream(filePath);
-			doc = new XWPFDocument(is);
-			//获取段落
-			List<XWPFParagraph> paras = doc.getParagraphs();
-			int duanLuoZongshu = paras.size();
-			if(duanLuoZongshu <= 0) {
-				System.out.println("当前文档没有读取到的段落数");
-				doc.close();
-				return jsonDuanArray;
-			}				
-			for (int i = 0;i < duanLuoZongshu ; i++) {
-				JSONObject jsonDuan = new JSONObject();
-				String abc = paras.get(i).getParagraphText().trim();
-				abc = StringUtil.myTrim(abc);
-				if("".equals(abc)) {
-					continue;
-				}else {
-					jsonDuan.put("neirong", abc);
-					jsonDuan.put("hangshu", i);
-					jsonDuanArray.add(jsonDuan);	
-				}
-							
-			}		
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (null != is) {
-					is.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return jsonDuanArray;
-	}
-	
+		
 	private void saveExamChoi(SaveServiceImpl examQueService, ExamQue examQue, Map<Integer,String> map) {
 		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
@@ -410,7 +363,7 @@ public class SzExamFileSaveSql {
 	}
 	
 	
-	private JSONArray diGuiHz(int hs,JSONArray rsArray,JSONArray csArray) {
+	private JSONArray diGuiHz(int hs,JSONArray rsArray,JSONArray csArray,String[] panduanchuanru) {
 		if (null == rsArray) {
 			rsArray = new JSONArray();			
 		}
@@ -418,22 +371,33 @@ public class SzExamFileSaveSql {
 		JSONArray jarray = new JSONArray();
 		for (int i = hs;i<csArray.size();i++) {
 			JSONObject obj1 = (JSONObject)csArray.get(i);
-			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+			String d = obj1.get("neirong").toString();
+			String d1 = StringUtil.myTrim(d);
+			if(StringUtil.isNotEmpty(d1))
 	        {
-				String d = obj1.get("neirong").toString();
-				jarray.add(obj1);
-				if(d.indexOf(zsd) >= 0 || d.indexOf(wdjs) >= 0
+				jarray.add(d1);
+				String[] timuzu = panduanchuanru; //StringUtil.getXiTiLeiXingZw();
+				boolean panduandao = false;
+				for (String abc : timuzu) {
+					int zhaodao = d1.indexOf(abc);
+					if (zhaodao>= 0) {
+						panduandao = true;
+						break;
+					}
+				}
+				if(panduandao || d.indexOf(wdjs) >= 0
 						|| i == csArray.size() - 1) {
-					if(StringUtil.isNotEmpty(j.getString("zsd"))) {
+					if(panduandao && i!=hs) {
 						if (i != csArray.size() - 1) {
 							jarray.remove(jarray.size()-1);
 						}
-						rsArray.add(j);
-						diGuiHz(i,rsArray,csArray);
+						if (jarray.size() > 0) {
+							rsArray.add(j);
+						}
+						diGuiHz(i,rsArray,csArray,panduanchuanru);
 						break;
 					}
 					j.put("al", jarray);
-					j.put("zsd", "1");
 					continue;
 				}				
 	        }			
@@ -443,6 +407,10 @@ public class SzExamFileSaveSql {
 		}
 		return rsArray;
 	}
+	
+	
+	
+	
 	
 	private JSONArray diGuiHzZhsy(int hs,JSONArray rsArray,JSONArray csArray) {
 		if (null == rsArray) {
@@ -508,9 +476,17 @@ public class SzExamFileSaveSql {
 		asjk.setWzlaiyuan(wzlaiyuan);
 		asjk.setYxbz("Y");
 		AtcSjk fid = examQueService.saveAtcSjk(asjk);
-		JSONArray yuanshiarray =fileToDuanLuo(fileweizhi);
+		JSONArray yuanshiarray =fileXiangGuan.transFiletoList(fileweizhi);
 		JSONArray hzarray = new JSONArray();
-		diGuiHz(0,hzarray,yuanshiarray);
+		//分析题目 是每个题目都有知识点 题型 选项 答案 解析 还有有一个 然后是题号
+		//用答案和答案之间是否有知识点 题型来断定
+		int panduantixingpaibu = 2;
+		if(panduantixingpaibu==2) {
+			diGuiHz(0,hzarray,yuanshiarray,new String[] {zsd});
+		}
+		if(panduantixingpaibu==1) {
+			diGuiHz(0,hzarray,yuanshiarray,StringUtil.getXiTiLeiXingZw());
+		}
 		Map<Integer,String> zsdlist,timulist,xuanxianglist,daanlist,jiexilist;
 		Map<Integer,String> zhzsdlist,zhdatimulist,zhtimulist,zhxuanxianglist,zhdaanlist,zhjiexilist;
 		for (Object fd:hzarray) {
@@ -605,7 +581,7 @@ public class SzExamFileSaveSql {
 					}
 				}
 			}
-			else {
+			else if (null!= arr && arr.size() > 0) {
 				if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw())) {
 					int maxhangshu  = 0;
 					for (Object a1:arr) {

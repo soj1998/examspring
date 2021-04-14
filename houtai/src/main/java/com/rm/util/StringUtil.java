@@ -423,7 +423,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingZw() {
-    	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】"};
+    	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】","单选","多选","判断","简答"};
     }
     public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
     	return new String[] {"【单选题】","【多选题】","【判断题】"};
