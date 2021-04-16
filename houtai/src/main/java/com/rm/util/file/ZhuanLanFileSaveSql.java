@@ -83,8 +83,8 @@ public class ZhuanLanFileSaveSql {
 			Map<Integer,String> riqilist = getGuiShu(riqi_qz,arr);
 			Map<Integer,String> xilielist = getGuiShu(xilie_qz,arr);
 			Map<Integer,String> zwlist = getGuiShu(zhengwen_qz,arr);
-			String riqi2 = StringUtil.getMapString(riqilist, riqi);
-			String zsd2 = StringUtil.getMapString(zsdlist, zsd);
+			String riqi2 = StringUtil.getMapString(riqilist, StringUtil.getZhuanLanRiQi());
+			String zsd2 = StringUtil.getMapString(zsdlist, StringUtil.getXiTiZhiShiDian());
 			riqi2 = riqi2.replace("年", "-").replace("月", "-").replace("日", "");
 			Date wddate = null;
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -101,7 +101,7 @@ public class ZhuanLanFileSaveSql {
 			Date lrsj2 = null!=wddate?wddate:lrsj;
 			//atcSjk.setLrsj(lrsj2);
 			//atcSjk.setFileweizhi(fileweizhi);
-			String sz1 = StringUtil.getMapString(szlist, sz);
+			String sz1 = StringUtil.getMapString(szlist, StringUtil.getZhuanLanShuiZhong());
 			Sz sza =szDao.findSzBymc(sz1);
 			if (null == sza) {
 				LOG.info("---税种错误，无法对应，输入的税种" + sz1);
@@ -109,11 +109,11 @@ public class ZhuanLanFileSaveSql {
 			}
 			//atcSjk.setSzid(sza.getId());
 			atcSjk.setWzlxid(wzlx);
-			String ly = StringUtil.getMapString(laiyuanlist, laiyuan);
+			String ly = StringUtil.getMapString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
 			//atcSjk.setWzlaiyuan(ly);
 			//atcSjk.setYxbz("Y");
 			atcSjk.setId(atcid);				
-			String xl = StringUtil.getMapString(xilielist, xilie);
+			String xl = StringUtil.getMapString(xilielist, StringUtil.getZhuanLanXiLie());
 			List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
 			int minhstimu  = 0;
 			for(Map.Entry<Integer,String> mapping:listmap){

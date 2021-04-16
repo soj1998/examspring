@@ -28,7 +28,6 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.linshi.Author;
-import com.rm.util.StringUtil;
 
 
 @EnableTransactionManagement
@@ -77,12 +76,9 @@ class HoutaiApplicationTests {
 	@Test
 	void contextLoads() {
 		String gets = "A．酌量性变动成本";
-		for(String tm:StringUtil.getXuanXiangBz()) {
-			if (gets.indexOf(tm)>= 0) {
-				System.out.println("aaa");
-			}
-		}
-		LOG.info("oooo");
+		
+		LOG.info(gets.substring(0,2));
+		LOG.info(gets.substring(2,gets.length()));
 	}
 	
 

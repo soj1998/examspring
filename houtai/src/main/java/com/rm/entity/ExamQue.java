@@ -149,7 +149,13 @@ public class ExamQue {
 		this.examtype = examtype;
 		this.jiexi = examanal;
 	}
-
+	@Transient
+	private int xitishuzifenzugeshu = 100;
+	@Transient
+	private String[] xitishuzifenzufuhao = StringUtil.getXiTiShuZiFenZuFuHao();
+	@Transient
+	private int tihuantouweishu = 10;
+	
 	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
@@ -158,19 +164,18 @@ public class ExamQue {
 		this.examZsd = examZsd;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
-		this.que = StringUtil.getMapString(examque,list);
+		String[] timufenge = StringUtil.getXiTiShuZiFenZu(xitishuzifenzugeshu, xitishuzifenzufuhao);
+		list.addAll(Arrays.asList(timufenge));
+		this.que = StringUtil.getMapStringTiHuanTou(examque,list,tihuantouweishu);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
-		this.ans = StringUtil.getMapString(examans,daan);
+		this.ans = StringUtil.getMapString(examans,StringUtil.getXiTiDaan());
 		this.setWentiLeiXing(examque);
-		this.jiexi = StringUtil.getMapString(examanal,jiexi2);
+		this.jiexi = StringUtil.getMapString(examanal,StringUtil.getXiTiJieXi());
 	}
 	@Transient
 	private String zsd = "【知识点】";
-	@Transient
-	private String daan = "【答案】";
-	@Transient
-	private String jiexi2 = "【解析】";
+
 	
 	public String getJiexi() {
 		return jiexi;

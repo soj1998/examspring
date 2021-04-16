@@ -5,6 +5,7 @@ package com.rm.util.file;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -32,15 +33,23 @@ import com.rm.util.StringUtil;
 public class SzExamFileSaveSql {
 
 	
-	private String zsd = "【知识点】";
+    private String[] zsd = StringUtil.getXiTiZhiShiDian();	
 	private String wdjs = "【结束】";
-	private String zongheti = "【综合题】";
-	private String daan = "【答案】";	
-	private String jiexi = "【解析】";
+	private String[] daan = StringUtil.getXiTiDaan();	
+	private String[] jiexi = StringUtil.getXiTiJieXi();
+	
+	private int xitishuzifenzugeshu = 100;
+	private String[] xitishuzifenzufuhao = StringUtil.getXiTiShuZiFenZuFuHao();
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SzExamFileSaveSql.class);
     
-		
+	
+	private String jsonarrjieduan = "a1";
+	private String[] getZongheti() {
+		String[] zongheti = Arrays.copyOf(StringUtil.getXiTiZhiShiDian(), StringUtil.getXiTiZhiShiDian().length + 1);
+		zongheti[StringUtil.getXiTiZhiShiDian().length] = "【综合题】";
+		return zongheti;
+	}	
 	private void saveExamChoi(SaveServiceImpl examQueService, ExamQue examQue, Map<Integer,String> map) {
 		List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
         //然后通过比较器来实现排序
@@ -121,16 +130,21 @@ public class SzExamFileSaveSql {
 	}
 		
     
-	private boolean getpanDuanZonghe(JSONArray crArray,String zongheti) {
+	private boolean getpanDuanZonghe(JSONArray crArray,String[] zongheti) {
 		boolean rs= false;
 		for (Object fd:crArray) {
 			JSONObject jb = (JSONObject)fd;
+			if (rs) {
+				break;
+			}
 			if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 				String gets = jb.getString("neirong");
-				if (gets.indexOf(zongheti)>= 0) {
-					rs = true;
-					break;
-				}
+				for (String a: zongheti) {
+					if (gets.indexOf(a)>= 0) {
+						rs = true;
+						break;
+					}
+				}				
 			}
 		}
 		return rs;
@@ -167,7 +181,14 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						if (gets.indexOf(zsd)>= 0) {
+						boolean t = false;
+						for (String a : zsd) {
+							if (gets.indexOf(a)>= 0) {
+								t = true;
+								break;
+							}
+						}
+						if (t) {
 							ksd = jb.getIntValue("hangshu");
 						}
 						for(String tm:StringUtil.getXiTiLeiXingZw()) {
@@ -188,11 +209,25 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						if (gets.indexOf(zongheti)>= 0) {
+						boolean t = false;
+						for (String a : StringUtil.getXiTiZongHeTi()) {
+							if (gets.indexOf(a)>= 0) {
+								t = true;
+								break;
+							}
+						}
+						if (t) {
 							ksd = jb.getIntValue("hangshu");
 						}
 						for(String tm:StringUtil.getXiTiLeiXingZw()) {
-							if(tm.equals(zongheti)) {
+							boolean t1 = false;
+							for (String a : StringUtil.getXiTiZongHeTi()) {
+								if (gets.indexOf(a)>= 0) {
+									t1 = true;
+									break;
+								}
+							}
+							if(t1) {
 								continue;
 							}
 							if (gets.indexOf(tm)>= 0) {
@@ -213,18 +248,12 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						if (gets.indexOf("【单选题】")>= 0) {
-							sfcz = true;
-							break;
-						}
-						if (gets.indexOf("【多选题】")>= 0) {
-							sfcz = true;
-							break;
-						}
-						if (gets.indexOf("【判断题】")>= 0) {
-							sfcz = true;
-							break;
-						}
+						for (String ab:StringUtil.getXiTiLeiXingZwYouXuanXiangZw()) {
+							if (gets.indexOf(ab)>= 0) {
+								sfcz = true;
+								break;
+							}	
+						}						
 					}
 				}
 				
@@ -252,7 +281,14 @@ public class SzExamFileSaveSql {
 								}
 							}
 						} else {
-							if (gets.indexOf(daan)>= 0) {
+							boolean t = false;
+							for (String a : daan) {
+								if (gets.indexOf(a)>= 0) {
+									t = true;
+									break;
+								}
+							}
+							if (t) {
 								jsd = jb.getIntValue("hangshu");
 								if (jsd-ksd > 0) {
 									jsd = jsd -1;
@@ -296,8 +332,15 @@ public class SzExamFileSaveSql {
 									ksd = jb.getIntValue("hangshu");
 									break;
 								}
-							}							
-							if (gets.indexOf(daan)>= 0) {								
+							}
+							boolean t = false;
+							for (String a : daan) {
+								if (gets.indexOf(a)>= 0) {
+									t = true;
+									break;
+								}
+							}
+							if (t) {								
 								jsd = jb.getIntValue("hangshu");
 								if (jsd-ksd > 0) {
 									jsd = jsd -1;
@@ -316,10 +359,24 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						if (gets.indexOf(daan)>= 0) {
+						boolean t1 = false;
+						boolean t2 = false;
+						for (String a : daan) {
+							if (gets.indexOf(a)>= 0) {
+								t1 = true;
+								break;
+							}
+						}
+						for (String a : jiexi) {
+							if (gets.indexOf(a)>= 0) {
+								t2 = true;
+								break;
+							}
+						}
+						if (t1) {
 							ksd = jb.getIntValue("hangshu");
 						}
-						if (gets.indexOf(jiexi)>= 0) {							
+						if (t2) {							
 							jsd = jb.getIntValue("hangshu");
 							if (jsd-ksd > 0) {
 								jsd = jsd -1;
@@ -334,10 +391,17 @@ public class SzExamFileSaveSql {
 					JSONObject jb = (JSONObject)fd;
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
-						if (gets.indexOf(jiexi)>= 0) {
+						boolean t2 = false;
+						for (String a : jiexi) {
+							if (gets.indexOf(a)>= 0) {
+								t2 = true;
+								break;
+							}
+						}
+						if (t2) {
 							ksd = jb.getIntValue("hangshu");
 						}
-						ksd = ksd==0?-1:ksd;
+						ksd = ksd==0?maxhangshu + 1:ksd;
 					}
 				}
 				break;
@@ -353,7 +417,7 @@ public class SzExamFileSaveSql {
 		for (Object fd:crArray) {
 			JSONObject jb = (JSONObject)fd;
 			int a = jb.getIntValue("hangshu");
-			if (qi>=0 && a >= qi && a <= zhi) {
+			if (a >= qi && a <= zhi) {
 				Map<Integer,String> hashmap = new HashMap<Integer,String>();
 				hashmap.put(a, jb.getString("neirong"));
 				rs.put(a, jb.getString("neirong"));
@@ -375,29 +439,32 @@ public class SzExamFileSaveSql {
 			String d1 = StringUtil.myTrim(d);
 			if(StringUtil.isNotEmpty(d1))
 	        {
-				jarray.add(d1);
+				jarray.add(obj1);
 				String[] timuzu = panduanchuanru; //StringUtil.getXiTiLeiXingZw();
 				boolean panduandao = false;
 				for (String abc : timuzu) {
-					int zhaodao = d1.indexOf(abc);
-					if (zhaodao>= 0) {
+					int zhaodao1 = d1.indexOf(abc);
+					int zhaodao2 = abc.indexOf(d1);
+					if (zhaodao1 >= 0 || zhaodao2 >= 0) {
 						panduandao = true;
 						break;
 					}
 				}
 				if(panduandao || d.indexOf(wdjs) >= 0
 						|| i == csArray.size() - 1) {
-					if(panduandao && i!=hs) {
+					if((panduandao || i == csArray.size() - 1) && i!=hs) {
 						if (i != csArray.size() - 1) {
 							jarray.remove(jarray.size()-1);
 						}
-						if (jarray.size() > 0) {
+						if (j.size() >= 1) {
 							rsArray.add(j);
 						}
 						diGuiHz(i,rsArray,csArray,panduanchuanru);
 						break;
 					}
-					j.put("al", jarray);
+					if (jarray.size() > 0) {
+						j.put(jsonarrjieduan, jarray);
+					}
 					continue;
 				}				
 	        }			
@@ -435,7 +502,7 @@ public class SzExamFileSaveSql {
 							diGuiHzZhsy(i,rsArray,csArray);
 							return rsArray;
 						}
-						j.put("al", jarray);
+						j.put(jsonarrjieduan, jarray);
 						j.put("zh", "1");
 						br = true;
 						break;
@@ -457,7 +524,7 @@ public class SzExamFileSaveSql {
 	
 	//一个整体的存取
 	public void asoneinsertToSql(SaveServiceImpl examQueService,
-			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan) {
+			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan,int danduchongfu) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
 		//对数据的长度 最好是有个更为友好的提示 比如 题目的长度 答案 或者解析的长度
@@ -480,33 +547,115 @@ public class SzExamFileSaveSql {
 		JSONArray hzarray = new JSONArray();
 		//分析题目 是每个题目都有知识点 题型 选项 答案 解析 还有有一个 然后是题号
 		//用答案和答案之间是否有知识点 题型来断定
-		int panduantixingpaibu = 2;
-		if(panduantixingpaibu==2) {
-			diGuiHz(0,hzarray,yuanshiarray,new String[] {zsd});
+		int panduantixingpaibu = danduchongfu;
+		int meigetidouyouzsdtixing = 1;
+		int zhiyouyigezsdleixing = 2;
+		if(panduantixingpaibu==meigetidouyouzsdtixing) {
+			diGuiHz(0,hzarray,yuanshiarray,zsd);
 		}
-		if(panduantixingpaibu==1) {
-			diGuiHz(0,hzarray,yuanshiarray,StringUtil.getXiTiLeiXingZw());
+		JSONArray hzarray3 = new JSONArray();
+		if(panduantixingpaibu==zhiyouyigezsdleixing) {
+			String[] timuleix = StringUtil.getXiTiLeiXingZw();
+			//这种文件知识点只能在开头设置一次
+			String myzsd = "";
+			boolean myzsdb = false;
+			for (Object fd:yuanshiarray) { 
+				JSONObject jb = (JSONObject)fd;
+				String arr1 = jb.getString("neirong");
+				String arr2 = StringUtil.myTrim(arr1);
+				if (myzsdb) {
+					break;
+				}
+				for (String a : zsd) {
+					if (arr2.indexOf(a) >= 0) {
+						myzsdb = true;
+						myzsd = arr2;
+						break;
+					}
+				}
+			}
+			diGuiHz(0,hzarray,yuanshiarray,timuleix);			
+			for (Object fd:hzarray) { 
+				JSONObject jb = (JSONObject)fd;
+				JSONArray arr = jb.getJSONArray(jsonarrjieduan);
+				JSONArray hzarray2 = new JSONArray();
+				String[] timufenge = StringUtil.getXiTiShuZiFenZu(xitishuzifenzugeshu, xitishuzifenzufuhao);
+				diGuiHz(0,hzarray2,arr,timufenge);
+				String timuxuanding = "";
+				boolean timuxuandinga = false;
+				for (Object fd2:arr) {
+					JSONObject jb1 = (JSONObject)fd2;
+					String arr1 = jb1.getString("neirong");
+					String arr2 = StringUtil.myTrim(arr1);
+					if (timuxuandinga) {
+						break;
+					}
+					if (StringUtil.isNotEmpty(arr2)) {
+						for (String a :timuleix) {
+							if (a.indexOf(arr2) > 0) {
+								timuxuanding = a;
+								timuxuandinga = true;
+								break;
+							}
+						}
+					}
+				}
+				if(StringUtil.isNotEmpty(timuxuanding)) {
+					for (Object a2:hzarray2) {
+						//加入题目类型 和知识点
+						JSONObject jsona2 = (JSONObject)a2;
+						JSONArray arrxiao = jsona2.getJSONArray(jsonarrjieduan);
+						if (null != arrxiao && arrxiao.size() > 0) {
+							Object ab = arrxiao.get(0);
+							JSONObject abo = (JSONObject)ab;
+							String a = timuxuanding + abo.getString("neirong");
+							int a1 = abo.getIntValue("hangshu");
+							JSONArray arrxiaoxin = new JSONArray();
+							JSONObject zsd = new JSONObject();
+							zsd.put("hangshu", -2);
+							//知识点的分类
+							//对大规模的单选多选 就不能在每个题目上搞知识点了
+							zsd.put("neirong", myzsd);
+							arrxiaoxin.add(zsd);
+							JSONObject t1 = new JSONObject();
+							t1.put("hangshu", a1);
+							t1.put("neirong", a);
+							arrxiaoxin.add(t1);
+							for (int i = 1 ; i<arrxiao.size(); i++) {
+								arrxiaoxin.add((JSONObject)arrxiao.get(i));
+							}
+							JSONObject zuizhong = new JSONObject();
+							zuizhong.put(jsonarrjieduan, arrxiaoxin);
+							hzarray3.add(zuizhong);
+						}
+					}
+				}
+			}			
 		}
 		Map<Integer,String> zsdlist,timulist,xuanxianglist,daanlist,jiexilist;
 		Map<Integer,String> zhzsdlist,zhdatimulist,zhtimulist,zhxuanxianglist,zhdaanlist,zhjiexilist;
+		if(panduantixingpaibu == zhiyouyigezsdleixing && hzarray3.size() > 0) {
+			hzarray = hzarray3;
+		}
 		for (Object fd:hzarray) {
 			JSONObject jb = (JSONObject)fd;
-			JSONArray arr = jb.getJSONArray("al");			
+			JSONArray arr = jb.getJSONArray(jsonarrjieduan);	
 			//先进行是否是综合题目的判断 非综合题进入非综合题
 			if (!getPanDuanXinXiQuan(arr)) {
-				LOG.info("信息不全，跳过了");
+				//信息全不全 有题目类型 有知识点或答案之一就行
+				LOG.info("信息不全，跳过了"); 
 				JSONObject ab = (JSONObject)arr.get(0);
 				fileXiangGuan.writeLogToFile(jilulog, ab.getString("hangshu") + "   " + ab.getString("neirong"));
 				continue;
 			}
-			if(getpanDuanZonghe(arr,zongheti)) {
+			if(getpanDuanZonghe(arr,StringUtil.getXiTiZongHeTi())) {
 				JSONArray hzzharray = new JSONArray();
 				diGuiHzZhsy(0,hzzharray,arr);
 				ExamQueZongHeDa examQueda = new ExamQueZongHeDa();
 				boolean dadecunhao = false;
 				for (Object fd1:hzzharray) {
 					JSONObject jb1 = (JSONObject)fd1;
-					JSONArray arr1 = jb1.getJSONArray("al");
+					JSONArray arr1 = jb1.getJSONArray(jsonarrjieduan);
 					int maxhangshu  = 0;
 					for (Object a1:arr1) {
 						JSONObject b1 = (JSONObject)a1;
@@ -518,7 +667,7 @@ public class SzExamFileSaveSql {
 					int[] datimu_qz1 = getpanDuanGuiShuDian("datimu",arr1,maxhangshu);
 					zhzsdlist = getGuiShu(zsd_qz1,arr1);
 					zhdatimulist = getGuiShu(datimu_qz1,arr1);
-					String azsd = StringUtil.getMapString(zhzsdlist,zsd);
+					String azsd = StringUtil.getMapString(zhzsdlist,StringUtil.getXiTiZhiShiDian());
 					String[] zsdzu = azsd.split("\\*\\*\\*");
 					List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
 					for (String azsdzu : zsdzu) {
@@ -549,11 +698,8 @@ public class SzExamFileSaveSql {
 				if (dadecunhao) {
 					for (Object fd1:hzzharray) {
 						JSONObject jb1 = (JSONObject)fd1;
-						JSONArray arr1 = jb1.getJSONArray("al");
-						if(getpanDuanZonghe(arr1,zongheti)) {
-							continue;
-						}
-						if(getpanDuanZonghe(arr1,zsd)) {
+						JSONArray arr1 = jb1.getJSONArray(jsonarrjieduan);
+						if(getpanDuanZonghe(arr1,getZongheti())) {
 							continue;
 						}
 						int maxhangshu  = 0;
@@ -600,7 +746,7 @@ public class SzExamFileSaveSql {
 					xuanxianglist = getGuiShu(xuanxiang_qz,arr);
 					daanlist = getGuiShu(daan_qz,arr);
 					jiexilist = getGuiShu(jiexi_qz,arr);
-					String azsd = StringUtil.getMapString(zsdlist,zsd);
+					String azsd = StringUtil.getMapString(zsdlist,StringUtil.getXiTiZhiShiDian());
 					String[] zsdzu = azsd.split("\\*\\*\\*");
 					List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
 					for (String azsdzu : zsdzu) {
@@ -623,7 +769,7 @@ public class SzExamFileSaveSql {
 						}
 						saveExamChoi(examQueService,examQue2,xuanxianglist); 
 			        }catch (Exception e){
-			            LOG.error("添加ExamQueXuanXiang 失败!"+e.getMessage());
+			            LOG.error("添加ExamQue 失败!"+e.getMessage());
 			        }
 				} else {
 					int maxhangshu  = 0;
@@ -641,7 +787,7 @@ public class SzExamFileSaveSql {
 					timulist = getGuiShu(timu_qz,arr);
 					daanlist = getGuiShu(daan_qz,arr);
 					jiexilist = getGuiShu(jiexi_qz,arr);
-					String azsd = StringUtil.getMapString(zsdlist,zsd);
+					String azsd = StringUtil.getMapString(zsdlist,StringUtil.getXiTiZhiShiDian());
 					String[] zsdzu = azsd.split("\\*\\*\\*");
 					List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
 					for (String azsdzu : zsdzu) {

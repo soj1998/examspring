@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 public class StringUtil {
 
 	public static Boolean isNotEmpty(String a) {
-		if( a != null && !"".equals(a) && a.length()>0)
+		String b = myTrim(a);
+		if( a != null && !"".equals(b) && b.length()>0)
 		{
 			return true;
 		}
@@ -260,12 +261,43 @@ public class StringUtil {
     } 
     
     /**
-     * 对Map<Integer,String> 类型的map对，先排序 再取值
-     * 取值时，按照确定的数组替换为空
-     * 例如将“【单选题】”替换为空
-     * 将取到的值格式化为string输出
+     	* 对Map<Integer,String> 类型的map对，先排序 再取值
+     	* 取值时，按照确定的数组替换为空
+     	* 例如将“【单选题】”替换为空
+     	* 将取到的值格式化为string输出
      * 
      */
+    public static String getMapStringTiHuanTou(Map<Integer,String> map,List<String> tihuan,int toubuweizhi) {
+		StringBuilder sb = new StringBuilder();		
+		//这里将map.entrySet转换为List
+        List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<Map.Entry<Integer,String>>() {
+            //升序排序
+            public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+        for(Map.Entry<Integer,String> mapping:list){
+        	String a = mapping.getValue();
+        	if (StringUtil.isNotEmpty(a)) {
+        		if(a.length() > toubuweizhi) {
+        			String a1 = a.substring(0, toubuweizhi);
+        			String a2 = a.substring(toubuweizhi, a.length());
+        			for(String tm:tihuan) {
+                		a1 = a1.replaceAll(tm, "");
+        			}
+        			if (StringUtil.isNotEmpty(a1) || StringUtil.isNotEmpty(a2)) {
+                		sb = sb.append(a1).append(a2);
+                	}
+        		}else {
+        			sb = sb.append(a);
+        		}
+        	}        	
+        } 
+		return sb.toString();
+	}
+    
     public static String getMapString(Map<Integer,String> map,List<String> tihuan) {
 		StringBuilder sb = new StringBuilder();		
 		//这里将map.entrySet转换为List
@@ -289,7 +321,7 @@ public class StringUtil {
 		return sb.toString();
 	}
     
-    public static String getMapString(Map<Integer,String> map,String tihuan) {
+    public static String getMapString(Map<Integer,String> map,String[] tihuan) {
 		StringBuilder sb = new StringBuilder();		
 		//这里将map.entrySet转换为List
         List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer,String>>(map.entrySet());
@@ -301,7 +333,10 @@ public class StringUtil {
             }
         });
         for(Map.Entry<Integer,String> mapping:list){
-        	String a1 = mapping.getValue().replaceAll(tihuan, "");
+        	String a1 = mapping.getValue();
+        	for (String ati : tihuan) {
+        		a1 = a1.replaceAll(ati, "");
+        	}
         	String a = myTrim(a1);
         	if (StringUtil.isNotEmpty(a)) {
         		sb = sb.append(a);
@@ -418,13 +453,76 @@ public class StringUtil {
      *转换题目类型，方便保存
      *
      */
+    public static String[] getZhuanLanRiQi() {
+    	return new String[] {"【日期】"};
+    }
+    
+    public static String[] getZhuanLanShuiZhong() {
+    	return new String[] {"【税种】"};
+    }
+    
+    public static String[] getZhuanLanLaiYuan() {
+    	return new String[] {"【来源】"};
+    }
+    
+    public static String[] getZhuanLanXiLie() {
+    	return new String[] {"【系列】"};
+    }
+    
     public static String[] getChuTiMuWaiXinXiQuan() {
     	return new String[] {"【知识点】","【答案】"};
     }
     
-    public static String[] getXiTiLeiXingZw() {
-    	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】","单选","多选","判断","简答"};
+    public static String[] getXiTiZhiShiDian() {
+    	return new String[] {"【知识点】"};
     }
+    
+    public static String[] getXiTiZongHeTi() {
+    	return new String[] {"【综合题】"};
+    }
+    
+    public static String[] getXiTiDaan() {
+    	return new String[] {"参考答案：","【答案】"};
+    }
+    
+    public static String[] getXiTiJieXi() {
+    	return new String[] {"答案解析：","【解析】"};
+    }
+    
+    public static String[] getXiTiLeiXingZw() {
+    	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】"};
+    }
+    /*
+            1.传入数字 返回类似1. 2. 3.或者 1, 2, 3,的字符串数组
+            2.作为判断分隔的依据
+     * */
+    public static String[] getXiTiShuZiFenZu(int shuzishu,String[] zifu) {
+    	List<String> a = new ArrayList<String>();
+    	for (String zifua : zifu) {
+	    	for (int i = 1;i <shuzishu;i++) {
+	    		String ab = i + zifua;
+	    		a.add(ab);
+	    	}
+    	}
+    	return a.toArray(new String[a.size()]);
+    }
+    
+    public static String[] getXiTiShuZiFenZuFuHao() {
+    	return new String[] {"."};
+    }
+    
+    public static String getXiTiShuZiFuJieQu(String chuanru, int zifuweishu) {
+    	int ac = 0;
+    	for (String a : getXiTiShuZiFenZuFuHao()) {
+    		int acd = chuanru.indexOf(a);
+    		if (acd >= 0 && acd <= zifuweishu) {
+    			ac = ac < acd ? acd : ac;
+    		}
+    	}
+    	String a = ac > 0 ? chuanru.substring(0, ac) : "";
+    	return a;
+    }
+    
     public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
     	return new String[] {"【单选题】","【多选题】","【判断题】"};
     }
@@ -461,7 +559,7 @@ public class StringUtil {
     public static String transExamXiTiLeiXing(String crstr) {
     	String rs ="weizhi";
     	String[] timu = getXiTiLeiXingZw();
-    	for(int i = 0; i < timu.length; i++) {
+    	for(int i = 0; i < timu.length -1; i++) {
 			if (isNotEmpty(crstr) && crstr.indexOf(timu[i])>=0) {
 				rs = getXiTiLeiXingYw()[i];
 				break;

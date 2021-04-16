@@ -97,7 +97,7 @@ public class SzExamController {
 	//试题没有文章架构
     @ResponseBody
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
-	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzlaiyuan") String wzlaiyuan,HttpServletResponse response) throws Exception{
+	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzlaiyuan") String wzlaiyuan,@RequestParam("danduchongfu") int danduchongfu,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
@@ -111,7 +111,7 @@ public class SzExamController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
 	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
-	    szExamFileSaveSql.asoneinsertToSql(examQueService,path + up.getUrl(), wzlx, sz,wzlaiyuan);
+	    szExamFileSaveSql.asoneinsertToSql(examQueService,path + up.getUrl(), wzlx, sz,wzlaiyuan,danduchongfu);
 	    return result + "update jieguo ";
 	    
 	}

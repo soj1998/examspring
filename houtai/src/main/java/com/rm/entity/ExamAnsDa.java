@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.rm.util.StringUtil;
 
@@ -134,12 +133,9 @@ public class ExamAnsDa {
 		this.examZsd = examZsd;
 	}
 
-	@Transient
-	private String zsd = "【知识点】";
-	@Transient
-	private String daan = "【答案】";
-	@Transient
-	private String jiexi2 = "【解析】";
+	
+	
+	
 	public ExamAnsDa(AtcSjk fid,Integer szid, ExamZsd zzd1, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
@@ -151,9 +147,9 @@ public class ExamAnsDa {
 		this.que = StringUtil.getMapString(examque,list);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
-		this.ans = StringUtil.getMapString(examans,daan);
+		this.ans = StringUtil.getMapString(examans,StringUtil.getXiTiDaan());
 		this.setWentiLeiXing(examque);
-		this.jiexi = StringUtil.getMapString(examanal,jiexi2);
+		this.jiexi = StringUtil.getMapString(examanal,StringUtil.getXiTiJieXi());
 	}
 	
 	private void setWentiLeiXing(Map<Integer,String> map) {
