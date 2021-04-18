@@ -350,7 +350,7 @@ public class SzExamFileSaveSql {
 						}
 					}
 				} else {
-					ksd = -1;
+					ksd = maxhangshu + 1;
 				}
 				break;
 			}

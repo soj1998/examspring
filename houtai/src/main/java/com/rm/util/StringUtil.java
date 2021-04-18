@@ -287,6 +287,8 @@ public class StringUtil {
         			for(String tm:tihuan) {
                 		a1 = a1.replaceAll(tm, "");
         			}
+        			a1 = myTrim(a1);
+        			a2 = myTrim(a2);
         			if (StringUtil.isNotEmpty(a1) || StringUtil.isNotEmpty(a2)) {
                 		sb = sb.append(a1).append(a2);
                 	}
@@ -482,7 +484,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiDaan() {
-    	return new String[] {"参考答案：","【答案】"};
+    	return new String[] {"参考答案：","【答案】","参考答案:"};
     }
     
     public static String[] getXiTiJieXi() {
@@ -499,12 +501,20 @@ public class StringUtil {
     public static String[] getXiTiShuZiFenZu(int shuzishu,String[] zifu) {
     	List<String> a = new ArrayList<String>();
     	for (String zifua : zifu) {
-	    	for (int i = 1;i <shuzishu;i++) {
+	    	for (int i = shuzishu;i > 0;i--) {
 	    		String ab = i + zifua;
 	    		a.add(ab);
 	    	}
     	}
     	return a.toArray(new String[a.size()]);
+    }
+    //每个单选不超过200题
+    public static int getXiTiShuZiFenZuGeShu() {
+    	return 200; //1. 2. 3. ... 100.
+    }
+    //只对前10个字符 替换 单选 多选 1. 2.
+    public static int getXiTiTiHuanTouWeiShu() {
+    	return 10; //1. 2. 3. ... 100.
     }
     
     public static String[] getXiTiShuZiFenZuFuHao() {
@@ -524,7 +534,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
-    	return new String[] {"【单选题】","【多选题】","【判断题】"};
+    	return new String[] {"【单选题】","【多选题】"}; //,"【判断题】"
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangYw() {

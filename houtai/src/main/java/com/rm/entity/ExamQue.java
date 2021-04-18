@@ -149,12 +149,11 @@ public class ExamQue {
 		this.examtype = examtype;
 		this.jiexi = examanal;
 	}
-	@Transient
-	private int xitishuzifenzugeshu = 100;
+	
 	@Transient
 	private String[] xitishuzifenzufuhao = StringUtil.getXiTiShuZiFenZuFuHao();
 	@Transient
-	private int tihuantouweishu = 10;
+	private int tihuantouweishu = StringUtil.getXiTiTiHuanTouWeiShu();
 	
 	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
@@ -164,7 +163,7 @@ public class ExamQue {
 		this.examZsd = examZsd;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
-		String[] timufenge = StringUtil.getXiTiShuZiFenZu(xitishuzifenzugeshu, xitishuzifenzufuhao);
+		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);
 		list.addAll(Arrays.asList(timufenge));
 		this.que = StringUtil.getMapStringTiHuanTou(examque,list,tihuantouweishu);
 		this.yxbz = yxbz;

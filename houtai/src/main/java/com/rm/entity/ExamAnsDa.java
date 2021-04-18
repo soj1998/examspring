@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.rm.util.StringUtil;
 
@@ -134,7 +135,10 @@ public class ExamAnsDa {
 	}
 
 	
-	
+	@Transient
+	private String[] xitishuzifenzufuhao = StringUtil.getXiTiShuZiFenZuFuHao();
+	@Transient
+	private int tihuantouweishu = StringUtil.getXiTiTiHuanTouWeiShu();;
 	
 	public ExamAnsDa(AtcSjk fid,Integer szid, ExamZsd zzd1, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
@@ -144,7 +148,9 @@ public class ExamAnsDa {
 		this.examZsd = zzd1;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
-		this.que = StringUtil.getMapString(examque,list);
+		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);
+		list.addAll(Arrays.asList(timufenge));
+		this.que = StringUtil.getMapStringTiHuanTou(examque,list,tihuantouweishu);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
 		this.ans = StringUtil.getMapString(examans,StringUtil.getXiTiDaan());
