@@ -28,6 +28,7 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.linshi.Author;
+import com.rm.util.pdf.PDFCaoZuo;
 
 
 @EnableTransactionManagement
@@ -75,10 +76,9 @@ class HoutaiApplicationTests {
     
 	@Test
 	void contextLoads() {
-		String gets = "A．酌量性变动成本";
-		
-		LOG.info(gets.substring(0,2));
-		LOG.info(gets.substring(2,gets.length()));
+		String a = PDFCaoZuo.ReaDPDF("D:\\123.pdf");
+		//PDFCaoZuo.getImgInPDF("D:\\123.pdf", "D:\\123\\");
+		System.out.println("内容:" + a.trim());
 	}
 	
 
