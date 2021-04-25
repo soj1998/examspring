@@ -1,6 +1,12 @@
 package com.rm.control.sys;
 
 import java.io.File;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.ZhuanLan;
+import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 import com.rm.util.file.UMEditor_Uploader;
 import com.rm.util.file.ZhuanLanFileSaveSql;
@@ -34,6 +43,9 @@ public class ZhuanLanController {
     private AtcSjkDao atcSjkDao;
 	@Resource
     private SzDao szDao;
+	
+	@Resource
+	private SaveServiceImpl saveServiceImpl;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ZhuanLanController.class);
 	
@@ -77,7 +89,7 @@ public class ZhuanLanController {
 	
 	
 	
-	//试题没有文章架构
+	
     @ResponseBody
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
 	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,HttpServletResponse response) throws Exception{
@@ -99,7 +111,66 @@ public class ZhuanLanController {
 	    
 	}
     
+    @ResponseBody
+	@RequestMapping(value="/uploadztsave",method=RequestMethod.POST)
+	public String getUploadUmImage2(HttpServletRequest request,HttpServletResponse response,
+			@RequestParam(name = "szid")int  szid,
+			@RequestParam(name = "wzriqi")String  wzrq,
+			@RequestParam(name = "wzlaiyuan")String  wzlaiyuan,
+			@RequestParam(name = "wzxilie")String  wzxilie,
+			@RequestParam(name = "wzquanbu")String  wzquanbu) throws Exception{
+		request.setCharacterEncoding("utf-8");
+		response.setCharacterEncoding("utf-8");
+		//szid riqi laiyuan xielie btid = -100
+	    System.out.println("传过来的" + szid + wzquanbu + wzxilie.length());
+	    Date wddate = null;
+	    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		try {
+			LocalDate wddate2 = LocalDate.parse(wzrq, dateTimeFormatter);
+			ZonedDateTime zonedDateTime = wddate2.atStartOfDay(ZoneId.systemDefault());
+			wddate = Date.from(zonedDateTime.toInstant());
+		} catch (DateTimeException e) {
+			LOG.info("---时间转换错误---" + wzrq);				
+			e.printStackTrace();
+			return "---时间转换错误---";
+		}
+		ZhuanLan zlan = null;
+		if (StringUtil.isNotEmpty(wzxilie)) {
+			zlan = new ZhuanLan(-100,wddate,wzlaiyuan,wzxilie,wzquanbu);
+		} else {
+			zlan = new ZhuanLan(-100,wddate,wzlaiyuan,wzquanbu);
+		}
+		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);
+		String rs = "";
+		if (rs1 != null) {
+			rs = "ok";
+		} else {
+			rs = "problem,maybe alreay exists";
+		}
+	    return rs;
+	    
+	}
     
+    @ResponseBody
+	@RequestMapping(value="/uploadimg",method=RequestMethod.POST)
+	public JSONObject getUploadUmImage3(HttpServletRequest request,HttpServletResponse response) throws Exception{
+		request.setCharacterEncoding("utf-8");
+		response.setCharacterEncoding("utf-8");
+		UMEditor_Uploader up = new UMEditor_Uploader(request);
+		String path=StringUtil.getRootDir(request,"houtai")
+				+File.separator
+				+"uploadfiles";
+	    up.setSavePath(path,"zhuanlan"+File.separator+"img");	    
+	    up.upload();
+	    UploadImgReSult ur = new UploadImgReSult("http://localhost:8080/houtai/image" + up.getZhuanlan_imgurl(),"1","2");
+	    JSONObject js = new JSONObject();
+	    js.put("errno", 0);
+	    js.put("data", new Object[]{ur});
+	    return js;	    
+	}
+    
+    
+
     
     @RequestMapping(path = "delete",method=RequestMethod.POST)
     public String urlParam(@RequestParam(name = "szid") int  szid) {
@@ -110,5 +181,42 @@ public class ZhuanLanController {
     	atcSjkDao.delete(zl.getAtcSjk());
     	return "ok";
     }
-   
+    
+    class UploadImgReSult{
+    	private String url;
+    	private String alt;
+    	private String href;
+        
+    	UploadImgReSult(String u,String a,String h) {
+    		this.url = u;
+    		this.alt = a;
+    		this.href = h;
+    	}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+		public String getAlt() {
+			return alt;
+		}
+
+		public void setAlt(String alt) {
+			this.alt = alt;
+		}
+
+		public String getHref() {
+			return href;
+		}
+
+		public void setHref(String href) {
+			this.href = href;
+		}
+    	
+    }
+    
 }

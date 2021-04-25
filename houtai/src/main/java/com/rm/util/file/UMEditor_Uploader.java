@@ -16,10 +16,20 @@ import javax.servlet.http.HttpServletRequest;
 public class UMEditor_Uploader {
 	// 输出文件地址
 	private String url = "";
+	// 专栏图片输出地址
+	private String zhuanlan_imgurl = "";
 	// 上传文件名
 	private String fileName = "";
 	// 状态
 	private String state = "";
+	public String getZhuanlan_imgurl() {
+		return zhuanlan_imgurl;
+	}
+
+	public void setZhuanlan_imgurl(String zhuanlan_imgurl) {
+		this.zhuanlan_imgurl = zhuanlan_imgurl;
+	}
+
 	// 文件类型
 	private String type = "";
 	// 原始文件名
@@ -84,6 +94,8 @@ public class UMEditor_Uploader {
 					path=path+File.separator+this.fileName;
 					this.type = this.getFileExt(this.fileName);
 					this.url=path.substring(path.lastIndexOf("uploadfiles") + 11);
+					String urlr = this.url.replaceAll("\\\\","/");
+					setZhuanlan_imgurl(urlr);
 					//this.url = this.url.replaceAll("\\\\","/");
 					File localFile = new File(path);
 					try {

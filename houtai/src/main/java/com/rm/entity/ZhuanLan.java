@@ -118,9 +118,20 @@ public class ZhuanLan {
 		this.id = id;
 	}
 
-		
-
+	@Column(length=16000) 
+	//英文63325 utf-8 21812 gbk 32766
+	//这都是一共的 21812 - 1000 -1000 - 1000 - 200
+    private String zlzhengge;	    
 	
+	
+	public String getZlzhengge() {
+		return zlzhengge;
+	}
+
+	public void setZlzhengge(String zlzhengge) {
+		this.zlzhengge = zlzhengge;
+	}
+
 	public int getBtid() {
 		return btid;
 	}
@@ -162,7 +173,22 @@ public class ZhuanLan {
 		this.hangshu = hangshu;
 	}
 
+	public ZhuanLan(int btid, Date riqi,String laiyuan,String xilie, String zhengge) {
+		super();		
+		this.btid = btid;
+		this.zlxilie = xilie;
+		this.wzlaiyuan = laiyuan;
+		this.zlzhengge = zhengge;
+		this.lrsj = riqi;
+	}
 	
+	public ZhuanLan(int btid, Date riqi,String laiyuan,String zhengge) {
+		super();		
+		this.btid = btid;
+		this.wzlaiyuan = laiyuan;
+		this.zlzhengge = zhengge;
+		this.lrsj = riqi;
+	}
 	
 	public int getHangshu() {
 		return hangshu;

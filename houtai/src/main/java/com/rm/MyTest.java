@@ -8,6 +8,8 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,12 +41,15 @@ public class MyTest {
 	
 	private FileUpload fup=new FileUpload();
 	
+	@Value("${helloWorld.abc}")
+	private String hello;
+	
 	@ResponseBody
 	@RequestMapping("/hello")
     public String say(){
         return "Spring Boot 你大爷222！";
     }
-	@RequestMapping("/say")
+	//@RequestMapping("/say") 搞了访问外部资源后访问不了html 暂时不弄了
     public ModelAndView say2(){
         ModelAndView mav=new ModelAndView();
         mav.addObject("message", "SpringBoot 大爷你好！");
@@ -56,7 +61,7 @@ public class MyTest {
     public JSONObject sayup(){
 		System.out.println("aaaa");
 		JSONObject mav=new JSONObject();
-        mav.put("message", "SpringBoot 大爷你好！");
+        mav.put("message", "SpringBoot 大爷你好！" + hello);
         return mav;
     }
 	@ResponseBody

@@ -1,4 +1,4 @@
-package com.rm;
+package com.rm.buyongd;
 
 import java.util.List;
 import javax.annotation.Resource;

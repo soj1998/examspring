@@ -14,6 +14,7 @@ import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.dao.ExamZsdDao;
+import com.rm.dao.ZhuanLanDao;
 import com.rm.entity.AtcSjk;
 import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
@@ -22,6 +23,7 @@ import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.ExamZsd;
+import com.rm.entity.ZhuanLan;
 import com.rm.util.SimCalculator;
 
 
@@ -45,6 +47,8 @@ public class SaveServiceImpl{
 	@Resource
     private ExamZsdDao examZsdDao;
 	
+	@Resource
+    private ZhuanLanDao zhuanLanDao;
 	private static final Logger LOG = LoggerFactory.getLogger(SaveServiceImpl.class);
 	
 	public AtcSjk saveAtcSjk(AtcSjk atcSjk) {		    	
@@ -176,6 +180,20 @@ public class SaveServiceImpl{
 	
 	public ExamChoiZongHe saveExamChoiZongHe(ExamChoiZongHe examChoiZongHe) {		    	
 		ExamChoiZongHe rs = examChoiZongHeDao.save(examChoiZongHe);
+		return rs;
+	}
+	
+	public ZhuanLan saveZhuanLan(ZhuanLan zhuanLan) {
+		SimCalculator sc=new SimCalculator();
+		List<ZhuanLan> szall=zhuanLanDao.findAll();
+    	for(ZhuanLan b:szall) {    		
+			double bl=sc.calculate(b.getZlzhengge(), zhuanLan.getZlzhengge(), 400);    
+    		if(bl>0.8) {
+    			LOG.info("already have same zhuanlan");
+    			return null;  			
+    		}
+    	}
+		ZhuanLan rs = zhuanLanDao.save(zhuanLan);
 		return rs;
 	}
 }

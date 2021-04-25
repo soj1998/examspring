@@ -3,7 +3,8 @@ server:
   servlet:
     context-path: /houtai
    
-helloWorld: spring Boot\u5927\u7237\u4F60\u597D
+helloWorld: 
+  abc: 111spring Boot\u5927\u7237\u4F60\u597D
    
 msyql:
    jdbcName: com.mysql.cj.jdbc.Driver
@@ -31,3 +32,10 @@ spring:
 freemarker:
    suffix: .html
    template-loader-path: classpath:/templates/
+
+fileweizhi:
+  common:
+    ## windows系统下访问路径
+    uploadWindow: E:\new_wl\examspring\uploadfiles\
+    ## Linux系统下访问路径
+    uploadLinux: /user/img/
