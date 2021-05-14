@@ -76,9 +76,8 @@ class HoutaiApplicationTests {
     
 	@Test
 	void contextLoads() {
-		String a = PDFCaoZuo.ReaDPDF("D:\\123.pdf");
-		//PDFCaoZuo.getImgInPDF("D:\\123.pdf", "D:\\123\\");
-		System.out.println("内容:" + a.trim());
+		PDFCaoZuo.getImgInPDF("D:\\123.pdf", "D:\\123\\");
+		System.out.println("内容:");
 	}
 	
 
