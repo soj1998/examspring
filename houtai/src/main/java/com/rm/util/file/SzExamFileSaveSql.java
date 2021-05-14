@@ -645,7 +645,7 @@ public class SzExamFileSaveSql {
 				//信息全不全 有题目类型 有知识点或答案之一就行
 				LOG.info("信息不全，跳过了"); 
 				JSONObject ab = (JSONObject)arr.get(0);
-				fileXiangGuan.writeLogToFile(jilulog, ab.getString("hangshu") + "   " + ab.getString("neirong"));
+				FileXiangGuan.writeLogToFile(jilulog, ab.getString("hangshu") + "   " + ab.getString("neirong"));
 				continue;
 			}
 			if(getpanDuanZonghe(arr,StringUtil.getXiTiZongHeTi())) {
@@ -678,7 +678,7 @@ public class SzExamFileSaveSql {
 					ExamZsd exzsd1 = examQueService.saveExamZsd(zsdzulist);
 					if (null == exzsd1) {
 						LOG.error("添加ExamAnsDa 失败!,zsd没搞对");
-						fileXiangGuan.writeLogToFile(jilulog, azsd);
+						FileXiangGuan.writeLogToFile(jilulog, azsd);
 						continue;
 					}
 					if(zhdatimulist.size()>0) {
@@ -757,7 +757,7 @@ public class SzExamFileSaveSql {
 					ExamZsd exzsd1 = examQueService.saveExamZsd(zsdzulist);
 					if (null == exzsd1) {
 						LOG.error("添加ExamQueXuanXiang 失败!,zsd没搞对");
-						fileXiangGuan.writeLogToFile(jilulog, azsd);
+						FileXiangGuan.writeLogToFile(jilulog, azsd);
 						continue;
 					}
 					ExamQue examQue = new ExamQue(fid,shuizhong,exzsd1,timulist,"Y",lrsj,daanlist,jiexilist);
@@ -798,7 +798,7 @@ public class SzExamFileSaveSql {
 					ExamZsd exzsd1 = examQueService.saveExamZsd(zsdzulist);
 					if (null == exzsd1) {
 						LOG.error("添加ExamAnsDa 失败!,zsd没搞对");
-						fileXiangGuan.writeLogToFile(jilulog, azsd);
+						FileXiangGuan.writeLogToFile(jilulog, azsd);
 						continue;
 					}
 					ExamAnsDa examAnsDa = new ExamAnsDa(fid,shuizhong,exzsd1,timulist,"Y",lrsj,daanlist,jiexilist);

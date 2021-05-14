@@ -3,14 +3,18 @@ package com.rm;
 
 
 
+import java.util.HashMap;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import com.baidu.aip.ocr.AipOcr;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.BookDao;
 import com.rm.dao.ExamAnsDaDao;
@@ -28,7 +32,6 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.linshi.Author;
-import com.rm.util.pdf.PDFCaoZuo;
 
 
 @EnableTransactionManagement
@@ -73,11 +76,30 @@ class HoutaiApplicationTests {
 
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HoutaiApplicationTests.class);
-    
+	public static final String APP_ID = "16781535";
+    public static final String API_KEY = "hUqtyvI4ip03GS8ehcpI3hRX";
+    public static final String SECRET_KEY = "DIM7drbNHoGlhLXjD7AMf9uD3bYlSNhN";
 	@Test
-	void contextLoads() {
-		PDFCaoZuo.getImgInPDF("D:\\123.pdf", "D:\\123\\");
-		System.out.println("内容:");
+	void contextLoads() throws JSONException {
+		AipOcr client = new AipOcr(APP_ID, API_KEY, SECRET_KEY);
+
+        // 可选：设置网络连接参数
+        client.setConnectionTimeoutInMillis(2000);
+        client.setSocketTimeoutInMillis(60000);
+
+        
+        
+		HashMap<String, String> options = new HashMap<String, String>();
+	    options.put("language_type", "CHN_ENG");
+	    options.put("detect_direction", "true");
+	    options.put("detect_language", "true");
+	    options.put("probability", "true");
+	    
+	    
+	    // 参数为本地图片路径
+	    String image = "D:\\图4.jpg";
+	    JSONObject res = client.basicGeneral(image, options);
+	    System.out.println(res.toString(2));
 	}
 	
 

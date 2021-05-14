@@ -97,7 +97,7 @@ public class FileXiangGuan {
 		return rsArray;
 	}
 	
-	public void writeLogToFile(String filename,String a) {
+	public static void writeLogToFile(String filename,String a) {
 		
 		File file = new File(filename);
 		//String content = "This is the text content";
@@ -124,4 +124,6 @@ public class FileXiangGuan {
 	    }
 	 
 	}
+	
+	
 }
