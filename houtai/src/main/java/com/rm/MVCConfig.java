@@ -6,7 +6,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
 @Configuration
 public class MVCConfig implements WebMvcConfigurer {
 
@@ -33,7 +32,7 @@ public class MVCConfig implements WebMvcConfigurer {
         	fileweizhi = linux_weizhi;
         }
     
-    	
+    	//在更换目录后 注意修改${fileweizhi.common.uploadWindow}的地址
     	
     	// 解决静态资源无法访问
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");

@@ -23,7 +23,8 @@ spring:
      show-sql: true
    servlet:
      multipart.max-file-size: 10MB
-     multipart.max-request-size: 100MB
+     multipart.max-request-size: 100MB  
+   
 # 上传文件总的最大值
 # spring.servlet.multipart.max-request-size=10MB
 # 单个文件的最大值
@@ -35,7 +36,7 @@ freemarker:
 
 fileweizhi:
   common:
-    ## windows系统下访问路径
-    uploadWindow: E:\new_wl\examspring\uploadfiles\
+    ## windows系统下访问路径 在更换开发目录后注意更好地址
+    uploadWindow: E:\2021_java\examspring\uploadfiles\
     ## Linux系统下访问路径
     uploadLinux: /user/img/
