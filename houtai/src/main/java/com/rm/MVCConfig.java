@@ -35,7 +35,7 @@ public class MVCConfig implements WebMvcConfigurer {
     	//在更换目录后 注意修改${fileweizhi.common.uploadWindow}的地址
     	
     	// 解决静态资源无法访问
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/houtai/**").addResourceLocations("classpath:/static/").addResourceLocations("classpath:/public/");
         //配置视图解析，把url中后面带/image/***的路径映射到c盘photo文件中的资源
        	registry.addResourceHandler("/image/**").addResourceLocations("file:" + fileweizhi);
     }
