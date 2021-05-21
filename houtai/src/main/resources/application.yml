@@ -4,7 +4,7 @@ server:
     context-path: /houtai
    
 helloWorld: 
-  abc: 111spring Boot\u5927\u7237\u4F60\u597D
+  abc: 111spring Boot 正文
    
 msyql:
    jdbcName: com.mysql.cj.jdbc.Driver

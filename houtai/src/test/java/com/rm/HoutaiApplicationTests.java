@@ -122,7 +122,7 @@ class HoutaiApplicationTests {
 			}
 			if (i==5) {
 				Author au = new Author();
-				au.setName("abcd885444555552225544455214452144111444");
+				au.setName("abcd884");
 				authorDao.save(au);
 			}
 		}		

@@ -182,11 +182,12 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	</dependencies>
 
 	<build>
+		<finalName>xueyanshe</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+			</plugin>			
 		</plugins>
 	</build>
 
