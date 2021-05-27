@@ -136,7 +136,7 @@ public class ZhuanLanFileSaveSql {
 		        	}
 		        	if (StringUtil.isNotEmpty(a1)) {
 		        		if(hs == minhstimu) {
-		        			ZhuanLan zlan = new ZhuanLan(-1,hs,a1,xl,atcSjk);
+		        			ZhuanLan zlan = new ZhuanLan("Y",-1,hs,a1,xl,atcSjk);
 		        			zlan.setLrsj(lrsj2);
 		        			zlan.setWzlaiyuan(ly);
 		        			zlan.setSzid(sza.getId());
@@ -154,7 +154,7 @@ public class ZhuanLanFileSaveSql {
 			        	int hs = mapping.getKey();		        	
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs != minhstimu) {
-			        			ZhuanLan zlan = new ZhuanLan(btid,hs,a1,xl,atcSjk);
+			        			ZhuanLan zlan = new ZhuanLan("Y",btid,hs,a1,xl,atcSjk);
 			        			zlan.setLrsj(lrsj2);
 			        			zlan.setWzlaiyuan(ly);
 			        			zlan.setSzid(sza.getId());

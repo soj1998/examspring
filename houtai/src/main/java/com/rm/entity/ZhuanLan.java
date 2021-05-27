@@ -164,30 +164,35 @@ public class ZhuanLan {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ZhuanLan(int btid, int hangshu,String zlduanluo, String xilie,AtcSjk atcSjk) {
+	public ZhuanLan(String yxbz,int btid, int hangshu,String zlduanluo, String xilie,AtcSjk atcSjk) {
 		super();
 		this.zlduanluo = zlduanluo;
 		this.atcSjk = atcSjk;
 		this.btid = btid;
 		this.zlxilie = xilie;
 		this.hangshu = hangshu;
+		this.yxbz =yxbz;
 	}
 
-	public ZhuanLan(int btid, Date riqi,String laiyuan,String xilie, String zhengge) {
-		super();		
+	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String xilie, String zhengge) {
+		super();
+		this.szid = szid;
 		this.btid = btid;
 		this.zlxilie = xilie;
 		this.wzlaiyuan = laiyuan;
 		this.zlzhengge = zhengge;
 		this.lrsj = riqi;
+		this.yxbz = yxbz;
 	}
 	
-	public ZhuanLan(int btid, Date riqi,String laiyuan,String zhengge) {
-		super();		
+	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String zhengge) {
+		super();	
+		this.szid = szid;
 		this.btid = btid;
 		this.wzlaiyuan = laiyuan;
 		this.zlzhengge = zhengge;
 		this.lrsj = riqi;
+		this.yxbz = yxbz;
 	}
 	
 	public int getHangshu() {

@@ -136,9 +136,9 @@ public class ZhuanLanController {
 		}
 		ZhuanLan zlan = null;
 		if (StringUtil.isNotEmpty(wzxilie)) {
-			zlan = new ZhuanLan(-100,wddate,wzlaiyuan,wzxilie,wzquanbu);
+			zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu);
 		} else {
-			zlan = new ZhuanLan(-100,wddate,wzlaiyuan,wzquanbu);
+			zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzquanbu);
 		}
 		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);
 		String rs = "";
