@@ -86,6 +86,12 @@ public class ZhuanLanController {
 		return zllist;        
     }
 	
+	@ResponseBody
+	@RequestMapping(value="/getzlztbyid",method=RequestMethod.POST)
+    public ZhuanLan listall7(@RequestParam("tid") int glid){  
+		ZhuanLan zl = zhuanLanDao.findById(glid).get();
+		return zl;        
+    }
 	
 	
 	
