@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -21,11 +22,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
+import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
@@ -112,7 +113,7 @@ public class ZhuanLanController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
 	    ZhuanLanFileSaveSql zhuanLanFileSaveSql = new ZhuanLanFileSaveSql();
-	    zhuanLanFileSaveSql.asoneinsertToSql(atcSjkDao,szDao,zhuanLanDao,path + up.getUrl(), wzlx);
+	    zhuanLanFileSaveSql.asoneinsertToSql(saveServiceImpl,atcSjkDao,szDao,zhuanLanDao,path + up.getUrl(), wzlx);
 	    return result + "update jieguo ";
 	    
 	}
@@ -124,7 +125,9 @@ public class ZhuanLanController {
 			@RequestParam(name = "wzriqi")String  wzrq,
 			@RequestParam(name = "wzlaiyuan")String  wzlaiyuan,
 			@RequestParam(name = "wzxilie")String  wzxilie,
-			@RequestParam(name = "wzquanbu")String  wzquanbu) throws Exception{
+			@RequestParam(name = "wzquanbu")String  wzquanbu,
+			@RequestParam(name = "wzquanbutxt")String  wzquanbutxt,
+			@RequestParam(name = "wzzsd")String  zsd) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		//szid riqi laiyuan xielie btid = -100
@@ -140,14 +143,28 @@ public class ZhuanLanController {
 			e.printStackTrace();
 			return "---时间转换错误---";
 		}
-		ZhuanLan zlan = null;
-		if (StringUtil.isNotEmpty(wzxilie)) {
-			zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu);
-		} else {
-			zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzquanbu);
+		//搞知识点 知识点搞分级 是***
+		String[] zsdzu = zsd.split("\\*\\*\\*");
+		List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
+		for (String azsdzu : zsdzu) {
+			ExamZsd exzsd = new ExamZsd();
+			exzsd.setNeirong(StringUtil.myTrim(azsdzu));
+			zsdzulist.add(exzsd);
 		}
-		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);
+		ExamZsd exzsd1 = saveServiceImpl.saveExamZsd(zsdzulist);
 		String rs = "";
+		if (null == exzsd1) {
+			LOG.error("添加ExamZsd 失败!,zsd没搞对");
+			rs = "zsd wrong";
+			return rs;
+		}
+		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
+		if (StringUtil.isNotEmpty(wzxilie)) {
+			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
+		} else {
+			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzquanbu,wzquanbutxt,exzsd1);
+		}
+		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);		
 		if (rs1 != null) {
 			rs = "ok";
 		} else {

@@ -25,6 +25,7 @@ import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
 import com.rm.util.SimCalculator;
+import com.rm.util.StringUtil;
 
 
 @Service
@@ -138,6 +139,19 @@ public class SaveServiceImpl{
 		}
 		return null;
 		
+	}
+	
+	public ExamZsd saveZsdEnd(String zsd1) {
+		//搞知识点 知识点搞分级 是***
+		String[] zsdzu = zsd1.split("\\*\\*\\*");
+		List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
+		for (String azsdzu : zsdzu) {
+			ExamZsd exzsd = new ExamZsd();
+			exzsd.setNeirong(StringUtil.myTrim(azsdzu));
+			zsdzulist.add(exzsd);
+		}
+		ExamZsd exzsd1 = saveExamZsd(zsdzulist);		
+		return exzsd1;
 	}
 	
 	public ExamAnsDa saveExamAnsDa(ExamAnsDa eExamAnsDa) {

@@ -21,8 +21,10 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.AtcSjk;
+import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
+import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 
 
@@ -39,7 +41,7 @@ public class ZhuanLanFileSaveSql {
 	private static final Logger LOG = LoggerFactory.getLogger(ZhuanLanFileSaveSql.class);
     
 	//一个整体的存取
-	public void asoneinsertToSql( AtcSjkDao atcSjkDao,SzDao szDao,ZhuanLanDao zhuanLanDao,
+	public void asoneinsertToSql(SaveServiceImpl examQueService,AtcSjkDao atcSjkDao,SzDao szDao,ZhuanLanDao zhuanLanDao,
 			String fileweizhi,int wzlx) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
@@ -86,6 +88,12 @@ public class ZhuanLanFileSaveSql {
 			String riqi2 = StringUtil.getMapString(riqilist, StringUtil.getZhuanLanRiQi());
 			String zsd2 = StringUtil.getMapString(zsdlist, StringUtil.getXiTiZhiShiDian());
 			riqi2 = riqi2.replace("年", "-").replace("月", "-").replace("日", "");
+			//搞下知识点
+			ExamZsd exzsd1 = examQueService.saveZsdEnd(zsd2);
+			if (null == exzsd1) {
+				LOG.error("添加ExamZsd 失败!,zsd没搞对");
+				continue;
+			}
 			Date wddate = null;
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			try {
@@ -136,12 +144,13 @@ public class ZhuanLanFileSaveSql {
 		        	}
 		        	if (StringUtil.isNotEmpty(a1)) {
 		        		if(hs == minhstimu) {
+		        			
 		        			ZhuanLan zlan = new ZhuanLan("Y",-1,hs,a1,xl,atcSjk);
 		        			zlan.setLrsj(lrsj2);
 		        			zlan.setWzlaiyuan(ly);
 		        			zlan.setSzid(sza.getId());
 		        			zlan.setYxbz("Y");
-		        			zlan.setZlzsd(zsd2);
+		        			zlan.setExzsd(exzsd1);
 		        			btid = zhuanLanDao.save(zlan).getId();
 		        		}
 		        	}
@@ -159,7 +168,7 @@ public class ZhuanLanFileSaveSql {
 			        			zlan.setWzlaiyuan(ly);
 			        			zlan.setSzid(sza.getId());
 			        			zlan.setYxbz("Y");
-			        			zlan.setZlzsd(zsd2);
+			        			zlan.setExzsd(exzsd1);
 			        			zhuanLanDao.save(zlan).getId();
 			        		}
 			        	}
