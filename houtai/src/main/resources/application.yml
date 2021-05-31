@@ -11,13 +11,23 @@ msyql:
    dbUrl: jdbc:mysql://localhost:3306/db_book
    userName: root
    password: 123456
- 
+# https://www.dazhuanlan.com/2019/12/13/5df32795f2766/
 spring:
    datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/abc?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
       username: root
       password: 123456
+      master:
+        url: jdbc:mysql://localhost:3307/testdb?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.jdbc.Driver
+      slave:
+        url: jdbc:mysql://localhost:3308/testdb?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.jdbc.Driver
    jpa:
      hibernate.ddl-auto: update
      show-sql: true
