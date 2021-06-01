@@ -12,6 +12,7 @@ msyql:
    userName: root
    password: 123456
 # https://www.dazhuanlan.com/2019/12/13/5df32795f2766/
+# https://www.cnblogs.com/carl-cn/p/12172962.html
 spring:
    datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,18 +20,20 @@ spring:
       username: root
       password: 123456
       master:
-        url: jdbc:mysql://localhost:3307/testdb?useUnicode=true&characterEncoding=utf8&useSSL=false
+        jdbc-url: jdbc:mysql://localhost:3306/ab1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
         username: root
         password: 123456
-        driver-class-name: com.mysql.jdbc.Driver
+        driver-class-name: com.mysql.cj.jdbc.Driver
       slave:
-        url: jdbc:mysql://localhost:3308/testdb?useUnicode=true&characterEncoding=utf8&useSSL=false
+        jdbc-url: jdbc:mysql://localhost:3306/ab2?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
         username: root
         password: 123456
-        driver-class-name: com.mysql.jdbc.Driver
+        driver-class-name: com.mysql.cj.jdbc.Driver
    jpa:
      hibernate.ddl-auto: update
      show-sql: true
+     database: mysql
+     open-in-view: true
    servlet:
      multipart.max-file-size: 10MB
      multipart.max-request-size: 100MB  
