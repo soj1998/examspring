@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-
-import com.rm.dynamicsource.DataSourceContextHolder;
 import com.rm.dynamicsource.DynamicDataSourceRouter;
 
 @Configuration

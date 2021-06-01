@@ -41,8 +41,15 @@ public class JpaEntityManager {
 //	    @Primary
     @Bean(name = "routingDataSource")
     public AbstractRoutingDataSource routingDataSource() {
-    	//决定用master 还是slave	
-        DataSourceContextHolder.setDataSource("slaveDataSource");
+    	//决定用master 还是slave
+        String os = System.getProperty("os.name");    	
+        //如果是Windows系统
+        if (os.toLowerCase().startsWith("win")) {
+        	DataSourceContextHolder.setDataSource("slaveDataSource");
+        } else {  //linux 和mac
+        	DataSourceContextHolder.setDataSource("masterDataSource");
+        }
+        
         DynamicDataSourceRouter proxy = new DynamicDataSourceRouter();
         Map<Object, Object> targetDataSources = new HashMap<>(2);
         targetDataSources.put("masterDataSource", masterDataSource);

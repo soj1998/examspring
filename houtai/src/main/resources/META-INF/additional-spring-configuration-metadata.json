@@ -1,0 +1,87 @@
+{"properties": [
+  {
+    "name": "fileweizhi.common.upload-window",
+    "type": "java.lang.String",
+    "description": "A description for 'fileweizhi.common.upload-window'"
+  },
+  {
+    "name": "fileweizhi.common.uploadLinux",
+    "type": "java.lang.String",
+    "description": "A description for 'fileweizhi.common.uploadLinux'"
+  },
+  {
+    "name": "helloWorld.abc",
+    "type": "java.lang.String",
+    "description": "A description for 'helloWorld.abc'"
+  },
+  {
+    "name": "msyql.jdbc-name",
+    "type": "java.lang.String",
+    "description": "A description for 'msyql.jdbc-name'"
+  },
+  {
+    "name": "msyql.dbUrl",
+    "type": "java.lang.String",
+    "description": "A description for 'msyql.dbUrl'"
+  },
+  {
+    "name": "msyql.userName",
+    "type": "java.lang.String",
+    "description": "A description for 'msyql.userName'"
+  },
+  {
+    "name": "msyql.password",
+    "type": "java.lang.String",
+    "description": "A description for 'msyql.password'"
+  },
+  {
+    "name": "freemarker.suffix",
+    "type": "java.lang.String",
+    "description": "A description for 'freemarker.suffix'"
+  },
+  {
+    "name": "freemarker.template-loader-path",
+    "type": "java.lang.String",
+    "description": "A description for 'freemarker.template-loader-path'"
+  },
+  {
+    "name": "spring.datasource.master.jdbc-url",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.master.jdbc-url'"
+  },
+  {
+    "name": "spring.datasource.master.driver-class-name",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.master.driver-class-name'"
+  },
+  {
+    "name": "spring.datasource.master.password",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.master.password'"
+  },
+  {
+    "name": "spring.datasource.master.username",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.master.username'"
+  },
+  {
+    "name": "spring.datasource.slave.jdbc-url",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.slave.jdbc-url'"
+  },
+  {
+    "name": "spring.datasource.slave.username",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.slave.username'"
+  },
+  {
+    "name": "spring.datasource.slave.password",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.slave.password'"
+  },
+  {
+    "name": "spring.datasource.slave.driver-class-name",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.slave.driver-class-name'"
+  }
+]}
