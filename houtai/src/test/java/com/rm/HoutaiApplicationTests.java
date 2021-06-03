@@ -70,7 +70,7 @@ class HoutaiApplicationTests {
 	@Resource 
     private SzDao szDao;
 	
-
+    //mvn 安装命令mvn clean package -DskipTests
 	
 	
 
