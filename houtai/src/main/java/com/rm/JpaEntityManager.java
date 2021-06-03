@@ -42,11 +42,16 @@ public class JpaEntityManager {
     @Bean(name = "routingDataSource")
     public AbstractRoutingDataSource routingDataSource() {
     	//决定用master 还是slave
-        String os = System.getProperty("os.name");    	
+        String os = System.getProperty("os.name"); 
+        System.out.println("------------");
+        System.out.println(os + "------------");
+        System.out.println("------------");
         //如果是Windows系统
         if (os.toLowerCase().startsWith("win")) {
+        	System.out.println("1------------");
         	DataSourceContextHolder.setDataSource("slaveDataSource");
         } else {  //linux 和mac
+        	System.out.println("2------------");
         	DataSourceContextHolder.setDataSource("masterDataSource");
         }
         
