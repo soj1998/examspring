@@ -18,8 +18,6 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import com.rm.dynamicsource.DataSourceContextHolder;
 import com.rm.dynamicsource.DynamicDataSourceRouter;
 
 
@@ -41,21 +39,7 @@ public class JpaEntityManager {
 //	    @Primary
     @Bean(name = "routingDataSource")
     public AbstractRoutingDataSource routingDataSource() {
-    	//决定用master 还是slave
-        String os = System.getProperty("os.name"); 
-        System.out.println("------------");
-        System.out.println(os + "------------");
-        System.out.println("------------");
-        //如果是Windows系统
-        if (os.toLowerCase().startsWith("win")) {
-        	System.out.println("1------------");
-        	DataSourceContextHolder.setDataSource("slaveDataSource");
-        } else {  //linux 和mac
-        	System.out.println("2------------");
-        	DataSourceContextHolder.setDataSource("masterDataSource");
-        }
-        
-        DynamicDataSourceRouter proxy = new DynamicDataSourceRouter();
+    	DynamicDataSourceRouter proxy = new DynamicDataSourceRouter();
         Map<Object, Object> targetDataSources = new HashMap<>(2);
         targetDataSources.put("masterDataSource", masterDataSource);
         targetDataSources.put("slaveDataSource", slaveDataSource);
