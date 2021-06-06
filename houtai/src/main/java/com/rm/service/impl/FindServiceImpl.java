@@ -48,11 +48,9 @@ public class FindServiceImpl{
 	@Resource
     private ExamQueZongHeXiaoDao examQueZongHeXiaoDao;
 	@Resource
-    private ExamChoiZongHeDao examChoiZongHeDao;
-	
+    private ExamChoiZongHeDao examChoiZongHeDao;	
 	@Resource
-    private ExamZsdDao examZsdDao;
-	
+    private ExamZsdDao examZsdDao;	
 	@Resource
     private TreeNodeSjkDao tnDao; 
 	@Resource
@@ -89,6 +87,51 @@ public class FindServiceImpl{
 		return a3 + a4 + a5;
 	}
 	
+	public Long getXiTiShuLiang() {
+		ExamQue examQue = new ExamQue();
+		examQue.setYxbz("Y");
+		Example<ExamQue> example3 = Example.of(examQue);
+		Long a3 = examQueDao.count(example3);
+		LOG.info("14   " + a3);
+		
+		ExamQueZongHeDa examQueZongHeDa = new ExamQueZongHeDa();
+		examQue.setYxbz("Y");
+		Example<ExamQueZongHeDa> example4 = Example.of(examQueZongHeDa);
+		Long a4 = examQueZongHeDaDao.count(example4);
+		LOG.info("15   " + a4);
+		
+		ExamAnsDa examAnsDa = new ExamAnsDa();
+		examAnsDa.setYxbz("Y");
+		Example<ExamAnsDa> example5 = Example.of(examAnsDa);
+		Long a5 = examAnsDaDao.count(example5);
+		LOG.info("16   " + a5);
+		return a3 + a4 + a5;
+	}
+	
+	public List<ExamQue> getExamQueList(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamQue> list_glx=examQueDao.getall(pageRequest);
+		return list_glx;
+	}
+	
+	public List<ExamAnsDa> getExamDaList(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamAnsDa> list_glx=examAnsDaDao.getall(pageRequest);
+		return list_glx;
+	}
+	
+	public List<ExamQue> getExamQueListOrderBysj(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamQue> list_glx=examQueDao.getallorderbysj(pageRequest);
+		return list_glx;
+	}
+	
+	public List<ExamAnsDa> getExamDaListOrderBysj(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamAnsDa> list_glx=examAnsDaDao.getallorderbysj(pageRequest);
+		return list_glx;
+	}
+	
 	public Long getZhuanLanShuLiang(int szid) {
 		ZhuanLan zl = new ZhuanLan();
 		zl.setSzid(szid);
@@ -100,6 +143,30 @@ public class FindServiceImpl{
 		Long a2 = zhuanLanDao.count(example2);
 		LOG.info("13   " + a2);
 		return a2;
+	}	
+	
+	public Long getZhuanLanShuLiang() {
+		ZhuanLan zl = new ZhuanLan();
+		zl.setYxbz("Y");
+		ExampleMatcher matcher2 = ExampleMatcher.matching()
+	            .withIgnorePaths("hangshu")
+	            .withIgnorePaths("btid");
+		Example<ZhuanLan> example2 = Example.of(zl, matcher2);		
+		Long a2 = zhuanLanDao.count(example2);
+		LOG.info("13   " + a2);
+		return a2;
+	}
+	
+	public List<ZhuanLan> getZhuanLanList(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ZhuanLan> list_glx=zhuanLanDao.getzlbybtidfuyi(pageRequest);
+		return list_glx;
+	}
+	
+	public List<ZhuanLan> getZhuanLanListOrderBysj(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ZhuanLan> list_glx=zhuanLanDao.getzlorderbysj(pageRequest);
+		return list_glx;
 	}
 	
 	public Long getJiChuShuLiang(int szid) {
@@ -111,6 +178,16 @@ public class FindServiceImpl{
 		LOG.info("12   " + a1);
 		return a1;
 	}
+	
+	public Long getJiChuShuLiang() {
+		TreeNodeSjk twz = new TreeNodeSjk();
+		twz.setYxbz("Y");
+		Example<TreeNodeSjk> example1 = Example.of(twz);
+		Long a1 = tnDao.count(example1);
+		LOG.info("12   " + a1);
+		return a1;
+	}
+	
 	/**
 	 * 根据索取题目全部、还是某类题型或知识点，以及pageNum pageSize得到返回的题目
 	 * quanbu 就是全部题型

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -174,6 +175,11 @@ public class ZhuanLanController {
 	    
 	}
     
+    
+    @Value("${urlbyos.win}")
+	private String urlwin;
+	@Value("${urlbyos.linux}")
+	private String urllinux;
     @ResponseBody
 	@RequestMapping(value="/uploadimg",method=RequestMethod.POST)
 	public JSONObject getUploadUmImage3(HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -185,7 +191,15 @@ public class ZhuanLanController {
 				+"uploadfiles";
 	    up.setSavePath(path,"zhuanlan"+File.separator+"img");	    
 	    up.upload();
-	    UploadImgReSult ur = new UploadImgReSult("http://localhost:8080/houtai/image" + up.getZhuanlan_imgurl(),"1","2");
+	    String url = "";
+	    String os = System.getProperty("os.name");
+    	//如果是Windows系统
+        if (os.toLowerCase().startsWith("win")) {
+        	url = urlwin;
+        } else {  //linux 和mac
+        	url = urllinux;
+        }
+	    UploadImgReSult ur = new UploadImgReSult("http://" +url+":8080/houtai/image" + up.getZhuanlan_imgurl(),"1","2");
 	    JSONObject js = new JSONObject();
 	    js.put("errno", 0);
 	    js.put("data", new Object[]{ur});

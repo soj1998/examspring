@@ -83,5 +83,25 @@
     "name": "spring.datasource.slave.driver-class-name",
     "type": "java.lang.String",
     "description": "A description for 'spring.datasource.slave.driver-class-name'"
+  },
+  {
+    "name": "urlbyos.urlwin",
+    "type": "java.lang.String",
+    "description": "A description for 'urlbyos.urlwin'"
+  },
+  {
+    "name": "urlbyos.urllinux",
+    "type": "java.lang.String",
+    "description": "A description for 'urlbyos.urllinux'"
+  },
+  {
+    "name": "urlbyos.win",
+    "type": "java.lang.String",
+    "description": "A description for 'urlbyos.win'"
+  },
+  {
+    "name": "urlbyos.linux",
+    "type": "java.lang.String",
+    "description": "A description for 'urlbyos.linux'"
   }
 ]}

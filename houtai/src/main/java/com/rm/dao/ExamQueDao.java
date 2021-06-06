@@ -29,4 +29,10 @@ public interface ExamQueDao extends JpaRepository<ExamQue, Integer>{
 	@Query(value = "select * from t_examquesjk where szid = :sid and examtype = :tmlx and yxbz ='Y' ",nativeQuery = true)
 	public List<ExamQue> getallbytmleixing(@Param("sid") int ssid, @Param("tmlx") String timuleixing);
 	
+	@Query(value = "select * from t_examquesjk where yxbz ='Y' order by id",nativeQuery = true)
+	public List<ExamQue> getall(Pageable pageable);
+	
+	@Query(value = "select * from t_examquesjk where yxbz ='Y' order by lrsj",nativeQuery = true)
+	public List<ExamQue> getallorderbysj(Pageable pageable);
+	
 }

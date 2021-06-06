@@ -53,3 +53,7 @@ fileweizhi:
     uploadWindow: E:\2021_java\examspring\uploadfiles\
     ## Linux系统下访问路径
     uploadLinux: /user/img/
+
+urlbyos:
+  win: localhost
+  linux: 1.116.123.109

@@ -451,10 +451,21 @@ public class StringUtil {
     	return abc2;
     }
     
+    public static List<String> getXinXiYuan() {
+    	List<String> rs = new ArrayList<String>();
+    	rs.add("选项试题");
+    	rs.add("问答试题");
+    	rs.add("专栏");
+    	rs.add("大文章");
+    	return rs;
+    }
+    
     /**
      *转换题目类型，方便保存
      *
      */
+    
+    
     public static String[] getZhuanLanRiQi() {
     	return new String[] {"【日期】"};
     }

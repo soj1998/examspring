@@ -29,6 +29,9 @@ public interface ZhuanLanDao extends JpaRepository<ZhuanLan, Integer>{
 	@Query(value = "select * from t_zhuanlan where btid = -1 or btid= -100 order by id",nativeQuery = true)
 	public List<ZhuanLan> getzlbybtidfuyi(Pageable pageable);
 	
+	@Query(value = "select * from t_zhuanlan where btid = -1 or btid= -100 order by lrsj",nativeQuery = true)
+	public List<ZhuanLan> getzlorderbysj(Pageable pageable);
+	
 	@Query(value = "select * from t_zhuanlan where (btid = -1 or btid= -100) and szid = :sid and yxbz ='Y' order by id",nativeQuery = true)
 	public List<ZhuanLan> getzlbybtidfuyizhanshi(Pageable pageable,@Param("sid") int ssid);
 	
