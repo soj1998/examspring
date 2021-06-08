@@ -60,9 +60,10 @@ public class ZtController {
         return zlsl1;
     }
     
-    @RequestMapping(value="/getsyzl")
+    @RequestMapping(value="/getsy")
     public List<ZhuanLan> listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("zlsl")ResquestZlsl zlsl){    	
         //totalrecord sortby
+    	
 		List<ZhuanLan> list_glx=service.getZhuanLanListOrderBysj(pageNum, pageSize);
         return list_glx;
     }
@@ -74,18 +75,7 @@ public class ZtController {
         return list_glx;
     }
     
-    @SuppressWarnings("unused")
-    class ResponseFanHui{    	
-		private int idxh;
-    	private int id;
-    	private String xinxiyuan;
-    	
-    	ResponseFanHui(int idxh,int id,String xinxiyuan) {
-    		this.idxh = idxh;
-    		this.id = id;
-    		this.xinxiyuan = xinxiyuan;
-    	}
-    }
+    
     
     @SuppressWarnings("unused")
     class ResquestZlsl{    	
