@@ -10,21 +10,45 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="t_ggxinxi")
-public class GongGongXinXi {
+@Table(name="t_shouyexinxi")
+public class ShouYeXinXi {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 	@Column(length=50)
 	private String sz;
+	private int szid;
 	@Column(length=200)
 	private String zsd;
+	private Long zsdid;
+	
+	public int getSzid() {
+		return szid;
+	}
+	public void setSzid(int szid) {
+		this.szid = szid;
+	}
+	public Long getZsdid() {
+		return zsdid;
+	}
+	public void setZsdid(Long zsdid) {
+		this.zsdid = zsdid;
+	}
 	@Column
 	private Date lrsj;
 	@Column(length=50)
 	private String xinxiyuanleixing;	
 	private Long xinxiyuanid;
+	
+	@Column(length=1)
+    private String yxbz;	
+	public String getYxbz() {
+		return yxbz;
+	}
+	public void setYxbz(String yxbz) {
+		this.yxbz = yxbz;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -61,13 +85,20 @@ public class GongGongXinXi {
 	public void setXinxiyuanid(Long xinxiyuanid) {
 		this.xinxiyuanid = xinxiyuanid;
 	}
-	public GongGongXinXi(String sz, String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid) {
+	public ShouYeXinXi(int szid,String sz, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid,String yxbz) {
 		super();
+		this.szid = szid;
 		this.sz = sz;
+		this.zsdid = zsdid;
 		this.zsd = zsd;
 		this.lrsj = lrsj;
 		this.xinxiyuanleixing = xinxiyuanleixing;
 		this.xinxiyuanid = xinxiyuanid;
+		this.yxbz= yxbz;
+	}
+	public ShouYeXinXi() {
+		super();
+		// TODO Auto-generated constructor stub
 	} 
 	
 	

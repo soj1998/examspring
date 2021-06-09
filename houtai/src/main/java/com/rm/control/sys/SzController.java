@@ -25,6 +25,7 @@ public class SzController {
 	@RequestMapping(value="/listall")
     public List<Sz> listall(){    	
         List<Sz> list_glx=szDao.findAll();
+        LOG.info("res1" + list_glx);
         return list_glx;
     }
 

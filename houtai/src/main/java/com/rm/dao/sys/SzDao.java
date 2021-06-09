@@ -17,7 +17,8 @@ import com.rm.entity.lieju.Sz;
  */
 public interface SzDao extends JpaRepository<Sz, Integer>{
 	@Query(value = "select * from t_sz where szmc = :szmc limit 0,1",nativeQuery = true)
-    public Sz findSzBymc(@Param("szmc") String mc);
+    public Sz findSzBymc(@Param("szmc") String mc);	
+	
 /**
 	@Query(value = "from GuanLianXing where userId = :userId")
     public List<Book> findGuanLianXingByUserId(@Param("userId") int useId);

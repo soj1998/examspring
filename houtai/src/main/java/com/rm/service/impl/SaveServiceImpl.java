@@ -14,6 +14,7 @@ import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.dao.ExamZsdDao;
+import com.rm.dao.ShouYeXinXiDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.entity.AtcSjk;
 import com.rm.entity.ExamAnsDa;
@@ -23,6 +24,7 @@ import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.ExamZsd;
+import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.util.SimCalculator;
 import com.rm.util.StringUtil;
@@ -50,6 +52,9 @@ public class SaveServiceImpl{
 	
 	@Resource
     private ZhuanLanDao zhuanLanDao;
+	
+	@Resource
+    private ShouYeXinXiDao shouYeXinXiDao;
 	private static final Logger LOG = LoggerFactory.getLogger(SaveServiceImpl.class);
 	
 	public AtcSjk saveAtcSjk(AtcSjk atcSjk) {		    	
@@ -208,6 +213,14 @@ public class SaveServiceImpl{
     		}
     	}
 		ZhuanLan rs = zhuanLanDao.save(zhuanLan);
+		
+		
+		
+		return rs;
+	}
+	
+	public ShouYeXinXi saveShouYeXinXi(ShouYeXinXi zhuanLan) {
+		ShouYeXinXi rs = shouYeXinXiDao.save(zhuanLan);
 		return rs;
 	}
 }

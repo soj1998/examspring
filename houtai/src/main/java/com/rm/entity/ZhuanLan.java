@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.rm.entity.lieju.Sz;
 
 @Entity
 @Table(name="t_zhuanlan")
@@ -82,6 +85,32 @@ public class ZhuanLan {
 		this.lrsj = lrsj;
 	}
 
+	@Column
+    private int exzsdid;
+	
+	public int getExzsdid() {
+		return exzsdid;
+	}
+
+	public void setExzsdid(int exzsdid) {
+		this.exzsdid = exzsdid;
+	}
+
+
+	@Transient
+	private Sz sz;
+	
+	public Sz getSz() {
+		return sz;
+	}
+
+	public void setSz(Sz sz) {
+		this.sz = sz;
+	}
+
+
+
+	@Transient
 	private ExamZsd exzsd;
 
 	public ExamZsd getExzsd() {
@@ -186,7 +215,7 @@ public class ZhuanLan {
 	/*
 	 * 搞单个专栏的时候用，且有系列
 	 * */
-	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String xilie, String zhengge, String zhenggetxt,ExamZsd exzsd) {
+	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String xilie, String zhengge, String zhenggetxt,int exzsdid) {
 		super();
 		this.szid = szid;
 		this.btid = btid;
@@ -196,12 +225,12 @@ public class ZhuanLan {
 		this.lrsj = riqi;
 		this.yxbz = yxbz;
 		this.zlzhenggetxt = zhenggetxt;
-		this.exzsd = exzsd;
+		this.exzsdid = exzsdid;
 	}
 	/*
 	 * 搞单个专栏的时候用，没有系列
 	 * */
-	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String zhengge, String zhenggetxt,ExamZsd exzsd) {
+	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String zhengge, String zhenggetxt,int exzsdid) {
 		super();	
 		this.szid = szid;
 		this.btid = btid;
@@ -210,7 +239,7 @@ public class ZhuanLan {
 		this.lrsj = riqi;
 		this.yxbz = yxbz;
 		this.zlzhenggetxt = zhenggetxt;
-		this.exzsd = exzsd;
+		this.exzsdid = exzsdid;
 	}
 	
 	public int getHangshu() {

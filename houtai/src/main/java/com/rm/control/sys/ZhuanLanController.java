@@ -29,6 +29,8 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
+import com.rm.entity.lieju.Sz;
+import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 import com.rm.util.file.UMEditor_Uploader;
@@ -48,6 +50,8 @@ public class ZhuanLanController {
 	
 	@Resource
 	private SaveServiceImpl saveServiceImpl;
+	@Resource
+	private FindServiceImpl findServiceImpl;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ZhuanLanController.class);
 	
@@ -159,12 +163,16 @@ public class ZhuanLanController {
 			rs = "zsd wrong";
 			return rs;
 		}
-		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
+		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId().intValue());
 		if (StringUtil.isNotEmpty(wzxilie)) {
 			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
 		} else {
 			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzquanbu,wzquanbutxt,exzsd1);
 		}
+		Sz sz = findServiceImpl.getSz(zlan.getSzid());
+		ExamZsd examzsd = findServiceImpl.getExamZsd(zlan.getExzsdid());
+		zlan.setExzsd(examzsd);
+		zlan.setSz(sz);
 		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);		
 		if (rs1 != null) {
 			rs = "ok";

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.entity.ExamQue;
+import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.pt.ExamQueChuanDi;
 import com.rm.service.impl.FindServiceImpl;
@@ -45,6 +46,19 @@ public class ZtController {
     /*
      * id 标题 类型 学科 知识点 录入时间
      * */
+    @RequestMapping(value="/getsyxxcount")
+    public int listall1(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+        Long zlsl = service.getShouYeXinXiShuLiang();
+        return zlsl.intValue();
+    }
+    
+    @RequestMapping(value="/getsyxx")
+    public List<ShouYeXinXi> listall31(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+        //totalrecord sortby
+		List<ShouYeXinXi> list_glx=service.getShouYeXinXiList(pageNum, pageSize);
+        return list_glx;
+    }
+    
     @RequestMapping(value="/getsycount")
     public ResquestZlsl listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
         Long timu = service.getXiTiShuLiang();

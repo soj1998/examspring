@@ -20,15 +20,19 @@ import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
 import com.rm.dao.ExamZsdDao;
+import com.rm.dao.ShouYeXinXiDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.dao.ZhuanLanDao;
+import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamZsd;
+import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.TreeNodeSjk;
 import com.rm.entity.ZhuanLan;
+import com.rm.entity.lieju.Sz;
 import com.rm.entity.pt.ExamQueChuanDi;
 import com.rm.util.StringUtil;
 
@@ -55,12 +59,51 @@ public class FindServiceImpl{
     private TreeNodeSjkDao tnDao; 
 	@Resource
     private ZhuanLanDao zhuanLanDao; 
+	@Resource
+    private ShouYeXinXiDao shouYeXinXiDao; 
+	
+	@Resource
+    private SzDao szDao;
+	
 	
 	private static final Logger LOG = LoggerFactory.getLogger(FindServiceImpl.class);
+	
+	public Sz getSz(int szid) {
+		return szDao.findById(szid).get();
+	}
+	
+	public ExamZsd getExamZsd(int szid) {
+		return examZsdDao.findById(szid).get();
+	}
 	
 	public List<ExamZsd> findExamZsdYi(ExamZsd examZsd) {		    	
 		List<ExamZsd> rs = examZsdDao.getZsdYiJi();
 		return rs;
+	}
+	
+	public Long getShouYeXinXiShuLiang(int szid) {
+		ShouYeXinXi zl = new ShouYeXinXi();
+		zl.setSzid(szid);
+		zl.setYxbz("Y");		
+		Example<ShouYeXinXi> example2 = Example.of(zl);		
+		Long a2 = shouYeXinXiDao.count(example2);
+		LOG.info("13   " + a2);
+		return a2;
+	}	
+	
+	public Long getShouYeXinXiShuLiang() {
+		ShouYeXinXi zl = new ShouYeXinXi();
+		zl.setYxbz("Y");
+		Example<ShouYeXinXi> example2 = Example.of(zl);		
+		Long a2 = shouYeXinXiDao.count(example2);
+		LOG.info("13   " + a2);
+		return a2;
+	}
+	
+	public List<ShouYeXinXi> getShouYeXinXiList(int pageNum,int pageSize) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ShouYeXinXi> list_glx=shouYeXinXiDao.getzlbybtidfuyi(pageRequest);
+		return list_glx;
 	}
 	
 	public Long getXiTiShuLiang(int szid) {
