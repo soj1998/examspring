@@ -78,7 +78,7 @@ public class SaveServiceImpl{
 	
 	public ExamZsd saveExamZsd(List<ExamZsd> examzsdzu) {
 		List<ExamZsd> rs = new ArrayList<ExamZsd>();
-		Long sjid = -1L;
+		int sjid = -1;
 		//知识点 一个也没有 每一个都要存一下
 		//知识点 前一个没有 后面的有 不保存
 		//知识点 前一个有 后面的保存
@@ -95,7 +95,7 @@ public class SaveServiceImpl{
 			}			
 		}
 		if (yigemeiyou ==0) {
-			Long qianyigeid = -1L;
+			int qianyigeid = -1;
 			for(int i = 0; i < examzsdzu.size(); i++) {
 				ExamZsd dq = examzsdzu.get(i);
 				int jibie = i;
@@ -213,9 +213,6 @@ public class SaveServiceImpl{
     		}
     	}
 		ZhuanLan rs = zhuanLanDao.save(zhuanLan);
-		
-		
-		
 		return rs;
 	}
 	

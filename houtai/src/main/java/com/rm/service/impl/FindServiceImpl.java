@@ -73,6 +73,10 @@ public class FindServiceImpl{
 	}
 	
 	public ExamZsd getExamZsd(int szid) {
+		//ExamZsd zl = new ExamZsd();
+		//zl.setId((long)szid);;	
+		//Example<ExamZsd> example2 = Example.of(zl);	
+		//return examZsdDao.findOne(example2).get();
 		return examZsdDao.findById(szid).get();
 	}
 	

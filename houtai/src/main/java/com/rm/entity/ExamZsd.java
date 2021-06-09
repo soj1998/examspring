@@ -21,20 +21,20 @@ public class ExamZsd implements Serializable{
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 	
+    private int id; 	
 
 	private int jibie;
 	
 	@Column(length=50)
 	private String neirong;
 	
-	private Long sjid;
+	private int sjid;
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -54,11 +54,11 @@ public class ExamZsd implements Serializable{
 		this.neirong = neirong;
 	}
 
-	public Long getSjid() {
+	public int getSjid() {
 		return sjid;
 	}
 
-	public void setSjid(Long sjid) {
+	public void setSjid(int sjid) {
 		this.sjid = sjid;
 	}
 	

@@ -28,6 +28,7 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamZsd;
+import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
 import com.rm.service.impl.FindServiceImpl;
@@ -163,7 +164,7 @@ public class ZhuanLanController {
 			rs = "zsd wrong";
 			return rs;
 		}
-		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId().intValue());
+		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId());
 		if (StringUtil.isNotEmpty(wzxilie)) {
 			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
 		} else {
@@ -174,7 +175,11 @@ public class ZhuanLanController {
 		zlan.setExzsd(examzsd);
 		zlan.setSz(sz);
 		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);		
-		if (rs1 != null) {
+		ShouYeXinXi syxx =new ShouYeXinXi(sz.getId(),sz.getSzmc(),
+				examzsd.getId(),examzsd.getNeirong(),
+				wddate,StringUtil.getXinXiYuan().get(0),rs1.getId().longValue(),"Y");
+		ShouYeXinXi syxx1 =saveServiceImpl.saveShouYeXinXi(syxx);
+		if (rs1 != null && syxx1 != null) {
 			rs = "ok";
 		} else {
 			rs = "problem,maybe alreay exists";
