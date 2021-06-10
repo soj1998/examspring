@@ -25,6 +25,7 @@ import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.ExamZsd;
+import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 
@@ -33,7 +34,8 @@ import com.rm.util.StringUtil;
 public class SzExamFileSaveSql {
 
 	
-    private String[] zsd = StringUtil.getXiTiZhiShiDian();	
+    private String[] zsd = StringUtil.getXiTiZhiShiDian();
+    private String[] biaoti = StringUtil.getXiTiBiaoTi();	
 	private String wdjs = "【结束】";
 	private String[] daan = StringUtil.getXiTiDaan();	
 	private String[] jiexi = StringUtil.getXiTiJieXi();
@@ -523,7 +525,7 @@ public class SzExamFileSaveSql {
 	
 	
 	//一个整体的存取
-	public void asoneinsertToSql(SaveServiceImpl examQueService,
+	public String asoneinsertToSql(FindServiceImpl findService,SaveServiceImpl examQueService,
 			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan,int danduchongfu) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
@@ -554,6 +556,35 @@ public class SzExamFileSaveSql {
 			diGuiHz(0,hzarray,yuanshiarray,zsd);
 		}
 		JSONArray hzarray3 = new JSONArray();
+		//标题只搞一次		
+		String mybiaoti = "";
+		boolean mybiaotib = false;
+		for (Object fd:yuanshiarray) { 
+			JSONObject jb = (JSONObject)fd;
+			String arr1 = jb.getString("neirong");
+			String arr2 = StringUtil.myTrim(arr1);
+			if (mybiaotib) {
+				break;
+			}
+			for (String a : biaoti) {
+				if (arr2.indexOf(a) >= 0) {
+					mybiaotib = true;
+					mybiaoti = arr2;
+					break;
+				}
+			}
+		}
+		//检测标题 不能为空 不能和系统内重复
+		if (StringUtil.isEmpty(mybiaoti)) {
+			LOG.error("标题不能为空");
+			return "标题不能为空";
+		}
+		int ashul =findService.getXiTiShuLiang(mybiaoti);
+		if (ashul > 0) {
+			LOG.error("标题不能重复");
+			return "系统内已有一样的标题";
+		}
+		//标题搞完
 		if(panduantixingpaibu==zhiyouyigezsdleixing) {
 			String[] timuleix = StringUtil.getXiTiLeiXingZw();
 			//这种文件知识点只能在开头设置一次
@@ -760,7 +791,7 @@ public class SzExamFileSaveSql {
 						FileXiangGuan.writeLogToFile(jilulog, azsd);
 						continue;
 					}
-					ExamQue examQue = new ExamQue(fid,shuizhong,exzsd1,timulist,"Y",lrsj,daanlist,jiexilist);
+					ExamQue examQue = new ExamQue(fid,shuizhong,exzsd1,mybiaoti,timulist,"Y",lrsj,daanlist,jiexilist);
 					try{
 						ExamQue examQue2 = examQueService.saveExamQue(examQue);
 						if (null == examQue2) {
@@ -801,7 +832,7 @@ public class SzExamFileSaveSql {
 						FileXiangGuan.writeLogToFile(jilulog, azsd);
 						continue;
 					}
-					ExamAnsDa examAnsDa = new ExamAnsDa(fid,shuizhong,exzsd1,timulist,"Y",lrsj,daanlist,jiexilist);
+					ExamAnsDa examAnsDa = new ExamAnsDa(fid,shuizhong,exzsd1,mybiaoti,timulist,"Y",lrsj,daanlist,jiexilist);
 					try{
 						ExamAnsDa examQue2 = examQueService.saveExamAnsDa(examAnsDa);
 						if (null == examQue2) {
@@ -815,5 +846,6 @@ public class SzExamFileSaveSql {
 			}			
 		}
 		System.out.println(hzarray.size());
+		return "ok";
 	}
 }

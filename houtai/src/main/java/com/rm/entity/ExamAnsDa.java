@@ -65,6 +65,7 @@ public class ExamAnsDa {
 	@Column(length=2400)
     private String jiexi;
 
+	
 	public String getJiexi() {
 		return jiexi;
 	}
@@ -73,7 +74,18 @@ public class ExamAnsDa {
 		this.jiexi = jiexi;
 	}
         
-    @Column(length=1)
+	@Column(length=100)
+    private String biaoti; 
+	
+    public String getBiaoti() {
+		return biaoti;
+	}
+
+	public void setBiaoti(String biaoti) {
+		this.biaoti = biaoti;
+	}
+
+	@Column(length=1)
     private String yxbz;	
     
 	@ManyToOne(targetEntity = AtcSjk.class,fetch = FetchType.EAGER)
@@ -140,12 +152,13 @@ public class ExamAnsDa {
 	@Transient
 	private int tihuantouweishu = StringUtil.getXiTiTiHuanTouWeiShu();;
 	
-	public ExamAnsDa(AtcSjk fid,Integer szid, ExamZsd zzd1, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
+	public ExamAnsDa(AtcSjk fid,Integer szid, ExamZsd zzd1,String biaoti, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
 		this.examZsd = zzd1;
+		this.biaoti = biaoti;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
 		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);

@@ -155,6 +155,23 @@ public class FindServiceImpl{
 		return a3 + a4 + a5;
 	}
 	
+	public int getXiTiShuLiang(String biaoti) {
+		ExamQue examQue = new ExamQue();
+		examQue.setBiaoti(biaoti);
+		examQue.setYxbz("Y");
+		Example<ExamQue> example3 = Example.of(examQue);
+		Long a3 = examQueDao.count(example3);
+		LOG.info("14   " + a3);
+		
+		ExamAnsDa examAnsDa = new ExamAnsDa();
+		examAnsDa.setBiaoti(biaoti);
+		examAnsDa.setYxbz("Y");
+		Example<ExamAnsDa> example5 = Example.of(examAnsDa);
+		Long a5 = examAnsDaDao.count(example5);
+		LOG.info("16   " + a5);
+		return a3.intValue() + a5.intValue();
+	}
+	
 	public List<ExamQue> getExamQueList(int pageNum,int pageSize) {
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
 		List<ExamQue> list_glx=examQueDao.getall(pageRequest);

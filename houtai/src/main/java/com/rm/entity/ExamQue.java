@@ -116,9 +116,19 @@ public class ExamQue {
 		this.examtype = examtype;
 	}
 
-	
+	@Column(length=100)
+    private String biaoti; 
 
     
+	public String getBiaoti() {
+		return biaoti;
+	}
+
+	public void setBiaoti(String biaoti) {
+		this.biaoti = biaoti;
+	}
+
+
 	@Column(length=100)
     private String ans; 
     
@@ -139,10 +149,11 @@ public class ExamQue {
     
    
     
-	public ExamQue(Integer szid, String examque, String yxbz, String examans, String examtype,
+	public ExamQue(Integer szid, String biaoti,String examque, String yxbz, String examans, String examtype,
 			String examanal) {
 		super();
 		this.szid = szid;
+		this.biaoti = biaoti;
 		this.que = examque;
 		this.yxbz = yxbz;
 		this.ans = examans;
@@ -155,12 +166,13 @@ public class ExamQue {
 	@Transient
 	private int tihuantouweishu = StringUtil.getXiTiTiHuanTouWeiShu();
 	
-	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
+	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, String biaoti,Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
 		this.examZsd = examZsd;
+		this.biaoti = biaoti;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
 		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);

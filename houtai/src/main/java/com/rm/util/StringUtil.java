@@ -490,6 +490,10 @@ public class StringUtil {
     	return new String[] {"【知识点】"};
     }
     
+    public static String[] getXiTiBiaoTi() {
+    	return new String[] {"【标题】"};
+    }
+    
     public static String[] getXiTiZongHeTi() {
     	return new String[] {"【综合题】"};
     }

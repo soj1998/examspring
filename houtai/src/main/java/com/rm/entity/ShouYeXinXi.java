@@ -86,10 +86,19 @@ public class ShouYeXinXi {
 		this.xinxiyuanid = xinxiyuanid;
 	}
 	
+	@Column
+	private int zlbiaotiid;
+	
+	public int getZlbiaotiid() {
+		return zlbiaotiid;
+	}
+	public void setZlbiaotiid(int zlbiaotiid) {
+		this.zlbiaotiid = zlbiaotiid;
+	}
 	@Column(length=200)
 	private String biaoti;
 	
-	public ShouYeXinXi(int szid,String sz, String biaoti, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid,String yxbz) {
+	public ShouYeXinXi(int szid,String sz, String biaoti, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid,int zlbiaotiid,String yxbz) {
 		super();
 		this.szid = szid;
 		this.sz = sz;
@@ -99,6 +108,7 @@ public class ShouYeXinXi {
 		this.lrsj = lrsj;
 		this.xinxiyuanleixing = xinxiyuanleixing;
 		this.xinxiyuanid = xinxiyuanid;
+		this.zlbiaotiid = zlbiaotiid;
 		this.yxbz= yxbz;
 	}
 	public String getBiaoti() {

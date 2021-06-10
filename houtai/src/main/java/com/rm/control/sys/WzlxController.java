@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.sys.WzlxDao;
+import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.entity.lieju.Wzlx;
 import com.rm.util.StringUtil;
 
@@ -22,9 +26,23 @@ public class WzlxController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(WzlxController.class);
     @RequestMapping(value="/listall")
-    public List<Wzlx> listall(){    	
-        List<Wzlx> list_glx=wzlxDao.findAll();
-        return list_glx;
+    public JSONArray listall(){    	
+        //List<Wzlx> list_glx=wzlxDao.findAll();
+        //return list_glx;
+    	JSONArray rs =new JSONArray();
+    	JSONObject one = new JSONObject();
+    	one.put("id", WenZhangLeiXing.JICHU.getIndex());
+    	one.put("wzlxmc", WenZhangLeiXing.JICHU.getName());
+    	rs.add(one);
+    	one = new JSONObject();
+    	one.put("id", WenZhangLeiXing.SHITI.getIndex());
+    	one.put("wzlxmc", WenZhangLeiXing.SHITI.getName());
+    	rs.add(one);
+    	one = new JSONObject();
+    	one.put("id", WenZhangLeiXing.ZHUANLAN.getIndex());
+    	one.put("wzlxmc", WenZhangLeiXing.ZHUANLAN.getName());
+    	rs.add(one);
+    	return rs;
     }
 
     
