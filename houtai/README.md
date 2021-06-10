@@ -4,7 +4,15 @@ exam question and answer
 
 12.24创建本文件
 
-# 1.搞试题
+# 1.搞首页
+```
+	（1）所有文章，包括专栏、试题、基础都要再存入shouyexinxi表
+	（2）新增的时候存入，新增成功后再去存入，没成功则不存入
+	（3）修改的时候修改shouyexinxi表，jpa的save方法有原来的id就是update
+	（4）删除的时候记得删除shouyexinxi表
+```
+
+# 2.搞试题
 ```
 	（1）试题的架构和文章不一样
 	（2）导入形式可以多种 用excel docx 网页录入 都可以

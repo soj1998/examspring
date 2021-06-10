@@ -31,4 +31,7 @@ public interface ShouYeXinXiDao extends JpaRepository<ShouYeXinXi, Integer>{
 	@Query(value = "select * from t_shouyexinxi where szid = :sid and yxbz ='Y' order by id",nativeQuery = true)
 	public List<ShouYeXinXi> getzlbysz(Pageable pageable,@Param("sid") int ssid);
 	
+	@Query(value = "select * from t_shouyexinxi where xinxiyuanleixing = :xxy and xinxiyuanid = :sid and yxbz ='Y' limit 0,1 ",nativeQuery = true)
+	public ShouYeXinXi getShouYeByXinXiYuan(@Param("xxy")String xinxiyuan, @Param("sid") int syid);
+	
 }

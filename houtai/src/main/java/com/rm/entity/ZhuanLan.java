@@ -38,7 +38,17 @@ public class ZhuanLan {
 		this.zlxilie = zlxilie;
 	}
 
+	@Column(length=200)
+	private String biaoti;
+	
 
+	public String getBiaoti() {
+		return biaoti;
+	}
+
+	public void setBiaoti(String biaoti) {
+		this.biaoti = biaoti;
+	}
 
 	@Column(columnDefinition="int default -1")
     private int btid; //是标题的话 存入-1
@@ -215,10 +225,11 @@ public class ZhuanLan {
 	/*
 	 * 搞单个专栏的时候用，且有系列
 	 * */
-	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String xilie, String zhengge, String zhenggetxt,int exzsdid) {
+	public ZhuanLan(String yxbz,int szid,int btid,String biaoti, Date riqi,String laiyuan,String xilie, String zhengge, String zhenggetxt,int exzsdid) {
 		super();
 		this.szid = szid;
 		this.btid = btid;
+		this.biaoti = biaoti;
 		this.zlxilie = xilie;
 		this.wzlaiyuan = laiyuan;
 		this.zlzhengge = zhengge;
@@ -227,20 +238,7 @@ public class ZhuanLan {
 		this.zlzhenggetxt = zhenggetxt;
 		this.exzsdid = exzsdid;
 	}
-	/*
-	 * 搞单个专栏的时候用，没有系列
-	 * */
-	public ZhuanLan(String yxbz,int szid,int btid, Date riqi,String laiyuan,String zhengge, String zhenggetxt,int exzsdid) {
-		super();	
-		this.szid = szid;
-		this.btid = btid;
-		this.wzlaiyuan = laiyuan;
-		this.zlzhengge = zhengge;
-		this.lrsj = riqi;
-		this.yxbz = yxbz;
-		this.zlzhenggetxt = zhenggetxt;
-		this.exzsdid = exzsdid;
-	}
+	
 	
 	public int getHangshu() {
 		return hangshu;

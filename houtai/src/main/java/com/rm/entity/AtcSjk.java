@@ -23,7 +23,7 @@ public class AtcSjk implements Serializable{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private Long id; 	
+    private int id; 	
 
 	public String getVersion() {
 		return version;
@@ -119,11 +119,11 @@ public class AtcSjk implements Serializable{
 		this.wzlaiyuan = wzlaiyuan;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

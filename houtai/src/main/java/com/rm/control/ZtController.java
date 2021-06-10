@@ -47,7 +47,7 @@ public class ZtController {
      * id 标题 类型 学科 知识点 录入时间
      * */
     @RequestMapping(value="/getsyxxcount")
-    public int listall1(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+    public int listall1(){    	
         Long zlsl = service.getShouYeXinXiShuLiang();
         return zlsl.intValue();
     }

@@ -220,4 +220,11 @@ public class SaveServiceImpl{
 		ShouYeXinXi rs = shouYeXinXiDao.save(zhuanLan);
 		return rs;
 	}
+	
+	public void delShouYeXinXi(int syid, String xinxiyuan) {
+		ShouYeXinXi rs = shouYeXinXiDao.getShouYeByXinXiYuan(xinxiyuan,syid);
+		if (rs != null) {
+			shouYeXinXiDao.deleteById(rs.getId());
+		}
+	}
 }

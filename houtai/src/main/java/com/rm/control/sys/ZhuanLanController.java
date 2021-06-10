@@ -31,6 +31,7 @@ import com.rm.entity.ExamZsd;
 import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
+import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
@@ -128,6 +129,7 @@ public class ZhuanLanController {
 	@RequestMapping(value="/uploadztsave",method=RequestMethod.POST)
 	public String getUploadUmImage2(HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(name = "szid")int  szid,
+			@RequestParam(name = "wzbiaoti")String  biaoti,
 			@RequestParam(name = "wzriqi")String  wzrq,
 			@RequestParam(name = "wzlaiyuan")String  wzlaiyuan,
 			@RequestParam(name = "wzxilie")String  wzxilie,
@@ -164,7 +166,8 @@ public class ZhuanLanController {
 			rs = "zsd wrong";
 			return rs;
 		}
-		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId());
+		// -100 是单个专栏  -1 是整体保存的专栏
+		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,biaoti,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId());
 		if (StringUtil.isNotEmpty(wzxilie)) {
 			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
 		} else {
@@ -174,10 +177,15 @@ public class ZhuanLanController {
 		ExamZsd examzsd = findServiceImpl.getExamZsd(zlan.getExzsdid());
 		zlan.setExzsd(examzsd);
 		zlan.setSz(sz);
-		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);		
+		ZhuanLan rs1 = saveServiceImpl.saveZhuanLan(zlan);
+		if (rs1 == null) {
+			rs = "problem,maybe alreay exists,don't save shouyexinxi";
+			return rs;
+		}
+		String wzlx = WenZhangLeiXing.ZHUANLAN.getName(); 
 		ShouYeXinXi syxx =new ShouYeXinXi(sz.getId(),sz.getSzmc(),
-				examzsd.getId(),examzsd.getNeirong(),
-				wddate,StringUtil.getXinXiYuan().get(0),rs1.getId().longValue(),"Y");
+				biaoti,examzsd.getId(),examzsd.getNeirong(),
+				wddate,wzlx,rs1.getId().longValue(),"Y");
 		ShouYeXinXi syxx1 =saveServiceImpl.saveShouYeXinXi(syxx);
 		if (rs1 != null && syxx1 != null) {
 			rs = "ok";
@@ -223,12 +231,16 @@ public class ZhuanLanController {
 
     
     @RequestMapping(path = "delete",method=RequestMethod.POST)
-    public String urlParam(@RequestParam(name = "szid") int  szid) {
+    public String deletezhuanlan(@RequestParam(name = "szid") int  szid) {
     	ZhuanLan zl = zhuanLanDao.findById(szid).get();    	
-    	List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
-    	zllist.add(zl);
-    	zhuanLanDao.deleteAll(zllist);
-    	atcSjkDao.delete(zl.getAtcSjk());
+    	//List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
+    	//zllist.add(zl);
+    	//zhuanLanDao.deleteAll(zllist);
+    	zhuanLanDao.deleteById(szid);
+    	if (zl.getAtcSjk() != null) {
+    		atcSjkDao.deleteById(zl.getAtcSjk().getId());
+    	}
+    	saveServiceImpl.delShouYeXinXi(szid, WenZhangLeiXing.ZHUANLAN.getName());
     	return "ok";
     }
     

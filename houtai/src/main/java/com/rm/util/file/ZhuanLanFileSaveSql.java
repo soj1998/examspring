@@ -55,7 +55,7 @@ public class ZhuanLanFileSaveSql {
 		AtcSjk atcSjk = new AtcSjk();		
 		atcSjk.setFileweizhi(fileweizhi);
 		atcSjk.setWzlxid(wzlx);
-		Long atcid = atcSjkDao.save(atcSjk).getId();		
+		int atcid = atcSjkDao.save(atcSjk).getId();		
 		fileXiangGuan.diGuiHz(0,hzarray,jsonDuanArray,sz);
 		for (Object fd:hzarray) {
 			//Map<Integer,String> szlist = null;

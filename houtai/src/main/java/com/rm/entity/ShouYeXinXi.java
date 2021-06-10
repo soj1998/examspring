@@ -15,7 +15,7 @@ public class ShouYeXinXi {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private int id; 
 	@Column(length=50)
 	private String sz;
 	private int szid;
@@ -49,10 +49,10 @@ public class ShouYeXinXi {
 	public void setYxbz(String yxbz) {
 		this.yxbz = yxbz;
 	}
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getSz() {
@@ -85,16 +85,27 @@ public class ShouYeXinXi {
 	public void setXinxiyuanid(Long xinxiyuanid) {
 		this.xinxiyuanid = xinxiyuanid;
 	}
-	public ShouYeXinXi(int szid,String sz, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid,String yxbz) {
+	
+	@Column(length=200)
+	private String biaoti;
+	
+	public ShouYeXinXi(int szid,String sz, String biaoti, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid,String yxbz) {
 		super();
 		this.szid = szid;
 		this.sz = sz;
 		this.zsdid = zsdid;
+		this.biaoti = biaoti;
 		this.zsd = zsd;
 		this.lrsj = lrsj;
 		this.xinxiyuanleixing = xinxiyuanleixing;
 		this.xinxiyuanid = xinxiyuanid;
 		this.yxbz= yxbz;
+	}
+	public String getBiaoti() {
+		return biaoti;
+	}
+	public void setBiaoti(String biaoti) {
+		this.biaoti = biaoti;
 	}
 	public ShouYeXinXi() {
 		super();
