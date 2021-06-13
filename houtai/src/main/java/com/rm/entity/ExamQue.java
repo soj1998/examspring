@@ -147,8 +147,28 @@ public class ExamQue {
     @Column(length=1200)
     private String jiexi;
     
-   
+    //级别默认为1 为0的则是综合题的小题 sjid去找综合题的大题
+    @Column(columnDefinition="int default 1")
+    private int jibie;
+    @Column(columnDefinition="int default -1")
+	private int sjid;
     
+	public int getJibie() {
+		return jibie;
+	}
+
+	public void setJibie(int jibie) {
+		this.jibie = jibie;
+	}
+
+	public int getSjid() {
+		return sjid;
+	}
+
+	public void setSjid(int sjid) {
+		this.sjid = sjid;
+	}
+
 	public ExamQue(Integer szid, String biaoti,String examque, String yxbz, String examans, String examtype,
 			String examanal) {
 		super();
@@ -180,7 +200,7 @@ public class ExamQue {
 		this.que = StringUtil.getMapStringTiHuanTou(examque,list,tihuantouweishu);
 		this.yxbz = yxbz;
 		this.lrsj = lrsj;
-		this.ans = StringUtil.getMapString(examans,StringUtil.getXiTiDaan());
+		this.ans = examans != null ? StringUtil.getMapString(examans,StringUtil.getXiTiDaan()) : null;
 		this.setWentiLeiXing(examque);
 		this.jiexi = StringUtil.getMapString(examanal,StringUtil.getXiTiJieXi());
 	}

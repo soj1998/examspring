@@ -185,7 +185,7 @@ public class ZhuanLanController {
 		String wzlx = WenZhangLeiXing.ZHUANLAN.getName(); 
 		ShouYeXinXi syxx =new ShouYeXinXi(sz.getId(),sz.getSzmc(),
 				biaoti,examzsd.getId(),examzsd.getNeirong(),
-				wddate,wzlx,rs1.getId().longValue(),rs1.getBtid(),"Y");
+				wddate,wzlx,rs1.getId(),rs1.getBtid(),"Y");
 		ShouYeXinXi syxx1 =saveServiceImpl.saveShouYeXinXi(syxx);
 		if (rs1 != null && syxx1 != null) {
 			rs = "ok";

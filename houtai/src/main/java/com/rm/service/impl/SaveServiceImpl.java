@@ -10,6 +10,7 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ExamAnsDaDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
+import com.rm.dao.ExamDaanDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
@@ -20,6 +21,7 @@ import com.rm.entity.AtcSjk;
 import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
+import com.rm.entity.ExamDaan;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
@@ -38,6 +40,8 @@ public class SaveServiceImpl{
     private ExamQueDao examQueDao;
 	@Resource
     private ExamChoiDao examChoiDao;
+	@Resource
+    private ExamDaanDao examDaanDao;
 	@Resource
     private ExamQueZongHeDaDao examQueZongHeDaDao;
 	@Resource
@@ -175,6 +179,11 @@ public class SaveServiceImpl{
 	
 	public ExamChoi saveExamChoi(ExamChoi examChoi) {		    	
 		ExamChoi rs = examChoiDao.save(examChoi);
+		return rs;
+	}
+	
+	public ExamDaan saveExamDaan(ExamDaan examDaan) {		    	
+		ExamDaan rs = examDaanDao.save(examDaan);
 		return rs;
 	}
 

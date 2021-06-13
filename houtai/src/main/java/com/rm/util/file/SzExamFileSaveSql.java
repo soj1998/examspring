@@ -18,13 +18,15 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.entity.AtcSjk;
-import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
+import com.rm.entity.ExamDaan;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.ExamZsd;
+import com.rm.entity.ShouYeXinXi;
+import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
@@ -72,6 +74,19 @@ public class SzExamFileSaveSql {
 		            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
 		        }
         	}
+        }
+	}
+	
+	private void saveExamDaan(SaveServiceImpl examQueService, ExamQue examQue, Map<Integer,String> map) {
+		try{
+			String daan1 = StringUtil.getMapString(map,StringUtil.getXiTiDaan());
+			if (StringUtil.isNotEmpty(daan1)) {
+				ExamDaan daan2 = new ExamDaan(daan1,examQue.getId()); 
+				examQueService.saveExamDaan(daan2);
+			}
+        }catch (Exception e){
+            LOG.error("添加saveExamDaan 失败!"+e.getMessage());
+            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();			            
         }
 	}
 	
@@ -526,7 +541,7 @@ public class SzExamFileSaveSql {
 	
 	//一个整体的存取
 	public String asoneinsertToSql(FindServiceImpl findService,SaveServiceImpl examQueService,
-			String fileweizhi,int wzlx,int shuizhong,String wzlaiyuan,int danduchongfu) {
+			String fileweizhi,int shuizhong,String wzlaiyuan,int danduchongfu) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
 		//对数据的长度 最好是有个更为友好的提示 比如 题目的长度 答案 或者解析的长度
@@ -541,7 +556,7 @@ public class SzExamFileSaveSql {
 		Date lrsj = Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant());
 		asjk.setLrsj(lrsj);
 		asjk.setSzid(shuizhong);
-		asjk.setWzlxid(wzlx);
+		asjk.setWzlxid(WenZhangLeiXing.SHITI.getIndex());
 		asjk.setWzlaiyuan(wzlaiyuan);
 		asjk.setYxbz("Y");
 		AtcSjk fid = examQueService.saveAtcSjk(asjk);
@@ -558,6 +573,7 @@ public class SzExamFileSaveSql {
 		JSONArray hzarray3 = new JSONArray();
 		//标题只搞一次		
 		String mybiaoti = "";
+		Map<Integer,String> mybiaotihashmap = new HashMap<Integer,String>();
 		boolean mybiaotib = false;
 		for (Object fd:yuanshiarray) { 
 			JSONObject jb = (JSONObject)fd;
@@ -570,21 +586,25 @@ public class SzExamFileSaveSql {
 				if (arr2.indexOf(a) >= 0) {
 					mybiaotib = true;
 					mybiaoti = arr2;
+					mybiaotihashmap.put(1, arr2);
 					break;
 				}
 			}
 		}
+		mybiaoti = StringUtil.getMapString(mybiaotihashmap, StringUtil.getXiTiBiaoTi());
 		//检测标题 不能为空 不能和系统内重复
 		if (StringUtil.isEmpty(mybiaoti)) {
 			LOG.error("标题不能为空");
 			return "标题不能为空";
-		}
+		}		
 		int ashul =findService.getXiTiShuLiang(mybiaoti);
 		if (ashul > 0) {
 			LOG.error("标题不能重复");
 			return "系统内已有一样的标题";
-		}
+		}		
 		//标题搞完
+		//知识点外面预留
+		ExamZsd exzsdzuizhong = new ExamZsd();
 		if(panduantixingpaibu==zhiyouyigezsdleixing) {
 			String[] timuleix = StringUtil.getXiTiLeiXingZw();
 			//这种文件知识点只能在开头设置一次
@@ -759,43 +779,46 @@ public class SzExamFileSaveSql {
 				}
 			}
 			else if (null!= arr && arr.size() > 0) {
-				if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw())) {
-					int maxhangshu  = 0;
-					for (Object a1:arr) {
-						JSONObject b1 = (JSONObject)a1;
-						if(b1.getIntValue("hangshu")>= maxhangshu) {
-							maxhangshu = b1.getIntValue("hangshu");
-						}
+				//if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw())) {
+				int maxhangshu  = 0;
+				for (Object a1:arr) {
+					JSONObject b1 = (JSONObject)a1;
+					if(b1.getIntValue("hangshu")>= maxhangshu) {
+						maxhangshu = b1.getIntValue("hangshu");
 					}
-					int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
-					int[] timu_qz = getpanDuanGuiShuDian("timu",arr,maxhangshu);
-					int[] xuanxiang_qz = getpanDuanGuiShuDian("xuanxiang",arr,maxhangshu);
-					int[] daan_qz = getpanDuanGuiShuDian("daan",arr,maxhangshu);
-					int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr,maxhangshu);
-					zsdlist = getGuiShu(zsd_qz,arr);
-					timulist = getGuiShu(timu_qz,arr);
-					xuanxianglist = getGuiShu(xuanxiang_qz,arr);
-					daanlist = getGuiShu(daan_qz,arr);
-					jiexilist = getGuiShu(jiexi_qz,arr);
-					String azsd = StringUtil.getMapString(zsdlist,StringUtil.getXiTiZhiShiDian());
-					String[] zsdzu = azsd.split("\\*\\*\\*");
-					List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
-					for (String azsdzu : zsdzu) {
-						ExamZsd exzsd = new ExamZsd();
-						exzsd.setNeirong(StringUtil.myTrim(azsdzu));
-						zsdzulist.add(exzsd);
-					}
-					ExamZsd exzsd1 = examQueService.saveExamZsd(zsdzulist);
-					if (null == exzsd1) {
-						LOG.error("添加ExamQueXuanXiang 失败!,zsd没搞对");
-						FileXiangGuan.writeLogToFile(jilulog, azsd);
-						continue;
-					}
-					ExamQue examQue = new ExamQue(fid,shuizhong,exzsd1,mybiaoti,timulist,"Y",lrsj,daanlist,jiexilist);
+				}
+				int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
+				int[] timu_qz = getpanDuanGuiShuDian("timu",arr,maxhangshu);
+				int[] xuanxiang_qz = getpanDuanGuiShuDian("xuanxiang",arr,maxhangshu);
+				int[] daan_qz = getpanDuanGuiShuDian("daan",arr,maxhangshu);
+				int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr,maxhangshu);
+				zsdlist = getGuiShu(zsd_qz,arr);
+				timulist = getGuiShu(timu_qz,arr);
+				xuanxianglist = getGuiShu(xuanxiang_qz,arr);
+				daanlist = getGuiShu(daan_qz,arr);
+				jiexilist = getGuiShu(jiexi_qz,arr);
+				String azsd = StringUtil.getMapString(zsdlist,StringUtil.getXiTiZhiShiDian());
+				String[] zsdzu = azsd.split("\\*\\*\\*");
+				List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
+				for (String azsdzu : zsdzu) {
+					ExamZsd exzsd = new ExamZsd();
+					exzsd.setNeirong(StringUtil.myTrim(azsdzu));
+					zsdzulist.add(exzsd);
+				}
+				exzsdzuizhong = examQueService.saveExamZsd(zsdzulist);
+				if (null == exzsdzuizhong) {
+					LOG.error("添加ExamQueXuanXiang 失败!,zsd没搞对");
+					FileXiangGuan.writeLogToFile(jilulog, azsd);
+					continue;
+				}
+				ExamQue examQue = null;
+				if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw()))
+				{
+					examQue = new ExamQue(fid,shuizhong,exzsdzuizhong,mybiaoti,timulist,"Y",lrsj,daanlist,jiexilist);
 					try{
 						ExamQue examQue2 = examQueService.saveExamQue(examQue);
 						if (null == examQue2) {
-							LOG.error("添加ExamQueXuanXiang 失败!,问题已存在");
+							LOG.error("添加ExamQue 失败!,问题已存在");
 							continue;
 						}
 						saveExamChoi(examQueService,examQue2,xuanxianglist); 
@@ -803,49 +826,33 @@ public class SzExamFileSaveSql {
 			            LOG.error("添加ExamQue 失败!"+e.getMessage());
 			        }
 				} else {
-					int maxhangshu  = 0;
-					for (Object a1:arr) {
-						JSONObject b1 = (JSONObject)a1;
-						if(b1.getIntValue("hangshu")>= maxhangshu) {
-							maxhangshu = b1.getIntValue("hangshu");
-						}
-					}
-					int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
-					int[] timu_qz = getpanDuanGuiShuDian("timu",arr,maxhangshu);					
-					int[] daan_qz = getpanDuanGuiShuDian("daan",arr,maxhangshu);
-					int[] jiexi_qz = getpanDuanGuiShuDian("jiexi",arr,maxhangshu);
-					zsdlist = getGuiShu(zsd_qz,arr);
-					timulist = getGuiShu(timu_qz,arr);
-					daanlist = getGuiShu(daan_qz,arr);
-					jiexilist = getGuiShu(jiexi_qz,arr);
-					String azsd = StringUtil.getMapString(zsdlist,StringUtil.getXiTiZhiShiDian());
-					String[] zsdzu = azsd.split("\\*\\*\\*");
-					List<ExamZsd> zsdzulist = new ArrayList<ExamZsd>();
-					for (String azsdzu : zsdzu) {
-						ExamZsd exzsd = new ExamZsd();
-						exzsd.setNeirong(StringUtil.myTrim(azsdzu));
-						zsdzulist.add(exzsd);
-					}
-					ExamZsd exzsd1 = examQueService.saveExamZsd(zsdzulist);
-					if (null == exzsd1) {
-						LOG.error("添加ExamAnsDa 失败!,zsd没搞对");
-						FileXiangGuan.writeLogToFile(jilulog, azsd);
-						continue;
-					}
-					ExamAnsDa examAnsDa = new ExamAnsDa(fid,shuizhong,exzsd1,mybiaoti,timulist,"Y",lrsj,daanlist,jiexilist);
+					examQue = new ExamQue(fid,shuizhong,exzsdzuizhong,mybiaoti,timulist,"Y",lrsj,null,jiexilist);
 					try{
-						ExamAnsDa examQue2 = examQueService.saveExamAnsDa(examAnsDa);
+						ExamQue examQue2 = examQueService.saveExamQue(examQue);
 						if (null == examQue2) {
-							LOG.error("添加ExamAnsDa 失败!,问题已存在");
+							LOG.error("添加ExamQue 失败!,问题已存在");
 							continue;
-						} 
+						}
+						saveExamDaan(examQueService,examQue2,daanlist); 
 			        }catch (Exception e){
-			            LOG.error("添加examQueDao 失败!"+e.getMessage());
+			            LOG.error("添加ExamQue 失败!"+e.getMessage());
 			        }
 				}
 			}			
 		}
+		String rs1 = "";
 		System.out.println(hzarray.size());
-		return "ok";
+		String wzlx1 = WenZhangLeiXing.SHITI.getName();
+		String szmc = findService.getSz(shuizhong).getSzmc();
+		ShouYeXinXi syxx =new ShouYeXinXi(shuizhong,szmc,
+				mybiaoti,exzsdzuizhong.getId(),exzsdzuizhong.getNeirong(),
+				lrsj,wzlx1,-1,-1,"Y");
+		ShouYeXinXi syxx1 =examQueService.saveShouYeXinXi(syxx);
+		if (syxx1 != null) {
+			rs1 = "shouyexinxi ok";
+		} else {
+			rs1 = "problem,maybe alreay exists";
+		}
+		return "ok" + rs1;
 	}
 }

@@ -39,7 +39,7 @@ public class ShouYeXinXi {
 	private Date lrsj;
 	@Column(length=50)
 	private String xinxiyuanleixing;	
-	private Long xinxiyuanid;
+	private int xinxiyuanid;
 	
 	@Column(length=1)
     private String yxbz;	
@@ -79,10 +79,10 @@ public class ShouYeXinXi {
 	public void setXinxiyuanleixing(String xinxiyuanleixing) {
 		this.xinxiyuanleixing = xinxiyuanleixing;
 	}
-	public Long getXinxiyuanid() {
+	public int getXinxiyuanid() {
 		return xinxiyuanid;
 	}
-	public void setXinxiyuanid(Long xinxiyuanid) {
+	public void setXinxiyuanid(int xinxiyuanid) {
 		this.xinxiyuanid = xinxiyuanid;
 	}
 	
@@ -98,7 +98,7 @@ public class ShouYeXinXi {
 	@Column(length=200)
 	private String biaoti;
 	
-	public ShouYeXinXi(int szid,String sz, String biaoti, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, Long xinxiyuanid,int zlbiaotiid,String yxbz) {
+	public ShouYeXinXi(int szid,String sz, String biaoti, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, int xinxiyuanid,int zlbiaotiid,String yxbz) {
 		super();
 		this.szid = szid;
 		this.sz = sz;

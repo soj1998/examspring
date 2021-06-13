@@ -16,6 +16,7 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ExamAnsDaDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
+import com.rm.dao.ExamDaanDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
@@ -26,6 +27,7 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
+import com.rm.entity.ExamDaan;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamZsd;
@@ -47,6 +49,8 @@ public class FindServiceImpl{
     private ExamQueDao examQueDao;
 	@Resource
     private ExamChoiDao examChoiDao;
+	@Resource
+    private ExamDaanDao examDaanDao;
 	@Resource
     private ExamQueZongHeDaDao examQueZongHeDaDao;
 	@Resource
@@ -252,6 +256,9 @@ public class FindServiceImpl{
 		return a1;
 	}
 	
+	
+	
+	
 	/**
 	 * 根据索取题目全部、还是某类题型或知识点，以及pageNum pageSize得到返回的题目
 	 * quanbu 就是全部题型
@@ -449,6 +456,82 @@ public class FindServiceImpl{
 		return null;
 	}
 	
+	public List<ExamQueChuanDi> getTiMuBySzid(int szid, int zuidashuliang){
+		List<ExamQueChuanDi> rs = new ArrayList<ExamQueChuanDi>();
+		List<ExamQue> rsa = new ArrayList<ExamQue>();
+		String[] tmlx = StringUtil.getXiTiLeiXingYwZhanShi();
+		for (int i = 0; i < tmlx.length; i++ ) {				
+			List<ExamQue> rs1 = examQueDao.getallbytmleixing(szid, tmlx[i]);
+			rsa.addAll(rs1);
+		}
+		int shezhiid= 1;
+		for (ExamQue examQue: rsa) {
+			if ("danxuan".equals(examQue.getExamtype())) {
+				//continue;
+			}
+			ExamQueChuanDi examcd = new ExamQueChuanDi();
+			examcd.setQue(examQue.getQue());
+			examcd.setExamtype(examQue.getExamtype());
+			List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(examQue.getId());
+			List<String> xxs = new ArrayList<>();
+			for (ExamChoi xx:zbchoidel) {
+				xxs.add(xx.getXuanxiang());
+			}
+			examcd.setXuanxiang(xxs);
+			if (examQue.getAns() == null) {
+				ExamDaan ans = examDaanDao.getExamDaanByQue(examQue.getId());
+				examcd.setAns(ans.getDaan());
+			} else {
+				examcd.setAns(examQue.getAns());
+			}
+			examcd.setJiexi(examQue.getJiexi());
+			examcd.setId(shezhiid);
+			shezhiid++;
+			rs.add(examcd);
+		}			
+		return rs;		
+	}
+	
+	public List<ExamQueChuanDi> getTiMuByBiaoTi(int szid,String biaoti){
+		List<ExamQueChuanDi> rs = new ArrayList<ExamQueChuanDi>();
+		List<ExamQue> rs1 = examQueDao.getallbybiaoti(szid, biaoti);
+		int shezhiid= 1;
+		for (ExamQue examQue: rs1) {
+			if ("danxuan".equals(examQue.getExamtype())) {
+				//continue;
+			}
+			ExamQueChuanDi examcd = new ExamQueChuanDi();
+			examcd.setQue(examQue.getQue());
+			examcd.setExamtype(examQue.getExamtype());
+			List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(examQue.getId());
+			List<String> xxs = new ArrayList<>();
+			for (ExamChoi xx:zbchoidel) {
+				xxs.add(xx.getXuanxiang());
+			}
+			examcd.setXuanxiang(xxs);
+			if (examQue.getAns() == null) {
+				ExamDaan ans = examDaanDao.getExamDaanByQue(examQue.getId());
+				examcd.setAns(ans.getDaan());
+			} else {
+				examcd.setAns(examQue.getAns());
+			}
+			examcd.setJiexi(examQue.getJiexi());
+			examcd.setId(shezhiid);
+			shezhiid++;
+			rs.add(examcd);
+		}			
+		return rs;		
+	}
+	
+	public int getTiMuByBiaoTiCount(int szid,String biaoti){
+		return examQueDao.getallbybiaoticount(szid, biaoti);		
+	}
+	
+	public List<ExamQue> getExamQue(int pageNum, int pageSize, int szid) {
+		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
+		List<ExamQue> list_glx=examQueDao.getallbyszid(szid,pageRequest);
+		return list_glx;
+	}
 	
 	public List<ExamQue> getExamQue(int pageNum, int pageSize, int szid, String timulx) {
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);

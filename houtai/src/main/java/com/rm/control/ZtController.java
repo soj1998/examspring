@@ -38,10 +38,24 @@ public class ZtController {
         return jSONObject;
     }
     
-    @RequestMapping(value="/getquanbuxitibyszid")
+    @RequestMapping(value="/getquanbuxitibyszid1")
     public List<ExamQueChuanDi> listall2(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
     	int zuidashu = 1000;    	
 		return service.getTiMuBySqtmSzid(szid, sqtm, zuidashu);
+    }
+    
+    @RequestMapping(value="/getquanbuxitibyszid2")
+    public List<ExamQueChuanDi> listall3(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
+    	return service.getTiMuBySzid(szid,100);
+    }
+    
+    @RequestMapping(value="/getquanbuxitibyszidbiaoti")
+    public List<ExamQueChuanDi> listall4(@RequestParam("sid") int szid,@RequestParam("biaoti") String biaoti){    	
+    	return service.getTiMuByBiaoTi(szid,biaoti);
+    }
+    @RequestMapping(value="/getquanbuxitibyszidbiaoticount")
+    public int listall5(@RequestParam("sid") int szid,@RequestParam("biaoti") String biaoti){    	
+    	return service.getTiMuByBiaoTiCount(szid,biaoti);
     }
     /*
      * id 标题 类型 学科 知识点 录入时间

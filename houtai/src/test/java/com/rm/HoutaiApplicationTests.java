@@ -23,7 +23,6 @@ import com.rm.dao.ExamChoiZongHeDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
-import com.rm.dao.QueandAnsDao;
 import com.rm.dao.TnsQbNeiRongDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.dao.XueKeDao;
@@ -41,8 +40,6 @@ class HoutaiApplicationTests {
     private BookDao bookDao;
 	@Resource
     private XueKeDao xkDao;   
-	@Resource
-    private QueandAnsDao qaDao;
 	@Resource
     private TreeNodeSjkDao tnDao; 
 	@Resource
