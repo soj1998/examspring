@@ -17,6 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 public class StringUtil {
 
 	public static Boolean isNotEmpty(String a) {
+		if( a == null || "".equals(a) && a.length()>0)
+		{
+			return false;
+		}
 		String b = myTrim(a);
 		if( a != null && !"".equals(b) && b.length()>0)
 		{
@@ -472,6 +476,10 @@ public class StringUtil {
     
     public static String[] getZhuanLanShuiZhong() {
     	return new String[] {"【税种】"};
+    }
+    
+    public static String[] getZhuanLanXueKe() {
+    	return new String[] {"【学科】"};
     }
     
     public static String[] getZhuanLanLaiYuan() {

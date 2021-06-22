@@ -22,8 +22,10 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.AtcSjk;
 import com.rm.entity.ExamZsd;
+import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
+import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 
@@ -31,9 +33,10 @@ import com.rm.util.StringUtil;
 public class ZhuanLanFileSaveSql {
 
 	
-	private String sz = "【税种】";
+	private String sz = "【学科】";
 	private String zsd = "【知识点】";
 	private String laiyuan = "【来源】";
+	private String biaoti = "【标题】";
 	private String riqi = "【日期】";
 	private String xilie = "【系列】";
 	private String zhengwen = "【正文】";
@@ -76,23 +79,29 @@ public class ZhuanLanFileSaveSql {
 			int[] sz_qz = getpanDuanGuiShuDian("sz",arr,maxhangshu);
 			int[] zsd_qz = getpanDuanGuiShuDian("zsd",arr,maxhangshu);
 			int[] laiyuan_qz = getpanDuanGuiShuDian("laiyuan",arr,maxhangshu);
+			int[] biaoti_qz = getpanDuanGuiShuDian("biaoti",arr,maxhangshu);
 			int[] riqi_qz = getpanDuanGuiShuDian("riqi",arr,maxhangshu);
 			int[] xilie_qz = getpanDuanGuiShuDian("xilie",arr,maxhangshu);
 			int[] zhengwen_qz = getpanDuanGuiShuDian("zhengwen",arr,maxhangshu);
 			Map<Integer,String> szlist = getGuiShu(sz_qz,arr);
 			Map<Integer,String> zsdlist = getGuiShu(zsd_qz,arr);
 			Map<Integer,String> laiyuanlist = getGuiShu(laiyuan_qz,arr);
+			Map<Integer,String> biaotilist = getGuiShu(biaoti_qz,arr);
 			Map<Integer,String> riqilist = getGuiShu(riqi_qz,arr);
 			Map<Integer,String> xilielist = getGuiShu(xilie_qz,arr);
 			Map<Integer,String> zwlist = getGuiShu(zhengwen_qz,arr);
 			String riqi2 = StringUtil.getMapString(riqilist, StringUtil.getZhuanLanRiQi());
 			String zsd2 = StringUtil.getMapString(zsdlist, StringUtil.getXiTiZhiShiDian());
+			String biaoti2 = StringUtil.getMapString(biaotilist, StringUtil.getXiTiBiaoTi());
 			riqi2 = riqi2.replace("年", "-").replace("月", "-").replace("日", "");
 			//搞下知识点
-			ExamZsd exzsd1 = examQueService.saveZsdEnd(zsd2);
-			if (null == exzsd1) {
-				LOG.error("添加ExamZsd 失败!,zsd没搞对");
-				continue;
+			ExamZsd exzsd1 = null;
+			if (StringUtil.isNotEmpty(zsd2)) {
+				exzsd1 = examQueService.saveZsdEnd(zsd2);
+				if (null == exzsd1) {
+					LOG.error("添加ExamZsd 失败!,zsd没搞对" + zsd2);
+					continue;
+				}
 			}
 			Date wddate = null;
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -109,7 +118,7 @@ public class ZhuanLanFileSaveSql {
 			Date lrsj2 = null!=wddate?wddate:lrsj;
 			//atcSjk.setLrsj(lrsj2);
 			//atcSjk.setFileweizhi(fileweizhi);
-			String sz1 = StringUtil.getMapString(szlist, StringUtil.getZhuanLanShuiZhong());
+			String sz1 = StringUtil.getMapString(szlist, StringUtil.getZhuanLanXueKe());
 			Sz sza =szDao.findSzBymc(sz1);
 			if (null == sza) {
 				LOG.info("---税种错误，无法对应，输入的税种" + sz1);
@@ -138,20 +147,45 @@ public class ZhuanLanFileSaveSql {
 				for(Map.Entry<Integer,String> mapping:listmap){
 		        	String a1 = mapping.getValue();
 		        	a1 = a1.replace(zhengwen, "");
+		        	if (StringUtil.isEmpty(a1)) {
+		        		continue;
+		        	}
+		        	if (StringUtil.isNotEmpty(a1) && a1.length() > 1950) {
+		        		LOG.info("段落信息超过1950太长啦，添加失败!");
+		        		continue;
+		        	}
 		        	int hs = mapping.getKey();
 		        	if(btid !=-1) {
 		        		break;
 		        	}
 		        	if (StringUtil.isNotEmpty(a1)) {
 		        		if(hs == minhstimu) {
-		        			
 		        			ZhuanLan zlan = new ZhuanLan("Y",-1,hs,a1,xl,atcSjk);
 		        			zlan.setLrsj(lrsj2);
 		        			zlan.setWzlaiyuan(ly);
 		        			zlan.setSzid(sza.getId());
-		        			zlan.setYxbz("Y");
-		        			zlan.setExzsd(exzsd1);
-		        			btid = zhuanLanDao.save(zlan).getId();
+		        			zlan.setYxbz("Y");	
+		        			String wzlx1 = WenZhangLeiXing.ZHUANLAN.getName();
+		        			if (exzsd1 != null) {
+		        				zlan.setExzsdid(exzsd1.getId());
+		        				btid = zhuanLanDao.save(zlan).getId();
+			        			ShouYeXinXi syxx =new ShouYeXinXi(sza.getId(),sza.getSzmc(),
+			        					biaoti2,exzsd1.getId(),exzsd1.getNeirong(),
+			        					wddate,wzlx1,btid,-1,"Y");
+			        			ShouYeXinXi syxx1 =examQueService.saveShouYeXinXi(syxx);
+			        			if (syxx1 == null ) {
+			        				LOG.info("添加ShouYeXinXi 失败!");
+			        			}
+		        			} else {
+		        				btid = zhuanLanDao.save(zlan).getId();
+		        				ShouYeXinXi syxx =new ShouYeXinXi(sza.getId(),sza.getSzmc(),
+			        					biaoti2,
+			        					wddate,wzlx1,btid,-1,"Y");
+			        			ShouYeXinXi syxx1 =examQueService.saveShouYeXinXi(syxx);
+			        			if (syxx1 == null ) {
+			        				LOG.info("添加ShouYeXinXi 失败!");
+			        			}
+		        			}
 		        		}
 		        	}
 		        	
@@ -160,6 +194,13 @@ public class ZhuanLanFileSaveSql {
 					for(Map.Entry<Integer,String> mapping:listmap){
 			        	String a1 = mapping.getValue();
 			        	a1 = a1.replace(zhengwen, "");
+			        	if (StringUtil.isEmpty(a1)) {
+			        		continue;
+			        	}
+			        	if (StringUtil.isNotEmpty(a1) && a1.length() > 1950) {
+			        		LOG.info("段落信息超过1950太长啦，添加失败!");
+			        		continue;
+			        	}
 			        	int hs = mapping.getKey();		        	
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs != minhstimu) {
@@ -173,12 +214,13 @@ public class ZhuanLanFileSaveSql {
 			        		}
 			        	}
 			        }
-				}				
+				}
+				
 	        }catch (Exception e){
 	            LOG.error("添加zhuanLanDao 失败!"+e.getMessage());
 	        }
 		}
-		LOG.info(hzarray.size() + "");
+		LOG.info(hzarray.size() + ",添加完毕");
 	}
 
 	
@@ -261,6 +303,25 @@ public class ZhuanLanFileSaveSql {
 					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
 						String gets = jb.getString("neirong");
 						if (gets.indexOf(laiyuan)>= 0) {
+							ksd = jb.getIntValue("hangshu");
+						}
+						if (gets.indexOf(biaoti)>= 0) {
+							jsd = jb.getIntValue("hangshu");
+							if (jsd-ksd > 0) {
+								jsd = jsd -1;
+							}
+							return new int[] {ksd,jsd};
+						}
+					}
+				}
+				break;
+			}
+			case "biaoti":{
+				for (Object fd:crArray) {
+					JSONObject jb = (JSONObject)fd;
+					if(StringUtil.isNotEmpty(jb.getString("neirong"))) {
+						String gets = jb.getString("neirong");
+						if (gets.indexOf(biaoti)>= 0) {
 							ksd = jb.getIntValue("hangshu");
 						}
 						if (gets.indexOf(riqi)>= 0) {

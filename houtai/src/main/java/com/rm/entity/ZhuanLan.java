@@ -24,7 +24,7 @@ public class ZhuanLan {
     private Integer id;
      
     //段落存为json bt xl hangshu neirong
-	@Column(length=1000)
+	@Column(length=2000)
     private String zlduanluo;
     
 	@Column(length=300)
@@ -95,7 +95,7 @@ public class ZhuanLan {
 		this.lrsj = lrsj;
 	}
 
-	@Column
+	@Column(columnDefinition="int default -1")
     private int exzsdid;
 	
 	public int getExzsdid() {

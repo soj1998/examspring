@@ -21,7 +21,7 @@ public class ShouYeXinXi {
 	private int szid;
 	@Column(length=200)
 	private String zsd;
-	private Long zsdid;
+	private int zsdid;
 	
 	public int getSzid() {
 		return szid;
@@ -29,10 +29,10 @@ public class ShouYeXinXi {
 	public void setSzid(int szid) {
 		this.szid = szid;
 	}
-	public Long getZsdid() {
+	public int getZsdid() {
 		return zsdid;
 	}
-	public void setZsdid(Long zsdid) {
+	public void setZsdid(int zsdid) {
 		this.zsdid = zsdid;
 	}
 	@Column
@@ -98,7 +98,8 @@ public class ShouYeXinXi {
 	@Column(length=200)
 	private String biaoti;
 	
-	public ShouYeXinXi(int szid,String sz, String biaoti, long zsdid,String zsd, Date lrsj, String xinxiyuanleixing, int xinxiyuanid,int zlbiaotiid,String yxbz) {
+	public ShouYeXinXi(int szid,String sz, String biaoti, 
+			int zsdid,String zsd, Date lrsj, String xinxiyuanleixing, int xinxiyuanid,int zlbiaotiid,String yxbz) {
 		super();
 		this.szid = szid;
 		this.sz = sz;
@@ -111,6 +112,20 @@ public class ShouYeXinXi {
 		this.zlbiaotiid = zlbiaotiid;
 		this.yxbz= yxbz;
 	}
+	
+	public ShouYeXinXi(int szid,String sz, String biaoti, 
+			Date lrsj, String xinxiyuanleixing, int xinxiyuanid,int zlbiaotiid,String yxbz) {
+		super();
+		this.szid = szid;
+		this.sz = sz;
+		this.biaoti = biaoti;
+		this.lrsj = lrsj;
+		this.xinxiyuanleixing = xinxiyuanleixing;
+		this.xinxiyuanid = xinxiyuanid;
+		this.zlbiaotiid = zlbiaotiid;
+		this.yxbz= yxbz;
+	}
+	
 	public String getBiaoti() {
 		return biaoti;
 	}
