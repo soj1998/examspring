@@ -164,7 +164,8 @@ public class ZhuanLanFileSaveSql {
 		        			zlan.setLrsj(lrsj2);
 		        			zlan.setWzlaiyuan(ly);
 		        			zlan.setSzid(sza.getId());
-		        			zlan.setYxbz("Y");	
+		        			zlan.setYxbz("Y");
+		        			zlan.setBiaoti(biaoti2);
 		        			String wzlx1 = WenZhangLeiXing.ZHUANLAN.getName();
 		        			if (exzsd1 != null) {
 		        				zlan.setExzsdid(exzsd1.getId());
