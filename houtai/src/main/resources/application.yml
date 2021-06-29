@@ -49,7 +49,7 @@ freemarker:
 
 fileweizhi:
   common:
-    ## windows系统下访问路径 在更换开发目录后注意更好地址
+    ## windows系统下访问路径 在更换开发目录后注意更换地址
     uploadWindow: E:\2021_java\examspring\uploadfiles\
     ## Linux系统下访问路径
     uploadLinux: /user/img/

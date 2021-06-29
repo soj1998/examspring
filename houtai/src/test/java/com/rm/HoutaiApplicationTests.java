@@ -30,7 +30,7 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
-import com.rm.entity.linshi.Author;
+import com.rm.util.file.FileXiangGuan;
 
 
 @EnableTransactionManagement
@@ -111,18 +111,10 @@ class HoutaiApplicationTests {
 	@Transactional
 	@Test
     public void test(){
-		for (int i = 1;i<10;i++) {
-			if (i!=5) {
-				Author au = new Author();
-				au.setName("abcd" + i);
-				authorDao.save(au);
-			}
-			if (i==5) {
-				Author au = new Author();
-				au.setName("abcd884");
-				authorDao.save(au);
-			}
-		}		
+		FileXiangGuan fg = new FileXiangGuan();
+		System.out.println("1");
+		fg.transFiletoList("D:\\1.docx");
+		System.out.println("2");
     }
 	
 	
