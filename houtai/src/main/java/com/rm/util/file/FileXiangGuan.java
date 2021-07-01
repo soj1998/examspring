@@ -172,7 +172,7 @@ public class FileXiangGuan {
 	
 	public String transInputToPic(InputStream inputs,String filenameext) throws IOException {
 		String path = null;
-		FileWriter fw = null;
+		FileOutputStream fos = null;
 		try {
 			path = "D:"
 					+File.separator
@@ -187,11 +187,12 @@ public class FileXiangGuan {
 			String filename = random.nextInt(10000)
 					+ System.currentTimeMillis() 
 					+ filenameext;
-			fw = new FileWriter(setSavePathDir + File.separator + filename);
+			
+			fos = new FileOutputStream(setSavePathDir + File.separator + filename);
+			byte[] b = new byte[1024];
 			int length = 0;
-			while((length = inputs.read()) != -1){			//如果没有读到文件末尾
-				fw.write(length);			//向文件写入数据
-				
+			while((length = inputs.read(b)) != -1){
+				fos.write(b,0,length);
 			}
 			String url = "";
 		    String os = System.getProperty("os.name");
@@ -214,8 +215,8 @@ public class FileXiangGuan {
 			if (inputs != null ) {
 				inputs.close();
 			}
-			if (fw != null ) {
-				fw.close();
+			if (fos != null ) {
+				fos.close();
 			}
 		}
 		return null;
