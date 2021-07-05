@@ -1,10 +1,13 @@
 package com.rm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 @Configuration
 public class MVCConfig implements WebMvcConfigurer {
@@ -21,6 +24,9 @@ public class MVCConfig implements WebMvcConfigurer {
      * 还能配置视图解析 访问服务器上的资源
      * @param registry
      */
+	
+	private static final Logger LOG = LoggerFactory.getLogger(MVCConfig.class);
+    
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
     	String os = System.getProperty("os.name");
@@ -33,7 +39,7 @@ public class MVCConfig implements WebMvcConfigurer {
         }
     
     	//在更换目录后 注意修改${fileweizhi.common.uploadWindow}的地址
-    	
+        LOG.info("图片映射保存地址:    " + fileweizhi);
     	// 解决静态资源无法访问
         registry.addResourceHandler("/houtai/**").addResourceLocations("classpath:/static/").addResourceLocations("classpath:/public/");
         //配置视图解析，把url中后面带/image/***的路径映射到c盘photo文件中的资源

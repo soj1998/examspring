@@ -103,7 +103,6 @@ public class ZhuanLanController {
 	
 	
 	
-	
     @ResponseBody
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
 	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,HttpServletResponse response) throws Exception{
@@ -112,7 +111,9 @@ public class ZhuanLanController {
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
 		String path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
-				+"uploadfiles";
+				+StringUtil.getUploadFiles()
+				+File.separator
+				+StringUtil.getTempFiles();
 	    up.setSavePath(path,"zhuanlan");
 	    String[] fileType = {".docx"};
 	    up.setAllowFiles(fileType);
@@ -120,7 +121,15 @@ public class ZhuanLanController {
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
 	    ZhuanLanFileSaveSql zhuanLanFileSaveSql = new ZhuanLanFileSaveSql();
-	    zhuanLanFileSaveSql.asoneinsertToSql(saveServiceImpl,atcSjkDao,szDao,zhuanLanDao,path + up.getUrl(), wzlx);
+	    String picurl = "";
+	    String os = System.getProperty("os.name");
+    	//如果是Windows系统
+        if (os.toLowerCase().startsWith("win")) {
+        	picurl = urlwin;
+        } else {  //linux 和mac
+        	picurl = urllinux;
+        }
+	    zhuanLanFileSaveSql.asoneinsertToSql(request,saveServiceImpl,atcSjkDao,szDao,zhuanLanDao,picurl,path + up.getUrl(), wzlx);
 	    return result + "update jieguo ";
 	    
 	}
@@ -209,7 +218,9 @@ public class ZhuanLanController {
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
 		String path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
-				+"uploadfiles";
+				+StringUtil.getUploadFiles()
+				+File.separator
+				+StringUtil.getPicFiles();
 	    up.setSavePath(path,"zhuanlan"+File.separator+"img");	    
 	    up.upload();
 	    String url = "";

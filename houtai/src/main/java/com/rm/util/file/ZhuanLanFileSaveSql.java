@@ -8,11 +8,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
@@ -44,8 +43,8 @@ public class ZhuanLanFileSaveSql {
 	private static final Logger LOG = LoggerFactory.getLogger(ZhuanLanFileSaveSql.class);
     
 	//一个整体的存取
-	public void asoneinsertToSql(SaveServiceImpl examQueService,AtcSjkDao atcSjkDao,SzDao szDao,ZhuanLanDao zhuanLanDao,
-			String fileweizhi,int wzlx) {
+	public void asoneinsertToSql(HttpServletRequest request,SaveServiceImpl examQueService,AtcSjkDao atcSjkDao,SzDao szDao,ZhuanLanDao zhuanLanDao,
+			String picurl,String fileweizhi,int wzlx) {
 		//存入试题和存入文章是不一样的 
 		//存入试题 不搞有效标志 不搞关联 单独存的时候设为空
 		//对数据的长度 最好是有个更为友好的提示 比如 题目的长度 答案 或者解析的长度
@@ -53,13 +52,14 @@ public class ZhuanLanFileSaveSql {
 		//增加题目的验证 已经有的题目就不存了
 		
 		FileXiangGuan fileXiangGuan = new FileXiangGuan();
-		JSONArray jsonDuanArray = fileXiangGuan.transFiletoList(fileweizhi);
+		JSONArray jsonDuanArray = fileXiangGuan.transFiletoList(fileweizhi,request,picurl);
 		JSONArray hzarray = new JSONArray();
 		AtcSjk atcSjk = new AtcSjk();		
 		atcSjk.setFileweizhi(fileweizhi);
 		atcSjk.setWzlxid(wzlx);
-		int atcid = atcSjkDao.save(atcSjk).getId();		
-		fileXiangGuan.diGuiHz(0,hzarray,jsonDuanArray,sz);
+		int atcid = atcSjkDao.save(atcSjk).getId();
+		int kashihangshu = fileXiangGuan.diGuiHzKaiShiHangShu(jsonDuanArray, StringUtil.getKaiShiBiaoZHi());
+		fileXiangGuan.diGuiHz(kashihangshu,hzarray,jsonDuanArray,sz);
 		for (Object fd:hzarray) {
 			//Map<Integer,String> szlist = null;
 			//Map<Integer,String> laiyuanlist1 = null;
@@ -83,16 +83,16 @@ public class ZhuanLanFileSaveSql {
 			int[] riqi_qz = getpanDuanGuiShuDian("riqi",arr,maxhangshu);
 			int[] xilie_qz = getpanDuanGuiShuDian("xilie",arr,maxhangshu);
 			int[] zhengwen_qz = getpanDuanGuiShuDian("zhengwen",arr,maxhangshu);
-			Map<Integer,String> szlist = getGuiShu(sz_qz,arr);
-			Map<Integer,String> zsdlist = getGuiShu(zsd_qz,arr);
-			Map<Integer,String> laiyuanlist = getGuiShu(laiyuan_qz,arr);
-			Map<Integer,String> biaotilist = getGuiShu(biaoti_qz,arr);
-			Map<Integer,String> riqilist = getGuiShu(riqi_qz,arr);
-			Map<Integer,String> xilielist = getGuiShu(xilie_qz,arr);
-			Map<Integer,String> zwlist = getGuiShu(zhengwen_qz,arr);
-			String riqi2 = StringUtil.getMapString(riqilist, StringUtil.getZhuanLanRiQi());
-			String zsd2 = StringUtil.getMapString(zsdlist, StringUtil.getXiTiZhiShiDian());
-			String biaoti2 = StringUtil.getMapString(biaotilist, StringUtil.getXiTiBiaoTi());
+			JSONArray szlist = getGuiShu(sz_qz,arr);
+			JSONArray zsdlist = getGuiShu(zsd_qz,arr);
+			JSONArray laiyuanlist = getGuiShu(laiyuan_qz,arr);
+			JSONArray biaotilist = getGuiShu(biaoti_qz,arr);
+			JSONArray riqilist = getGuiShu(riqi_qz,arr);
+			JSONArray xilielist = getGuiShu(xilie_qz,arr);
+			JSONArray zwlist = getGuiShu(zhengwen_qz,arr);
+			String riqi2 = StringUtil.getJSONArrayString(riqilist, StringUtil.getZhuanLanRiQi());
+			String zsd2 = StringUtil.getJSONArrayString(zsdlist, StringUtil.getXiTiZhiShiDian());
+			String biaoti2 = StringUtil.getJSONArrayString(biaotilist, StringUtil.getXiTiBiaoTi());
 			riqi2 = riqi2.replace("年", "-").replace("月", "-").replace("日", "");
 			//搞下知识点
 			ExamZsd exzsd1 = null;
@@ -118,7 +118,7 @@ public class ZhuanLanFileSaveSql {
 			Date lrsj2 = null!=wddate?wddate:lrsj;
 			//atcSjk.setLrsj(lrsj2);
 			//atcSjk.setFileweizhi(fileweizhi);
-			String sz1 = StringUtil.getMapString(szlist, StringUtil.getZhuanLanXueKe());
+			String sz1 = StringUtil.getJSONArrayString(szlist, StringUtil.getZhuanLanXueKe());
 			Sz sza =szDao.findSzBymc(sz1);
 			if (null == sza) {
 				LOG.info("---税种错误，无法对应，输入的税种" + sz1);
@@ -126,17 +126,18 @@ public class ZhuanLanFileSaveSql {
 			}
 			//atcSjk.setSzid(sza.getId());
 			atcSjk.setWzlxid(wzlx);
-			String ly = StringUtil.getMapString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
+			String ly = StringUtil.getJSONArrayString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
 			//atcSjk.setWzlaiyuan(ly);
 			//atcSjk.setYxbz("Y");
 			atcSjk.setId(atcid);				
-			String xl = StringUtil.getMapString(xilielist, StringUtil.getZhuanLanXiLie());
-			List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
+			String xl = StringUtil.getJSONArrayString(xilielist, StringUtil.getZhuanLanXiLie());
+			//List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
 			int minhstimu  = 0;
-			for(Map.Entry<Integer,String> mapping:listmap){
-	        	String a1 = mapping.getValue();
+			for(Object mapping1:zwlist){
+				JSONObject mapping = (JSONObject)mapping1;
+	        	String a1 = mapping.getString("neirong");
 	        	a1 = a1.replace(zhengwen, "");
-	        	int hs = mapping.getKey();		        	
+	        	int hs = mapping.getIntValue("hangshu");		        	
 	        	if (StringUtil.isNotEmpty(a1)) {
 	        		minhstimu = minhstimu == 0? hs: minhstimu;
 	        		minhstimu = minhstimu >= hs? hs: minhstimu;
@@ -144,8 +145,9 @@ public class ZhuanLanFileSaveSql {
 	        }
 			try{
 				int btid = -1;
-				for(Map.Entry<Integer,String> mapping:listmap){
-		        	String a1 = mapping.getValue();
+				for(Object mapping1:zwlist){
+					JSONObject mapping = (JSONObject)mapping1;
+		        	String a1 = mapping.getString("neirong");
 		        	a1 = a1.replace(zhengwen, "");
 		        	if (StringUtil.isEmpty(a1)) {
 		        		continue;
@@ -154,7 +156,7 @@ public class ZhuanLanFileSaveSql {
 		        		LOG.info("段落信息超过1950太长啦，添加失败!");
 		        		continue;
 		        	}
-		        	int hs = mapping.getKey();
+		        	int hs = mapping.getIntValue("hangshu");
 		        	if(btid !=-1) {
 		        		break;
 		        	}
@@ -192,8 +194,9 @@ public class ZhuanLanFileSaveSql {
 		        	
 		        }
 				if(btid !=-1) {
-					for(Map.Entry<Integer,String> mapping:listmap){
-			        	String a1 = mapping.getValue();
+					for(Object mapping1:zwlist){
+						JSONObject mapping = (JSONObject)mapping1;
+			        	String a1 = mapping.getString("neirong");
 			        	a1 = a1.replace(zhengwen, "");
 			        	if (StringUtil.isEmpty(a1)) {
 			        		continue;
@@ -202,7 +205,7 @@ public class ZhuanLanFileSaveSql {
 			        		LOG.info("段落信息超过1950太长啦，添加失败!");
 			        		continue;
 			        	}
-			        	int hs = mapping.getKey();		        	
+			        	int hs = mapping.getIntValue("hangshu");		        	
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs != minhstimu) {
 			        			ZhuanLan zlan = new ZhuanLan("Y",btid,hs,a1,xl,atcSjk);
@@ -409,7 +412,7 @@ public class ZhuanLanFileSaveSql {
 		jsd = jsd==0?maxhangshu:jsd;
 		return new int[] {ksd,jsd};
 	}
-	private Map<Integer,String> getGuiShu(int[]qizhi,JSONArray crArray) {
+	public Map<Integer,String> getGuiShu3(int[]qizhi,JSONArray crArray) {
 		Map<Integer,String> rs = new HashMap<Integer,String>();
 		int qi = qizhi[0];
 		int zhi = qizhi[1];
@@ -425,5 +428,23 @@ public class ZhuanLanFileSaveSql {
 		return rs;
 	}
 	
+	//map key是唯一的 当有重复的行数时 造成数据的丢失 改用 jsonobject jsonarray
+	
+	public JSONArray getGuiShu(int[]qizhi,JSONArray crArray) {
+		JSONArray rs = new JSONArray();
+		int qi = qizhi[0];
+		int zhi = qizhi[1];
+		for (Object fd:crArray) {
+			JSONObject jb = (JSONObject)fd;
+			int a = jb.getIntValue("hangshu");
+			if (qi>=0 && a >= qi && a <= zhi) {
+				JSONObject one = new JSONObject();
+				one.put("hangshu", a);
+				one.put("neirong", jb.getString("neirong"));
+				rs.add(one);
+			}
+		}
+		return rs;
+	}
 	
 }

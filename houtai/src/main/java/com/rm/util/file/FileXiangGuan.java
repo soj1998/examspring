@@ -3,9 +3,10 @@ package com.rm.util.file;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,6 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,6 +49,57 @@ public class FileXiangGuan {
 			for (int i = 0;i < duanLuoZongshu ; i++) {
 				List<XWPFRun> runs = paras.get(i).getRuns();				
 				String jpgcunchu = poitoPic(doc,runs);
+				if (null != jpgcunchu) {
+					JSONObject jsonDuan = new JSONObject();
+					jsonDuan.put("neirong", jpgcunchu);
+					jsonDuan.put("hangshu", i);					
+					jsonDuanArray.add(jsonDuan);
+				}
+				String abc = paras.get(i).getParagraphText().trim();				
+				abc = StringUtil.myTrim(abc);
+				if(StringUtil.isEmpty(abc)) {
+					continue;
+				}else {
+					JSONObject jsonDuan = new JSONObject();
+					jsonDuan.put("neirong", abc);
+					jsonDuan.put("hangshu", i);					
+					jsonDuanArray.add(jsonDuan);
+				}
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null != is) {
+					is.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return jsonDuanArray;
+	}
+	
+	public JSONArray transFiletoList(String filePath,HttpServletRequest request,String pirurl){
+		InputStream is = null;
+		XWPFDocument doc = null;
+		JSONArray jsonDuanArray = new JSONArray();	
+		try {
+			is = new FileInputStream(filePath);
+			doc = new XWPFDocument(is);
+			//获取段落
+			List<XWPFParagraph> paras = doc.getParagraphs();
+			int duanLuoZongshu = paras.size();
+			if(duanLuoZongshu <= 0) {
+				LOG.info("当前文档没有读取到的段落数");
+				doc.close();
+				return null;
+			}
+			
+			for (int i = 0;i < duanLuoZongshu ; i++) {
+				List<XWPFRun> runs = paras.get(i).getRuns();				
+				String jpgcunchu = poitoPic(request,doc,runs,pirurl);
 				if (null != jpgcunchu) {
 					JSONObject jsonDuan = new JSONObject();
 					jsonDuan.put("neirong", jpgcunchu);
@@ -115,17 +166,52 @@ public class FileXiangGuan {
 
 	}
 	
-	@Value("${urlbyos.win}")
-	private String urlwin;
-	@Value("${urlbyos.linux}")
-	private String urllinux;
-	public String transInputToPic(HttpServletRequest request,InputStream inputs,String filenameext) throws IOException {
+	public String poitoPic(HttpServletRequest request, XWPFDocument document,List<XWPFRun> runs,String pirurl) throws IOException {
+		for (XWPFRun run : runs) {
+			Node node = run.getCTR().getDomNode();
+			// drawing 一个绘画的图片
+			Node drawingNode = getChildNode(node, "w:drawing");
+			if (drawingNode == null) {
+				continue;
+			}
+			// 绘画图片的宽和高
+			Node extentNode = getChildNode(drawingNode, "wp:extent");
+			NamedNodeMap extentAttrs = extentNode.getAttributes();
+			System.out.println("宽：".concat(extentAttrs.getNamedItem("cx").getNodeValue()).concat("emu"));
+			System.out.println("高：".concat(extentAttrs.getNamedItem("cy").getNodeValue()).concat("emu"));
+			
+			// 绘画图片具体引用
+			Node blipNode = getChildNode(drawingNode, "a:blip");
+			NamedNodeMap blipAttrs = blipNode.getAttributes();
+			String rid = blipAttrs.getNamedItem("r:embed").getNodeValue();
+			System.out.println("word中图片ID：".concat(rid));
+			
+			// 获取图片信息
+			PackagePart part = document.getPartById(rid);
+			System.out.println(part.getContentType());
+			System.out.println(part.getPartName().getName());
+			String filenameext = part.getPartName().getName().substring(part.getPartName().getName().lastIndexOf("."));
+			System.out.println(part.getInputStream());
+			System.out.println("------ run ------");
+			String abc = transInputToPic(request, part.getInputStream(),filenameext,pirurl);
+			return abc;
+		}
+		return null;
+
+	}
+	
+	
+	public String transInputToPic(HttpServletRequest request,InputStream inputs,String filenameext,String pirurl) throws IOException {
 		String path = null;
-		FileWriter fw = null;
+		FileOutputStream fos = null;
 		try {
 			path = StringUtil.getRootDir(request,"houtai")
 					+File.separator
-					+"uploadfiles";
+					+StringUtil.getUploadFiles()
+					+File.separator
+					+StringUtil.getPicFiles();
+			SimpleDateFormat formater = new SimpleDateFormat("yyyyMMdd");
+			path += File.separator + formater.format(new Date());
 			Random random = new Random();
 			String setSavePathDir = path+File.separator
 					+ "zhuanlan" + File.separator+"img";
@@ -136,23 +222,17 @@ public class FileXiangGuan {
 			String filename = random.nextInt(10000)
 					+ System.currentTimeMillis() 
 					+ filenameext;
-			fw = new FileWriter(setSavePathDir + File.separator + filename);
+			fos = new FileOutputStream(setSavePathDir + File.separator + filename);
+			byte[] b = new byte[1024];
 			int length = 0;
-			while((length = inputs.read()) != -1){			//如果没有读到文件末尾
-				fw.write(length);			//向文件写入数据
+			while((length = inputs.read(b)) != -1){
+				fos.write(b,0,length);
 			}
-			String url = "";
-		    String os = System.getProperty("os.name");
-	    	//如果是Windows系统
-	        if (os.toLowerCase().startsWith("win")) {
-	        	url = urlwin;
-	        } else {  //linux 和mac
-	        	url = urllinux;
-	        }
+			
 			String rs = setSavePathDir + File.separator + filename;
-			url=rs.substring(rs.lastIndexOf("uploadfiles") + 11);
-			String urlr = url.replaceAll("\\\\","/");
-			String rs1 = "http://" +url+":8080/houtai/image" + urlr;
+			String url2=rs.substring(rs.lastIndexOf("uploadfiles") + 11);
+			String urlr = url2.replaceAll("\\\\","/");
+			String rs1 = "http://" +pirurl+":8080/houtai/image" + urlr;
 			System.out.println(rs1);
 			return rs1;
 	
@@ -163,8 +243,8 @@ public class FileXiangGuan {
 			if (inputs != null ) {
 				inputs.close();
 			}
-			if (fw != null ) {
-				fw.close();
+			if (fos != null ) {
+				fos.close();
 			}
 		}
 		return null;
@@ -177,6 +257,8 @@ public class FileXiangGuan {
 			path = "D:"
 					+File.separator
 					+"uploadfiles";
+			SimpleDateFormat formater = new SimpleDateFormat("yyyyMMdd");
+			path += File.separator + formater.format(new Date());
 			Random random = new Random();
 			String setSavePathDir = path+File.separator
 					+ "zhuanlan" + File.separator+"img";
@@ -194,18 +276,11 @@ public class FileXiangGuan {
 			while((length = inputs.read(b)) != -1){
 				fos.write(b,0,length);
 			}
-			String url = "";
-		    String os = System.getProperty("os.name");
-	    	//如果是Windows系统
-	        if (os.toLowerCase().startsWith("win")) {
-	        	url = urlwin;
-	        } else {  //linux 和mac
-	        	url = urllinux;
-	        }
+			
 			String rs = setSavePathDir + File.separator + filename;
 			String url2=rs.substring(rs.lastIndexOf("uploadfiles") + 11);
 			String urlr = url2.replaceAll("\\\\","/");
-			String rs1 = "http://" +url+":8080/houtai/image" + urlr;
+			String rs1 = "http://" +"123"+":8080/houtai/image" + urlr;
 			System.out.println(rs1);
 			return rs1;
 	
@@ -240,7 +315,20 @@ public class FileXiangGuan {
 		return null;
 	}
 
-	
+	// ---------正式开始--------- 以此为开始标志
+	public int diGuiHzKaiShiHangShu (JSONArray jsarray,String kaishibiaozhi) {
+		for(Object mapping1:jsarray){
+			JSONObject mapping = (JSONObject)mapping1;
+        	String a1 = mapping.getString("neirong");
+        	int hs = mapping.getIntValue("hangshu");		        	
+        	if (StringUtil.isNotEmpty(a1)
+        			&&
+        		a1.indexOf(kaishibiaozhi) >= 0) {
+        		return hs;
+        	}
+        }
+		return 0;
+	}
 	
 	
 	public JSONArray diGuiHz(int hs,JSONArray rsArray,JSONArray csArray,String jiangebz) {

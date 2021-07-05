@@ -50,9 +50,11 @@ freemarker:
 fileweizhi:
   common:
     ## windows系统下访问路径 在更换开发目录后注意更换地址
-    uploadWindow: E:\2021_java\examspring\uploadfiles\
+    ## jiali D:\vuework\myjava\examspring\uploadfiles\
+    ## danwei E:\2021_java\examspring\uploadfiles\
+    uploadWindow: D:\vuework\myjava\examspring\uploadfiles\
     ## Linux系统下访问路径
-    uploadLinux: /user/img/
+    uploadLinux: /usr/local/tomcat9/webapps/uploadfiles/
 
 urlbyos:
   win: localhost

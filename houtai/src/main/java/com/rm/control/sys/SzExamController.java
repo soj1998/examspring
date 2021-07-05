@@ -106,7 +106,9 @@ public class SzExamController {
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
 		String path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
-				+"uploadfiles";
+				+StringUtil.getUploadFiles()
+				+File.separator
+				+StringUtil.getTempFiles();
 	    up.setSavePath(path,"szexam");
 	    String[] fileType = {".docx"};
 	    up.setAllowFiles(fileType);

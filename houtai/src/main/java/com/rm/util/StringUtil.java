@@ -14,6 +14,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+
 public class StringUtil {
 
 	public static Boolean isNotEmpty(String a) {
@@ -351,6 +355,62 @@ public class StringUtil {
 		return sb.toString();
 	}
     
+    //jsonobject 格式 hangshu neirong
+    public static String getJSONArrayString(JSONArray map,String[] tihuan) {
+		StringBuilder sb = new StringBuilder();		
+		//存放排序结果json数组
+        JSONArray sortedJsonArray = new JSONArray();
+        // 用于排序的list
+        List<JSONObject> list = new ArrayList<JSONObject>();
+        //遍历待排序的json数组，并将数据放入list
+        for (int i = 0; i < map.size(); i++) {
+            list.add(map.getJSONObject(i));
+        }
+        //然后通过比较器来实现排序
+        
+        Collections.sort(list, new Comparator<JSONObject>() {
+            //排序字段
+            private static final String KEY_NAME1 = "hangshu";
+            private static final String KEY_NAME2 = "neirong";
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA1 = new String();
+                String valA2 = new String();
+                String valB1 = new String();
+                String valB2 = new String();
+                try {
+                    valA1 = a.getString(KEY_NAME1);
+                    valA2 = b.getString(KEY_NAME1);
+                    valB1 = a.getString(KEY_NAME2);
+                    valB2 = b.getString(KEY_NAME2);
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+                // 设置排序规则
+                int i = valA1.compareTo(valA2);
+                if (i == 0) {
+                    int j = valB1.compareTo(valB2);
+                    return j;
+                }
+                return i;
+            }
+        });
+      //将排序后结果放入结果jsonArray
+        for (int i = 0; i < map.size(); i++) {
+            sortedJsonArray.add(list.get(i));
+            String a1 = list.get(i).getString("neirong");
+            for (String ati : tihuan) {
+        		a1 = a1.replaceAll(ati, "");
+        	}
+        	String a = myTrim(a1);
+        	if (StringUtil.isNotEmpty(a)) {
+        		sb = sb.append(a);
+        	}
+        }
+        return sb.toString();
+	}
+    
     
     /**
      * 生成六位随机数字字母组合的字符串
@@ -468,7 +528,21 @@ public class StringUtil {
      *转换题目类型，方便保存
      *
      */
+    public static String getUploadFiles() {
+    	return "uploadfiles";
+    }
     
+    public static String getTempFiles() {
+    	return "tempfiles";
+    }
+    
+    public static String getPicFiles() {
+    	return "picfiles";
+    }
+    
+    public static String getKaiShiBiaoZHi() {
+    	return "---------正式开始---------";
+    }
     
     public static String[] getZhuanLanRiQi() {
     	return new String[] {"【日期】"};
