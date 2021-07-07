@@ -28,7 +28,6 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamZsd;
-import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
 import com.rm.entity.lieju.WenZhangLeiXing;
@@ -129,6 +128,9 @@ public class ZhuanLanController {
         } else {  //linux 和mac
         	picurl = urllinux;
         }
+        path=StringUtil.getRootDir(request,"houtai")
+				+File.separator
+				+StringUtil.getUploadFiles();
 	    zhuanLanFileSaveSql.asoneinsertToSql(request,saveServiceImpl,atcSjkDao,szDao,zhuanLanDao,picurl,path + up.getUrl(), wzlx);
 	    return result + "update jieguo ";
 	    
@@ -191,16 +193,17 @@ public class ZhuanLanController {
 			rs = "problem,maybe alreay exists,don't save shouyexinxi";
 			return rs;
 		}
-		String wzlx = WenZhangLeiXing.ZHUANLAN.getName(); 
-		ShouYeXinXi syxx =new ShouYeXinXi(sz.getId(),sz.getSzmc(),
-				biaoti,examzsd.getId(),examzsd.getNeirong(),
-				wddate,wzlx,rs1.getId(),rs1.getBtid(),"Y");
-		ShouYeXinXi syxx1 =saveServiceImpl.saveShouYeXinXi(syxx);
-		if (rs1 != null && syxx1 != null) {
+		//String wzlx = WenZhangLeiXing.ZHUANLAN.getName(); 
+		//ShouYeXinXi syxx =new ShouYeXinXi(sz.getId(),sz.getSzmc(),
+		//		biaoti,examzsd.getId(),examzsd.getNeirong(),
+		//		wddate,wzlx,rs1.getId(),rs1.getBtid(),"Y");
+		//ShouYeXinXi syxx1 =saveServiceImpl.saveShouYeXinXi(syxx);
+		if (rs1 != null) { //&& syxx1 != null) {
 			rs = "ok";
-		} else {
-			rs = "problem,maybe alreay exists";
-		}
+		} 
+		//else {
+		//	rs = "problem,maybe alreay exists";
+		//}
 	    return rs;
 	    
 	}

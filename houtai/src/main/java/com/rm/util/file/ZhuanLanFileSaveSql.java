@@ -21,10 +21,8 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.AtcSjk;
 import com.rm.entity.ExamZsd;
-import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
-import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
 
@@ -168,6 +166,9 @@ public class ZhuanLanFileSaveSql {
 		        			zlan.setSzid(sza.getId());
 		        			zlan.setYxbz("Y");
 		        			zlan.setBiaoti(biaoti2);
+		        			zlan.setExzsdid(exzsd1.getId());
+		        			btid = zhuanLanDao.save(zlan).getId();
+		        			/**
 		        			String wzlx1 = WenZhangLeiXing.ZHUANLAN.getName();
 		        			if (exzsd1 != null) {
 		        				zlan.setExzsdid(exzsd1.getId());
@@ -188,7 +189,7 @@ public class ZhuanLanFileSaveSql {
 			        			if (syxx1 == null ) {
 			        				LOG.info("添加ShouYeXinXi 失败!");
 			        			}
-		        			}
+		        			}**/
 		        		}
 		        	}
 		        	

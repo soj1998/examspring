@@ -337,8 +337,12 @@ public class FileXiangGuan {
 		}
 		JSONObject j = new JSONObject();
 		JSONArray jarray = new JSONArray();
-		for (int i = hs;i<csArray.size();i++) {
+		for (int i = 0;i<csArray.size();i++) {
 			JSONObject obj1 = (JSONObject)csArray.get(i);
+			int ac = obj1.getIntValue("hangshu");
+			if(ac <= hs) {
+				continue;
+			}
 			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
 	        {
 				String d = obj1.get("neirong").toString();
