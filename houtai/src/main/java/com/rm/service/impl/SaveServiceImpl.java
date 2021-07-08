@@ -231,9 +231,10 @@ public class SaveServiceImpl{
 	}
 	
 	public void delShouYeXinXi(int syid, String xinxiyuan) {
-		ShouYeXinXi rs = shouYeXinXiDao.getShouYeByXinXiYuan(xinxiyuan,syid);
+		/**ShouYeXinXi rs = shouYeXinXiDao.getShouYeByXinXiYuan(xinxiyuan,syid);
 		if (rs != null) {
 			shouYeXinXiDao.deleteById(rs.getId());
-		}
+		}**/
+		LOG.info("no do anything");
 	}
 }

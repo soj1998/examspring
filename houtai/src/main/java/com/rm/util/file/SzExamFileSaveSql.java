@@ -25,7 +25,6 @@ import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
 import com.rm.entity.ExamZsd;
-import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
@@ -841,7 +840,7 @@ public class SzExamFileSaveSql {
 			}			
 		}
 		String rs1 = "";
-		System.out.println(hzarray.size());
+		/**System.out.println(hzarray.size());
 		String wzlx1 = WenZhangLeiXing.SHITI.getName();
 		String szmc = findService.getSz(shuizhong).getSzmc();
 		ShouYeXinXi syxx =new ShouYeXinXi(shuizhong,szmc,
@@ -852,7 +851,7 @@ public class SzExamFileSaveSql {
 			rs1 = "shouyexinxi ok";
 		} else {
 			rs1 = "problem,maybe alreay exists";
-		}
+		}**/
 		return "ok" + rs1;
 	}
 }

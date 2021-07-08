@@ -12,10 +12,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name="t_shouyexinxi")
 public class ShouYeXinXi {
+	
+	@Id 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id; 	
+
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; 
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	@Column(length=50)
 	private String sz;
 	private int szid;
@@ -49,12 +57,7 @@ public class ShouYeXinXi {
 	public void setYxbz(String yxbz) {
 		this.yxbz = yxbz;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public String getSz() {
 		return sz;
 	}
@@ -86,20 +89,12 @@ public class ShouYeXinXi {
 		this.xinxiyuanid = xinxiyuanid;
 	}
 	
-	@Column
-	private int zlbiaotiid;
 	
-	public int getZlbiaotiid() {
-		return zlbiaotiid;
-	}
-	public void setZlbiaotiid(int zlbiaotiid) {
-		this.zlbiaotiid = zlbiaotiid;
-	}
 	@Column(length=200)
 	private String biaoti;
 	
 	public ShouYeXinXi(int szid,String sz, String biaoti, 
-			int zsdid,String zsd, Date lrsj, String xinxiyuanleixing, int xinxiyuanid,int zlbiaotiid,String yxbz) {
+			int zsdid,String zsd, Date lrsj, String xinxiyuanleixing, int xinxiyuanid,String yxbz) {
 		super();
 		this.szid = szid;
 		this.sz = sz;
@@ -109,12 +104,11 @@ public class ShouYeXinXi {
 		this.lrsj = lrsj;
 		this.xinxiyuanleixing = xinxiyuanleixing;
 		this.xinxiyuanid = xinxiyuanid;
-		this.zlbiaotiid = zlbiaotiid;
 		this.yxbz= yxbz;
 	}
 	
 	public ShouYeXinXi(int szid,String sz, String biaoti, 
-			Date lrsj, String xinxiyuanleixing, int xinxiyuanid,int zlbiaotiid,String yxbz) {
+			Date lrsj, String xinxiyuanleixing, int xinxiyuanid,String yxbz) {
 		super();
 		this.szid = szid;
 		this.sz = sz;
@@ -122,7 +116,6 @@ public class ShouYeXinXi {
 		this.lrsj = lrsj;
 		this.xinxiyuanleixing = xinxiyuanleixing;
 		this.xinxiyuanid = xinxiyuanid;
-		this.zlbiaotiid = zlbiaotiid;
 		this.yxbz= yxbz;
 	}
 	
