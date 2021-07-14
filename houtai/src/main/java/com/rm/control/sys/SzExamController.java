@@ -115,6 +115,9 @@ public class SzExamController {
 	    up.upload();
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
+	    path=StringUtil.getRootDir(request,"houtai")
+				+File.separator
+				+StringUtil.getUploadFiles();
 	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
 	    String rs = szExamFileSaveSql.asoneinsertToSql(examQueFindService,examQueSaveService,path + up.getUrl(), sz,wzlaiyuan,danduchongfu);
 	    return result + "update jieguo " + rs;

@@ -30,7 +30,6 @@ import com.rm.dao.sys.SzDao;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
-import com.rm.entity.lieju.WenZhangLeiXing;
 import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
 import com.rm.util.StringUtil;
@@ -254,7 +253,7 @@ public class ZhuanLanController {
     	if (zl.getAtcSjk() != null) {
     		atcSjkDao.deleteById(zl.getAtcSjk().getId());
     	}
-    	saveServiceImpl.delShouYeXinXi(szid, WenZhangLeiXing.ZHUANLAN.getName());
+    	// saveServiceImpl.delShouYeXinXi(szid, WenZhangLeiXing.ZHUANLAN.getName());
     	return "ok";
     }
     

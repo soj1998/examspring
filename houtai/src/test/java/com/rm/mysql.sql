@@ -8,6 +8,10 @@ SELECT * FROM t_zhuanlan
 
 DELETE  FROM t_zhuanlan
 
+DELETE  FROM t_examquesjk
+
+DELETE  FROM t_examdaansjk
+
 drop view t_shouyexinxi
 
 CREATE VIEW t_shouyexinxi AS 

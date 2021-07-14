@@ -559,7 +559,18 @@ public class SzExamFileSaveSql {
 		asjk.setWzlaiyuan(wzlaiyuan);
 		asjk.setYxbz("Y");
 		AtcSjk fid = examQueService.saveAtcSjk(asjk);
-		JSONArray yuanshiarray =fileXiangGuan.transFiletoList(fileweizhi);
+		JSONArray yuanshiarray1 =fileXiangGuan.transFiletoList(fileweizhi);
+		//yuanshiarray 要搞分割线
+		int kaishisuan = fileXiangGuan.diGuiHzKaiShiHangShu(yuanshiarray1, StringUtil.getKaiShiBiaoZHi());
+		JSONArray yuanshiarray = new JSONArray();
+		for(Object one:yuanshiarray1){
+			JSONObject one1 = (JSONObject)one;
+        	int hs = one1.getIntValue("hangshu");		        	
+        	if (hs >= kaishisuan) {
+        		yuanshiarray.add(one1);
+        	}
+        }
+		
 		JSONArray hzarray = new JSONArray();
 		//分析题目 是每个题目都有知识点 题型 选项 答案 解析 还有有一个 然后是题号
 		//用答案和答案之间是否有知识点 题型来断定

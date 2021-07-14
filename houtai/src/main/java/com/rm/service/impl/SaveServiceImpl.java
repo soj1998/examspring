@@ -94,6 +94,7 @@ public class SaveServiceImpl{
 				yigemeiyou++;
 				if (yigemeiyou <= i) {
 					//这是前一个没有，后一个有了
+					LOG.error("1   是前一个没有，后一个有了"+dq.getNeirong());
 					return null;
 				}
 			}			
