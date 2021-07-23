@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -411,6 +410,85 @@ public class StringUtil {
         return sb.toString();
 	}
     
+    public static JSONArray getJSONArraySorted(JSONArray cr) {
+        JSONArray sortedJsonArray = new JSONArray();
+        // 用于排序的list
+        List<JSONObject> list = new ArrayList<JSONObject>();
+        //遍历待排序的json数组，并将数据放入list
+        for (int i = 0; i < cr.size(); i++) {
+            list.add(cr.getJSONObject(i));
+        }
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<JSONObject>() {
+            //排序字段
+            private static final String KEY_NAME1 = "hangshu";
+            private static final String KEY_NAME2 = "neirong";
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA1 = new String();
+                String valA2 = new String();
+                String valB1 = new String();
+                String valB2 = new String();
+                try {
+                    valA1 = a.getString(KEY_NAME1);
+                    valA2 = b.getString(KEY_NAME1);
+                    valB1 = a.getString(KEY_NAME2);
+                    valB2 = b.getString(KEY_NAME2);
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+                // 设置排序规则
+                int i = valA1.compareTo(valA2);
+                if (i == 0) {
+                    int j = valB1.compareTo(valB2);
+                    return j;
+                }
+                return i;
+            }
+        });
+      
+        for (int i = 0; i < list.size(); i++) {
+            sortedJsonArray.add(list.get(i));
+        }
+        return sortedJsonArray;
+    }
+    
+    
+  //jsonobject 格式 hangshu neirong
+    public static String getJSONArrayString(JSONArray map,String[] tihuan,int toubuweizhi) {
+		StringBuilder sb = new StringBuilder();		
+		//存放排序结果json数组
+        JSONArray sortedJsonArray = getJSONArraySorted(map);
+      
+        for (int i = 0; i < map.size(); i++) {
+        	JSONObject jone = (JSONObject)sortedJsonArray.get(i);
+            String a12 = jone.getString("neirong");
+            for (String ati : tihuan) {
+        		a12 = a12.replaceAll(ati, "");
+        	}
+        	String a = myTrim(a12);
+        	if (StringUtil.isNotEmpty(a)) {
+        		
+        		if(a.length() > toubuweizhi) {
+        			String a1 = a.substring(0, toubuweizhi);
+        			String a2 = a.substring(toubuweizhi, a.length());
+        			for(String tm:tihuan) {
+                		a1 = a1.replaceAll(tm, "");
+        			}
+        			a1 = myTrim(a1);
+        			a2 = myTrim(a2);
+        			if (StringUtil.isNotEmpty(a1) || StringUtil.isNotEmpty(a2)) {
+                		sb = sb.append(a1).append(a2);
+                	}
+        		}else {
+        			sb = sb.append(a);
+        		}
+            	
+        	}
+        }
+        return sb.toString();
+	}
     
     /**
      * 生成六位随机数字字母组合的字符串
@@ -491,14 +569,17 @@ public class StringUtil {
 				tb1 = true;
 			}	
 		}
-		for(int i =0;i<abclist.size();i++) {			
-			if(tb1 && myIsWhitespace(abclist.get(i))) {
+		for(int i =0;i<abclist.size();i++) {
+			Character abc = abclist.get(i);
+			if(tb1 && myIsWhitespace(abc)) {
 				continue;
 			}
-			if(!myIsWhitespace(abclist.get(i))) {
+			if(!myIsWhitespace(abc)) {
 				tb1 = false;
+			} 
+			if (abc != null ) {
+				abclist2.add(abc);
 			}
-			abclist2.add(abclist.get(i));
 		}
 		Collections.reverse(abclist2);
 		for (char ab: abclist2) {
@@ -542,6 +623,9 @@ public class StringUtil {
     
     public static String getKaiShiBiaoZHi() {
     	return "---------正式开始---------";
+    }
+    public static String getJianGeBiaoZHi() {
+    	return "a1";
     }
     
     public static String[] getZhuanLanRiQi() {
@@ -589,7 +673,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingZw() {
-    	return new String[] {"【单选题】","【多选题】","【计算题】","【综合题】","【判断题】","【简答题】","【名词解释】"};
+    	return new String[] {"单选题","单项选择题","多选题","多项选择题","计算题","综合题","判断题","简答题","名词解释"};
     }
     /*
             1.传入数字 返回类似1. 2. 3.或者 1, 2, 3,的字符串数组
@@ -631,7 +715,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
-    	return new String[] {"【单选题】","【多选题】"}; //,"【判断题】"
+    	return new String[] {"【单选题】","【单项选择题】","【多选题】","【多项选择题】"}; //,"【判断题】"
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangYw() {
@@ -649,7 +733,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingYw() {
-    	return new String[] {"danxuan","duoxuan","jisuan","zonghe","panduan","jianda","mcjieshi"};
+    	return new String[] {"danxuan","danxuan","duoxuan","duoxuan","jisuan","zonghe","panduan","jianda","mcjieshi"};
     }
     
     public static String[] getXiTiLeiXingYwZhanShi() {

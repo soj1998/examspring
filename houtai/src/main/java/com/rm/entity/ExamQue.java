@@ -15,6 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.rm.util.StringUtil;
 
 @Entity
@@ -127,6 +130,16 @@ public class ExamQue {
 	public void setBiaoti(String biaoti) {
 		this.biaoti = biaoti;
 	}
+	@Column
+	private int biaotiid; 
+
+	public int getBiaotiid() {
+		return biaotiid;
+	}
+
+	public void setBiaotiid(int biaotiid) {
+		this.biaotiid = biaotiid;
+	}
 
 
 	@Column(length=100)
@@ -170,7 +183,7 @@ public class ExamQue {
 	}
 
 	public ExamQue(Integer szid, String biaoti,String examque, String yxbz, String examans, String examtype,
-			String examanal) {
+			String examanal,int biaotiid) {
 		super();
 		this.szid = szid;
 		this.biaoti = biaoti;
@@ -179,6 +192,7 @@ public class ExamQue {
 		this.ans = examans;
 		this.examtype = examtype;
 		this.jiexi = examanal;
+		this.biaotiid = biaotiid;
 	}
 	
 	@Transient
@@ -186,23 +200,41 @@ public class ExamQue {
 	@Transient
 	private int tihuantouweishu = StringUtil.getXiTiTiHuanTouWeiShu();
 	
-	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, String biaoti,Map<Integer,String> examque, String yxbz,Date lrsj, Map<Integer,String> examans,
+	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, int biaotiid,Map<Integer,String> examque, String yxbz, Map<Integer,String> examans,
 			Map<Integer,String> examanal) {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
 		this.examZsd = examZsd;
-		this.biaoti = biaoti;
+		this.biaotiid = biaotiid;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
 		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);
 		list.addAll(Arrays.asList(timufenge));
 		this.que = StringUtil.getMapStringTiHuanTou(examque,list,tihuantouweishu);
 		this.yxbz = yxbz;
-		this.lrsj = lrsj;
 		this.ans = examans != null ? StringUtil.getMapString(examans,StringUtil.getXiTiDaan()) : null;
 		this.setWentiLeiXing(examque);
 		this.jiexi = StringUtil.getMapString(examanal,StringUtil.getXiTiJieXi());
+	}
+	
+	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, int biaotiid,JSONArray examque, String yxbz, JSONArray examans,
+			JSONArray examanal) {
+		super();
+		this.atcSjk = fid;
+		this.szid = szid;
+		this.examZsd = examZsd;
+		this.biaotiid = biaotiid;
+		List<String> list=new ArrayList<String>();
+		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
+		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);
+		list.addAll(Arrays.asList(timufenge));
+		String[] timufengeall = (String[])list.toArray();
+		this.que = StringUtil.getJSONArrayString(examque,timufengeall,tihuantouweishu);
+		this.yxbz = yxbz;
+		this.ans = examans != null ? StringUtil.getJSONArrayString(examans,StringUtil.getXiTiDaan()) : null;
+		this.setWentiLeiXing(examque);
+		this.jiexi = StringUtil.getJSONArrayString(examanal,StringUtil.getXiTiJieXi());
 	}
 	@Transient
 	private String zsd = "【知识点】";
@@ -226,6 +258,16 @@ public class ExamQue {
         }		
 		this.setExamtype(rs);
 	}	
+	private void setWentiLeiXing(JSONArray map) {
+		String rs = "weizhi";
+		for (Object entry : map) {
+			JSONObject one = (JSONObject) entry;
+            String a = one.getString("neirong");
+            this.setExamtype(StringUtil.transExamXiTiLeiXing(a));
+			return;
+        }		
+		this.setExamtype(rs);
+	}
 	
 	public ExamQue() {
 		super();

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.rm.dao.AtcSjkDao;
+import com.rm.dao.BiaoTiDao;
 import com.rm.dao.ExamAnsDaDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
@@ -18,6 +19,7 @@ import com.rm.dao.ExamZsdDao;
 import com.rm.dao.ShouYeXinXiDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.entity.AtcSjk;
+import com.rm.entity.BiaoTi;
 import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamChoiZongHe;
@@ -56,7 +58,8 @@ public class SaveServiceImpl{
 	
 	@Resource
     private ZhuanLanDao zhuanLanDao;
-	
+	@Resource
+    private BiaoTiDao biaoTiDao;
 	@Resource
     private ShouYeXinXiDao shouYeXinXiDao;
 	private static final Logger LOG = LoggerFactory.getLogger(SaveServiceImpl.class);
@@ -66,6 +69,11 @@ public class SaveServiceImpl{
 		return rs;
 	}
 	
+	
+	public BiaoTi saveBiaoTi(BiaoTi atcSjk) {		    	
+		BiaoTi rs = biaoTiDao.save(atcSjk);
+		return rs;
+	}
 	public ExamQue saveExamQue(ExamQue examQue) {
 		SimCalculator sc=new SimCalculator();
 		List<ExamQue> szall=examQueDao.findAll();

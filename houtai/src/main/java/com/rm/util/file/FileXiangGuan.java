@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -237,7 +238,6 @@ public class FileXiangGuan {
 			return rs1;
 	
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {			
 			if (inputs != null ) {
@@ -343,9 +343,9 @@ public class FileXiangGuan {
 			if(ac <= hs) {
 				continue;
 			}
-			if(StringUtil.isNotEmpty(obj1.get("neirong").toString()))
+			String d = obj1.getString("neirong");
+			if(StringUtil.isNotEmpty(d))
 	        {
-				String d = obj1.get("neirong").toString();
 				jarray.add(obj1);
 				if(d.indexOf(jiangebz) >= 0 || i == csArray.size() - 1) {
 					if(StringUtil.isNotEmpty(j.getString("szbz"))) {
@@ -367,9 +367,111 @@ public class FileXiangGuan {
 		}
 		return rsArray;
 	}
+	public List<JSONArray> fenSanDigui(int hs,JSONArray rsArray,JSONArray csArray,String[] panduanchuanru){
+		List<JSONArray> rs = new ArrayList<JSONArray>();
+		//先把多余的去除
+		JSONArray csArrayxin = new JSONArray();
+		if (hs > 0) {
+			for (int i = 0;i<csArray.size();i++) {
+				JSONObject obj1 = (JSONObject)csArray.get(i);
+				int ac = obj1.getIntValue("hangshu");
+				if(ac <= hs) {
+					continue;
+				}
+				csArrayxin.add(obj1);
+			}
+		}
+		JSONArray csArrayxin2 = hs > 0 && csArrayxin != null  ? csArrayxin : csArray;
+		//再考虑太多行会发生内存溢出
+		int xinshul = csArrayxin2.size()/2;
+		if (csArrayxin2 != null && csArrayxin2.size() > 100) {
+			//防止内存泄漏，分成两块
+			JSONArray csArray1 = new JSONArray();	
+			JSONArray csArray2 = new JSONArray();			
+			for (int i = 0;i<csArrayxin2.size();i++) {
+				JSONObject obj1 = (JSONObject)csArray.get(i);
+				if(i <= xinshul) {
+					csArray1.add(obj1);
+				}
+				else {
+					csArray2.add(obj1);
+				}
+			}
+			List<JSONArray> rsArrayxin1 = fenSanDigui(0,new JSONArray(),csArray1,panduanchuanru);
+			List<JSONArray> rsArrayxin2 = fenSanDigui(0,new JSONArray(),csArray2,panduanchuanru);
+			rs.addAll(rsArrayxin1);
+			rs.addAll(rsArrayxin2);
+		}else {
+			rs.add(csArrayxin2);
+		}
+		return rs;
+	}
 	
 	
-	
+	public JSONArray diGuiHzXin(int hs,JSONArray rsArray,JSONArray csArray,String[] panduanchuanru) {
+		if (null == rsArray) {
+			rsArray = new JSONArray();			
+		}
+		JSONObject j = new JSONObject();
+		JSONArray jarray = new JSONArray();
+		for (int i = 0;i<csArray.size();i++) {
+			JSONObject obj1 = (JSONObject)csArray.get(i);
+			int ac = obj1.getIntValue("hangshu");
+			if(hs > 0 && ac <= hs) {
+				continue;
+			}
+			String d = obj1.getString("neirong");
+			boolean panduandao = false;
+			for (String abc : panduanchuanru) {
+				int zhaodao1 = d.indexOf(abc);
+				int zhaodao2 = abc.indexOf(d);
+				if (zhaodao1 >= 0 || zhaodao2 >= 0) {
+					panduandao = true;
+					break;
+				}
+			}
+			if(StringUtil.isNotEmpty(d))
+	        {
+				jarray.add(obj1);
+				if(panduandao || i == csArray.size() - 1) {
+					if(StringUtil.isNotEmpty(j.getString("szbz"))) {
+						if (i != csArray.size() - 1) {
+							jarray.remove(jarray.size()-1);
+						}
+						rsArray.add(j);
+						LOG.info("添加一次，进入下一层");
+						diGuiHzXin(ac-1,rsArray,csArray,panduanchuanru);
+						break;
+					}
+					j.put(StringUtil.getJianGeBiaoZHi(), jarray);
+					j.put("szbz", "1");
+					continue;
+				}				
+	        }			
+			if (i == csArray.size() - 1) {
+				return rsArray;
+			}
+		}
+		LOG.info("搞完一层");
+		return rsArray;
+	}
+	//map key是唯一的 当有重复的行数时 造成数据的丢失 改用 jsonobject jsonarray
+	public JSONArray getGuiShu(int[]qizhi,JSONArray crArray) {
+		JSONArray rs = new JSONArray();
+		int qi = qizhi[0];
+		int zhi = qizhi[1];
+		for (Object fd:crArray) {
+			JSONObject jb = (JSONObject)fd;
+			int a = jb.getIntValue("hangshu");
+			if (qi>=0 && a >= qi && a <= zhi) {
+				JSONObject one = new JSONObject();
+				one.put("hangshu", a);
+				one.put("neirong", jb.getString("neirong"));
+				rs.add(one);
+			}
+		}
+		return rs;
+	}
 	
 	public static void writeLogToFile(String filename,String a) {
 		
@@ -391,7 +493,6 @@ public class FileXiangGuan {
 	    fop.flush();
 	    fop.close();
 
-	    System.out.println("Done");
 
 	    } catch (IOException e) {
 	    	e.printStackTrace();

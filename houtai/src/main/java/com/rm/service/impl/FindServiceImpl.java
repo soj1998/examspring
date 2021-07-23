@@ -76,6 +76,10 @@ public class FindServiceImpl{
 		return szDao.findById(szid).get();
 	}
 	
+	public Sz getSzByMc(String szmc) {
+		return szDao.findSzBymc(szmc);
+	}
+	
 	public ExamZsd getExamZsd(int szid) {
 		//ExamZsd zl = new ExamZsd();
 		//zl.setId((long)szid);;	

@@ -56,6 +56,10 @@ public class ZhuanLanFileSaveSql {
 		atcSjk.setFileweizhi(fileweizhi);
 		atcSjk.setWzlxid(wzlx);
 		int atcid = atcSjkDao.save(atcSjk).getId();
+		if (atcid <0 ) {
+			LOG.info("---文档保存错误不能继续搞了" + atcid);	
+			return;
+		}
 		int kashihangshu = fileXiangGuan.diGuiHzKaiShiHangShu(jsonDuanArray, StringUtil.getKaiShiBiaoZHi());
 		fileXiangGuan.diGuiHz(kashihangshu,hzarray,jsonDuanArray,sz);
 		for (Object fd:hzarray) {
@@ -119,15 +123,11 @@ public class ZhuanLanFileSaveSql {
 			String sz1 = StringUtil.getJSONArrayString(szlist, StringUtil.getZhuanLanXueKe());
 			Sz sza =szDao.findSzBymc(sz1);
 			if (null == sza) {
-				LOG.info("---税种错误，无法对应，输入的税种" + sz1);
+				LOG.info("---学科错误，无法对应输入的学科" + sz1);
 				continue;
 			}
-			//atcSjk.setSzid(sza.getId());
-			atcSjk.setWzlxid(wzlx);
+			
 			String ly = StringUtil.getJSONArrayString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
-			//atcSjk.setWzlaiyuan(ly);
-			//atcSjk.setYxbz("Y");
-			atcSjk.setId(atcid);				
 			String xl = StringUtil.getJSONArrayString(xilielist, StringUtil.getZhuanLanXiLie());
 			//List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
 			int minhstimu  = 0;

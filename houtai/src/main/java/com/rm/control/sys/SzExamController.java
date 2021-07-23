@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -98,9 +99,13 @@ public class SzExamController {
     }
 	
 	//试题没有文章架构
-    @ResponseBody
+	@Value("${urlbyos.win}")
+	private String urlwin;
+	@Value("${urlbyos.linux}")
+	private String urllinux;
+    @ResponseBody    
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
-	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,@RequestParam("sz") int sz,@RequestParam("wzlaiyuan") String wzlaiyuan,@RequestParam("danduchongfu") int danduchongfu,HttpServletResponse response) throws Exception{
+	public String getUploadUmImage(HttpServletRequest request,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
@@ -115,11 +120,19 @@ public class SzExamController {
 	    up.upload();
 	    String result = "{\"name\":\""+ up.getFileName() +"\", \"originalName\": \""+ up.getOriginalName() +"\", \"size\": "+ up.getSize() +", \"state\": \""+ up.getState() +"\", \"type\": \""+ up.getType() +"\", \"url\": \""+ up.getUrl() +"\"}";
 	    LOG.info("r    "+result);
-	    path=StringUtil.getRootDir(request,"houtai")
+	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
+	    String picurl = "";
+	    String os = System.getProperty("os.name");
+    	//如果是Windows系统
+        if (os.toLowerCase().startsWith("win")) {
+        	picurl = urlwin;
+        } else {  //linux 和mac
+        	picurl = urllinux;
+        }
+        path=StringUtil.getRootDir(request,"houtai")
 				+File.separator
 				+StringUtil.getUploadFiles();
-	    SzExamFileSaveSql szExamFileSaveSql = new SzExamFileSaveSql();
-	    String rs = szExamFileSaveSql.asoneinsertToSql(examQueFindService,examQueSaveService,path + up.getUrl(), sz,wzlaiyuan,danduchongfu);
+	    String rs = szExamFileSaveSql.asoneinsertToSql(request,examQueFindService,examQueSaveService,picurl,path + up.getUrl());
 	    return result + "update jieguo " + rs;
 	    
 	}
