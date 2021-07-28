@@ -2,7 +2,6 @@ package com.rm.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
@@ -71,17 +70,7 @@ public class ExamQue {
 		this.atcSjk = atcSjk;
 	}
 
-	@Column
-    private Date lrsj;
-		
 	
-	public Date getLrsj() {
-		return lrsj;
-	}
-
-	public void setLrsj(Date lrsj) {
-		this.lrsj = lrsj;
-	}
 	
 
 	public String getYxbz() {
@@ -119,17 +108,7 @@ public class ExamQue {
 		this.examtype = examtype;
 	}
 
-	@Column(length=100)
-    private String biaoti; 
-
-    
-	public String getBiaoti() {
-		return biaoti;
-	}
-
-	public void setBiaoti(String biaoti) {
-		this.biaoti = biaoti;
-	}
+	
 	@Column
 	private int biaotiid; 
 
@@ -182,11 +161,10 @@ public class ExamQue {
 		this.sjid = sjid;
 	}
 
-	public ExamQue(Integer szid, String biaoti,String examque, String yxbz, String examans, String examtype,
+	public ExamQue(Integer szid, String examque, String yxbz, String examans, String examtype,
 			String examanal,int biaotiid) {
 		super();
 		this.szid = szid;
-		this.biaoti = biaoti;
 		this.que = examque;
 		this.yxbz = yxbz;
 		this.ans = examans;
@@ -229,8 +207,7 @@ public class ExamQue {
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
 		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);
 		list.addAll(Arrays.asList(timufenge));
-		String[] timufengeall = (String[])list.toArray();
-		this.que = StringUtil.getJSONArrayString(examque,timufengeall,tihuantouweishu);
+		this.que = StringUtil.getJSONArrayString(examque,list,tihuantouweishu);
 		this.yxbz = yxbz;
 		this.ans = examans != null ? StringUtil.getJSONArrayString(examans,StringUtil.getXiTiDaan()) : null;
 		this.setWentiLeiXing(examque);

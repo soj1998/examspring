@@ -72,7 +72,7 @@ public class SzExamFileSaveSql {
 	}
 	
 	
-	
+	//有问题 有答案就行
 	private boolean getPanDuanXinXiQuan(JSONArray crArray) {
 		boolean rs= false;
 		boolean timuyou = false;
@@ -90,7 +90,7 @@ public class SzExamFileSaveSql {
 					}
 				}
 				if(!timuyouwai) {
-					for(String timu : StringUtil.getChuTiMuWaiXinXiQuan()) {
+					for(String timu : StringUtil.getXiTiDaan()) {
 						if (gets.indexOf(timu)>= 0) {
 							timuyouwai = true;
 							break;
@@ -650,7 +650,7 @@ public class SzExamFileSaveSql {
 		for (int i = hs;i<csArray.size();i++) {
 			JSONObject obj1 = (JSONObject)csArray.get(i);
 			String d = obj1.get("neirong").toString();
-			String d1 = StringUtil.myTrim(d);
+			String d1 = StringUtil.removeTailSpace(d);
 			if(StringUtil.isNotEmpty(d1))
 	        {
 				jarray.add(obj1);
@@ -737,7 +737,8 @@ public class SzExamFileSaveSql {
         	}
         }
 		JSONArray hzarray = new JSONArray();
-		fileXiangGuan.diGuiHzXin(kashihangshu,hzarray,yuanshiarray,sz);		
+		fileXiangGuan.diGuiHzXin(kashihangshu,hzarray,yuanshiarray,sz);
+		boolean biaotione = false;
 		for (Object fd2:hzarray) {
 			JSONObject jb2 = (JSONObject)fd2;
 			JSONArray arr2 = jb2.getJSONArray(StringUtil.getJianGeBiaoZHi());//a1 al 简直坑爹
@@ -801,11 +802,15 @@ public class SzExamFileSaveSql {
 			}
 			String ly = StringUtil.getJSONArrayString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
 			String xl = StringUtil.getJSONArrayString(xilielist, StringUtil.getZhuanLanXiLie());
-			BiaoTi biaoti = new BiaoTi(biaoti2,ly,xl,lrsj2);
-			BiaoTi biaoti21 = examQueService.saveBiaoTi(biaoti);
-			if (biaoti21 == null ) {
-				LOG.info("---标题保存错误，不继续了");
-				continue;
+			BiaoTi biaoti = new BiaoTi(biaoti2,ly,xl,lrsj2,"Y",sza.getId());
+			if (!biaotione) {
+				BiaoTi biaoti21 = examQueService.saveBiaoTi(biaoti);
+				if (biaoti21 == null ) {
+					LOG.info("---标题保存错误，不继续了");
+					continue;
+				} else {
+					biaoti = biaoti21;
+				}
 			}
 			JSONArray hzarray3 = new JSONArray();
 			for(Object mapping1:zwlist){
@@ -828,8 +833,9 @@ public class SzExamFileSaveSql {
 				JSONObject jb3 = (JSONObject)fd;
 				JSONArray arr3 = jb3.getJSONArray(jsonarrjieduan);
 				JSONArray hzarray2 = new JSONArray();
-				//String[] timufenge = StringUtil.getXiTiShuZiFenZu(xitishuzifenzugeshu, xitishuzifenzufuhao);
-				//fileXiangGuan.diGuiHzXin(0,hzarray2,arr3,timufenge);
+				JSONArray hzarray5 = new JSONArray();//hzarray2 的信息加工后填到hzarray5
+				String[] timufenge = StringUtil.getXiTiShuZiFenZu(xitishuzifenzugeshu, xitishuzifenzufuhao);
+				fileXiangGuan.diGuiHzXin(0,hzarray2,arr3,timufenge);
 				String timuxuanding = "";
 				boolean timuxuandinga = false;
 				for (Object fd3:arr3) {
@@ -841,8 +847,11 @@ public class SzExamFileSaveSql {
 					}
 					if (StringUtil.isNotEmpty(arr21)) {
 						for (String a :timuleix) {
-							if (a.indexOf(arr21) > 0 
-									|| arr21.indexOf(a) > 0) {
+							String ab = a.replaceAll("【", "");
+							ab = ab.replaceAll("】", "");
+							if (a.indexOf(arr21) >= 0 
+									|| arr21.indexOf(a) >= 0
+									|| arr21.indexOf(ab) >= 0) {
 								timuxuanding = a;
 								timuxuandinga = true;
 								break;
@@ -850,25 +859,29 @@ public class SzExamFileSaveSql {
 						}
 					}
 				}
+				
 				JSONArray timulist2,xuanxianglist,daanlist,jiexilist;
-				JSONArray hzarray5 = new JSONArray();
 				if(StringUtil.isNotEmpty(timuxuanding)) {
-					for (Object a2:hzarray2) {
+					for (int i =0;i<hzarray2.size();i++){//Object a2:hzarray2) {
 						//加入题目类型 和知识点
-						JSONObject jsona2 = (JSONObject)a2;
+						JSONObject jsona2 = hzarray2.getJSONObject(i);
 						JSONArray arrxiao = jsona2.getJSONArray(jsonarrjieduan);
 						if (null != arrxiao && arrxiao.size() > 0) {
 							Object ab = arrxiao.get(0);
 							JSONObject abo = (JSONObject)ab;
-							String a = timuxuanding + abo.getString("neirong");
+							String a = timuxuanding;
 							int a1 = abo.getIntValue("hangshu");
 							JSONArray arrxiaoxin = new JSONArray();
 							JSONObject t1 = new JSONObject();
 							t1.put("hangshu", a1);
 							t1.put("neirong", a);
 							arrxiaoxin.add(t1);
-							for (int i = 1 ; i<arrxiao.size(); i++) {
-								arrxiaoxin.add((JSONObject)arrxiao.get(i));
+							//第一次 不赋值  前面根据单选多选 已经搞了第一个值了
+							for (int j = 0 ; j<arrxiao.size(); j++) {
+								if (i==0 && j==0 ) {
+									continue;
+								}
+								arrxiaoxin.add((JSONObject)arrxiao.get(j));
 							}
 							JSONObject zuizhong = new JSONObject();
 							zuizhong.put(jsonarrjieduan, arrxiaoxin);
@@ -882,7 +895,7 @@ public class SzExamFileSaveSql {
 						JSONArray arr = jb.getJSONArray(jsonarrjieduan);	
 						//先进行是否是综合题目的判断 非综合题进入非综合题
 						if (!getPanDuanXinXiQuan(arr)) {
-							//信息全不全 有题目类型 有知识点或答案之一就行
+							//信息全不全 有题目类型 答案之一就行
 							LOG.info("信息不全，跳过了"); 
 							JSONObject ab = (JSONObject)arr.get(0);
 							FileXiangGuan.writeLogToFile(jilulog, ab.getString("hangshu") + "   " + ab.getString("neirong"));
@@ -910,7 +923,7 @@ public class SzExamFileSaveSql {
 							ExamQue examQue = null;
 							if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw()))
 							{
-								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti21.getId(),timulist2,"Y",daanlist,jiexilist);
+								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),timulist2,"Y",daanlist,jiexilist);
 								try{
 									ExamQue examQue2 = examQueService.saveExamQue(examQue);
 									if (null == examQue2) {
@@ -922,7 +935,7 @@ public class SzExamFileSaveSql {
 						            LOG.error("添加ExamQue 失败!"+e.getMessage());
 						        }
 							} else {
-								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti21.getId(),timulist2,"Y",null,jiexilist);
+								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),timulist2,"Y",null,jiexilist);
 								try{
 									ExamQue examQue2 = examQueService.saveExamQue(examQue);
 									if (null == examQue2) {

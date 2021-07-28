@@ -29,7 +29,13 @@ public class ShouYeXinXi {
 	@Column(length=200)
 	private String zsd;
 	private int zsdid;
-	
+	private int biaotiid;
+	public int getBiaotiid() {
+		return biaotiid;
+	}
+	public void setBiaotiid(int biaotiid) {
+		this.biaotiid = biaotiid;
+	}
 	public int getSzid() {
 		return szid;
 	}

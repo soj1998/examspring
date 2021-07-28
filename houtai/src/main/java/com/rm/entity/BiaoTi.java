@@ -61,6 +61,8 @@ public class BiaoTi implements Serializable{
 	@Column(length=150)
 	private String xilie;
 
+	@Column(length=1)
+	private String yxbz;
 	@Column
 	private Date lrsj;
 	
@@ -71,13 +73,33 @@ public class BiaoTi implements Serializable{
 	public void setId(int id) {
 		this.id = id;
 	}
+	@Column
+	private int szid;
 
-	public BiaoTi(String biaoti, String laiyuan, String xilie,Date lrsj) {
+	public int getSzid() {
+		return szid;
+	}
+
+	public void setSzid(int szid) {
+		this.szid = szid;
+	}
+
+	public BiaoTi(String biaoti, String laiyuan, String xilie,Date lrsj,String yxbz,int szid) {
 		super();
 		this.biaoti = biaoti;
 		this.laiyuan = laiyuan;
 		this.xilie = xilie;
 		this.lrsj = lrsj;
+		this.yxbz = "Y";
+		this.szid = szid;
+	}
+
+	public String getYxbz() {
+		return yxbz;
+	}
+
+	public void setYxbz(String yxbz) {
+		this.yxbz = yxbz;
 	}
 
 	public Date getLrsj() {

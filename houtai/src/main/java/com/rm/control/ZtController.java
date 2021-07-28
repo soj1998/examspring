@@ -50,7 +50,7 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getquanbuxitibyszidbiaoti")
-    public List<ExamQueChuanDi> listall4(@RequestParam("sid") int szid,@RequestParam("biaoti") String biaoti){    	
+    public List<ExamQueChuanDi> listall4(@RequestParam("sid") int szid,@RequestParam("biaoti") int biaoti){    	
     	return service.getTiMuByBiaoTi(szid,biaoti);
     }
     @RequestMapping(value="/getquanbuxitibyszidbiaoticount")

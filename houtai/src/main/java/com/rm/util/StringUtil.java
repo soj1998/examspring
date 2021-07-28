@@ -489,7 +489,49 @@ public class StringUtil {
         }
         return sb.toString();
 	}
-    
+    public static String getJSONArrayString(JSONArray map,List<String> tihuan,int toubuweizhi) {
+		StringBuilder sb = new StringBuilder();		
+		//存放排序结果json数组
+        JSONArray sortedJsonArray = getJSONArraySorted(map);      
+        for (int i = 0; i < map.size(); i++) {
+        	JSONObject jone = (JSONObject)sortedJsonArray.get(i);
+            String a12 = jone.getString("neirong");
+            for (String ati : tihuan) {
+            	if (a12.indexOf(ati)>=0) {
+					//t1ci =true;
+            		a12 = a12.replaceFirst(ati, "");
+					break;
+				}        		
+        	}
+        	String a = myTrim(a12);
+        	if (StringUtil.isNotEmpty(a)) {
+        		
+        		if(a.length() > toubuweizhi) {
+        			String a1 = a.substring(0, toubuweizhi);
+        			String a2 = a.substring(toubuweizhi, a.length());
+        			//boolean t1ci = false;
+        			for(String tm:tihuan) {
+        				//只替换一次
+        				if (a1.indexOf(tm)>=0) {
+        					//t1ci =true;
+        					a1 = a1.replaceFirst(tm, "");
+        					break;
+        				}
+                		
+        			}
+        			a1 = myTrim(a1);
+        			a2 = myTrim(a2);
+        			if (StringUtil.isNotEmpty(a1) || StringUtil.isNotEmpty(a2)) {
+                		sb = sb.append(a1).append(a2);
+                	}
+        		}else {
+        			sb = sb.append(a);
+        		}
+            	
+        	}
+        }
+        return sb.toString();
+	}
     /**
      * 生成六位随机数字字母组合的字符串
      * 
@@ -665,15 +707,15 @@ public class StringUtil {
     }
     
     public static String[] getXiTiDaan() {
-    	return new String[] {"参考答案：","【答案】","参考答案:"};
+    	return new String[] {"参考答案:","参考答案：","【答案】","答案："};
     }
     
     public static String[] getXiTiJieXi() {
-    	return new String[] {"答案解析：","【解析】"};
+    	return new String[] {"答案解析:","答案解析：","解析：","【解析】"};
     }
     
     public static String[] getXiTiLeiXingZw() {
-    	return new String[] {"单选题","单项选择题","多选题","多项选择题","计算题","综合题","判断题","简答题","名词解释"};
+    	return new String[] {"【单选题】","【单项选择题】","【多选题】","【多项选择题】","【计算题】","【综合题】","【判断题】","【填空题】","【简答题】","【名词解释】"};
     }
     /*
             1.传入数字 返回类似1. 2. 3.或者 1, 2, 3,的字符串数组
@@ -733,7 +775,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingYw() {
-    	return new String[] {"danxuan","danxuan","duoxuan","duoxuan","jisuan","zonghe","panduan","jianda","mcjieshi"};
+    	return new String[] {"danxuan","danxuan","duoxuan","duoxuan","jisuan","zonghe","panduan","tiankong","jianda","mcjieshi"};
     }
     
     public static String[] getXiTiLeiXingYwZhanShi() {

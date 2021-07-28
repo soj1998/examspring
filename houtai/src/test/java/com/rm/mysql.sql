@@ -6,16 +6,18 @@ SELECT * FROM test1
 
 SELECT * FROM t_zhuanlan
 
-DELETE  FROM t_zhuanlan
+DELETE  FROM t_zhuanlan;
 
-DELETE  FROM t_examquesjk
+DELETE FROM t_examchoisjk;
+DELETE FROM t_biaoti;
+DELETE  FROM t_examquesjk;
+DELETE  FROM t_examdaansjk;
 
-DELETE  FROM t_examdaansjk
 
-drop view t_shouyexinxi
+drop view if exists t_shouyexinxi;
 
 CREATE VIEW t_shouyexinxi AS 
-select  row_number() over (order by a.lrsj) as id, a.* from
+SELECT  ROW_NUMBER() OVER (ORDER BY a.lrsj) AS id, a.* FROM
 (
 SELECT lrsj,
 (SELECT szmc FROM t_sz t2 WHERE t2.id= t.szid) sz, 
@@ -25,12 +27,19 @@ t.id xinxiyuanid,
 yxbz,
 (SELECT neirong FROM t_examquezsd t2 WHERE t2.id= t.exzsdid)  zsd,
 exzsdid zsdid,
-biaoti
+biaoti,
+0 biaotiid,
+ROW_NUMBER() OVER (ORDER BY t.lrsj) AS rn 
 FROM t_zhuanlan t
 WHERE btid = -1
 
 UNION ALL 
-SELECT MAX(lrsj) lrsj,
+SELECT a.* FROM (
+SELECT a.*,ROW_NUMBER() OVER(PARTITION BY sz,szid,xinxiyuanleixing,yxbz,zsd,
+zsdid,biaoti,biaotiid ORDER BY lrsj DESC) rn
+FROM (
+SELECT 
+(SELECT lrsj FROM t_biaoti a WHERE a.id = t.biaotiid ) lrsj,
 (SELECT szmc FROM t_sz t2 WHERE t2.id= t.szid) sz, 
 szid,
 t.id xinxiyuanid,
@@ -38,7 +47,8 @@ t.id xinxiyuanid,
 yxbz,
 (SELECT neirong FROM t_examquezsd t2 WHERE t2.id= t.examquezsdid)  zsd,
 examquezsdid zsdid,
-biaoti
-FROM t_examquesjk t
-GROUP BY t.biaoti
-) a
+(SELECT biaoti FROM t_biaoti a WHERE a.id = t.biaotiid ) biaoti,
+t.biaotiid
+FROM t_examquesjk t) a ) a WHERE a.rn =1 ) a
+
+

@@ -30,7 +30,6 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
-import com.rm.util.file.FileXiangGuan;
 
 
 @EnableTransactionManagement
@@ -111,10 +110,10 @@ class HoutaiApplicationTests {
 	@Transactional
 	@Test
     public void test(){
-		FileXiangGuan fg = new FileXiangGuan();
-		System.out.println("1");
-		fg.transFiletoList("D:\\1.docx");
-		System.out.println("2");
+		String a = "1.1921年7月23日，中国共产党第一次全";
+		String b = "1.";
+		String c = a.replaceFirst(b, "");
+		System.out.println("2  " + c);
     }
 	
 	

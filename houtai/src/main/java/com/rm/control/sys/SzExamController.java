@@ -1,9 +1,6 @@
 package com.rm.control.sys;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -162,7 +159,6 @@ public class SzExamController {
 	    		}
 	    	}
     	}
-    	equ.setLrsj(Date.from(LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
     	Integer xuekeId= examQueDao.save(equ).getId();
     	equ.setId(xuekeId);
     	LOG.info("sz ok");

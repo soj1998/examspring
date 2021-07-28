@@ -57,7 +57,7 @@ public class FileXiangGuan {
 					jsonDuanArray.add(jsonDuan);
 				}
 				String abc = paras.get(i).getParagraphText().trim();				
-				abc = StringUtil.myTrim(abc);
+				abc = StringUtil.removeTailSpace(abc);
 				if(StringUtil.isEmpty(abc)) {
 					continue;
 				}else {
@@ -108,7 +108,7 @@ public class FileXiangGuan {
 					jsonDuanArray.add(jsonDuan);
 				}
 				String abc = paras.get(i).getParagraphText().trim();				
-				abc = StringUtil.myTrim(abc);
+				abc = StringUtil.removeTailSpace(abc);
 				if(StringUtil.isEmpty(abc)) {
 					continue;
 				}else {
@@ -425,7 +425,11 @@ public class FileXiangGuan {
 			for (String abc : panduanchuanru) {
 				int zhaodao1 = d.indexOf(abc);
 				int zhaodao2 = abc.indexOf(d);
-				if (zhaodao1 >= 0 || zhaodao2 >= 0) {
+				String abc1 = abc.replaceAll("【", "");
+				abc1 = abc1.replaceAll("】", "");
+				int zhaodao3 = d.indexOf(abc1);
+				if (zhaodao1 >= 0 || zhaodao2 >= 0
+						|| zhaodao3 >= 0) {
 					panduandao = true;
 					break;
 				}
@@ -439,7 +443,6 @@ public class FileXiangGuan {
 							jarray.remove(jarray.size()-1);
 						}
 						rsArray.add(j);
-						LOG.info("添加一次，进入下一层");
 						diGuiHzXin(ac-1,rsArray,csArray,panduanchuanru);
 						break;
 					}
@@ -452,7 +455,6 @@ public class FileXiangGuan {
 				return rsArray;
 			}
 		}
-		LOG.info("搞完一层");
 		return rsArray;
 	}
 	//map key是唯一的 当有重复的行数时 造成数据的丢失 改用 jsonobject jsonarray

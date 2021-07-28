@@ -1,6 +1,7 @@
 package com.rm.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.Resource;
@@ -11,8 +12,11 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
+import com.rm.dao.BiaoTiDao;
 import com.rm.dao.ExamAnsDaDao;
 import com.rm.dao.ExamChoiDao;
 import com.rm.dao.ExamChoiZongHeDao;
@@ -65,7 +69,8 @@ public class FindServiceImpl{
     private ZhuanLanDao zhuanLanDao; 
 	@Resource
     private ShouYeXinXiDao shouYeXinXiDao; 
-	
+	@Resource
+    private BiaoTiDao biaotiDao;
 	@Resource
     private SzDao szDao;
 	
@@ -165,7 +170,6 @@ public class FindServiceImpl{
 	
 	public int getXiTiShuLiang(String biaoti) {
 		ExamQue examQue = new ExamQue();
-		examQue.setBiaoti(biaoti);
 		examQue.setYxbz("Y");
 		Example<ExamQue> example3 = Example.of(examQue);
 		Long a3 = examQueDao.count(example3);
@@ -496,9 +500,9 @@ public class FindServiceImpl{
 		return rs;		
 	}
 	
-	public List<ExamQueChuanDi> getTiMuByBiaoTi(int szid,String biaoti){
+	public List<ExamQueChuanDi> getTiMuByBiaoTi(int szid,int biaotiid){
 		List<ExamQueChuanDi> rs = new ArrayList<ExamQueChuanDi>();
-		List<ExamQue> rs1 = examQueDao.getallbybiaoti(szid, biaoti);
+		List<ExamQue> rs1 = examQueDao.getallbybiaoti(szid, biaotiid);
 		int shezhiid= 1;
 		for (ExamQue examQue: rs1) {
 			if ("danxuan".equals(examQue.getExamtype())) {
@@ -508,6 +512,22 @@ public class FindServiceImpl{
 			examcd.setQue(examQue.getQue());
 			examcd.setExamtype(examQue.getExamtype());
 			List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(examQue.getId());
+			Collections.sort(zbchoidel, new Comparator<ExamChoi>() {
+	            @Override
+	            public int compare(ExamChoi a, ExamChoi b) {
+	                String valA1 = new String();
+	                String valA2 = new String();
+	                try {
+	                    valA1 = a.getXuanxiang();
+	                    valA2 = b.getXuanxiang();
+	                } catch (JSONException e) {
+	                    System.out.println(e);
+	                }
+	                // 设置排序规则
+	                int i = valA1.compareTo(valA2);
+	                return i;
+	            }
+	        });
 			List<String> xxs = new ArrayList<>();
 			for (ExamChoi xx:zbchoidel) {
 				xxs.add(xx.getXuanxiang());
@@ -515,7 +535,8 @@ public class FindServiceImpl{
 			examcd.setXuanxiang(xxs);
 			if (examQue.getAns() == null) {
 				ExamDaan ans = examDaanDao.getExamDaanByQue(examQue.getId());
-				examcd.setAns(ans.getDaan());
+				if (ans != null )
+					examcd.setAns(ans.getDaan());
 			} else {
 				examcd.setAns(examQue.getAns());
 			}
@@ -528,8 +549,10 @@ public class FindServiceImpl{
 	}
 	
 	public int getTiMuByBiaoTiCount(int szid,String biaoti){
-		return examQueDao.getallbybiaoticount(szid, biaoti);		
+		return biaotiDao.getallbybiaoticount(szid, biaoti);		
 	}
+	
+	
 	
 	public List<ExamQue> getExamQue(int pageNum, int pageSize, int szid) {
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
