@@ -120,6 +120,18 @@ public class ExamQue {
 		this.biaotiid = biaotiid;
 	}
 
+	@Column
+	private int biaotixh; 
+
+
+	public int getBiaotixh() {
+		return biaotixh;
+	}
+
+	public void setBiaotixh(int biaotixh) {
+		this.biaotixh = biaotixh;
+	}
+
 
 	@Column(length=100)
     private String ans; 
@@ -196,12 +208,13 @@ public class ExamQue {
 		this.jiexi = StringUtil.getMapString(examanal,StringUtil.getXiTiJieXi());
 	}
 	
-	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, int biaotiid,JSONArray examque, String yxbz, JSONArray examans,
+	public ExamQue(AtcSjk fid,Integer szid, ExamZsd examZsd, int biaotiid,int biaotixh,JSONArray examque, String yxbz, JSONArray examans,
 			JSONArray examanal) {
 		super();
 		this.atcSjk = fid;
 		this.szid = szid;
 		this.examZsd = examZsd;
+		this.biaotixh = biaotixh;
 		this.biaotiid = biaotiid;
 		List<String> list=new ArrayList<String>();
 		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));

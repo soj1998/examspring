@@ -889,6 +889,7 @@ public class SzExamFileSaveSql {
 						}
 					}
 				}
+				int biaotixh = 0;
 				if (hzarray5 != null && hzarray5.size() > 0) {
 					for (Object fd4:hzarray5) {
 						JSONObject jb = (JSONObject)fd4;
@@ -921,9 +922,10 @@ public class SzExamFileSaveSql {
 							daanlist = fileXiangGuan.getGuiShu(daan_qz,arr);
 							jiexilist = fileXiangGuan.getGuiShu(jiexi_qz,arr);
 							ExamQue examQue = null;
+							biaotixh++;
 							if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw()))
 							{
-								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),timulist2,"Y",daanlist,jiexilist);
+								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),biaotixh,timulist2,"Y",daanlist,jiexilist);
 								try{
 									ExamQue examQue2 = examQueService.saveExamQue(examQue);
 									if (null == examQue2) {
@@ -935,7 +937,7 @@ public class SzExamFileSaveSql {
 						            LOG.error("添加ExamQue 失败!"+e.getMessage());
 						        }
 							} else {
-								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),timulist2,"Y",null,jiexilist);
+								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),biaotixh,timulist2,"Y",null,jiexilist);
 								try{
 									ExamQue examQue2 = examQueService.saveExamQue(examQue);
 									if (null == examQue2) {
