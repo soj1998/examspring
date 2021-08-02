@@ -102,29 +102,40 @@ class HoutaiApplicationTests {
 	    // 参数为本地图片路径
 	    String jilulog = "D:\\szexamlog.txt";
 	    
-	    String path = "C:\\Users\\ad\\Desktop\\图片1\\2021税务师 轻二 税法(Ⅰ)";		//要遍历的路径
+	    String path = "C:\\Users\\ad\\Desktop\\图片2\\3";		//要遍历的路径
 		File file = new File(path);		//获取其file对象
 		File[] fs = file.listFiles();	//遍历path下的文件和目录，放在File数组中
 		List<File> ls = new ArrayList<File>();
 		for(File f:fs){	
 			ls.add(f);
+			String fn = f.getName();
+			int dian = fn.indexOf(".");
+			int dian2 = 2;
+			if (dian==23) 
+				dian2 = 3;
+			String fnc = fn.substring(20,20+ dian2);
+			System.out.println(fn + "  " + fn.substring(20) + "  " + dian);
+			System.out.println(fnc);
 		}
+		//if (1==1) {
+			//return;
+		//}
 		Collections.sort(ls, new Comparator<File>() {
             //升序排序
             public int compare(File o1, File o2) {
             	String fn = o1.getName();
     			int dian = fn.indexOf(".");
     			int dian2 = 2;
-    			if (dian==20) 
+    			if (dian==23) 
     				dian2 = 3;
-    			String fnc = fn.substring(17,17+ dian2);
+    			String fnc = fn.substring(20,20+ dian2);
     			int a = Integer.parseInt(fnc);
     			String fn1 = o2.getName();
     			int dian1 = fn1.indexOf(".");
     			int dian21 = 2;
-    			if (dian1==20) 
+    			if (dian1==23) 
     				dian21 = 3;
-    			String fnc1 = fn1.substring(17,17+ dian21);
+    			String fnc1 = fn1.substring(20,20+ dian21);
     			int b = Integer.parseInt(fnc1);
     			return a - b;
             }
