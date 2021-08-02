@@ -3,9 +3,15 @@ package com.rm;
 
 
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -30,6 +36,7 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
+import com.rm.util.file.FileXiangGuan;
 
 
 @EnableTransactionManagement
@@ -93,9 +100,54 @@ class HoutaiApplicationTests {
 	    
 	    
 	    // 参数为本地图片路径
-	    String image = "D:\\图4.jpg";
-	    JSONObject res = client.basicGeneral(image, options);
-	    System.out.println(res.toString(2));
+	    String jilulog = "D:\\szexamlog.txt";
+	    
+	    String path = "C:\\Users\\ad\\Desktop\\图片1\\2021税务师 轻二 税法(Ⅰ)";		//要遍历的路径
+		File file = new File(path);		//获取其file对象
+		File[] fs = file.listFiles();	//遍历path下的文件和目录，放在File数组中
+		List<File> ls = new ArrayList<File>();
+		for(File f:fs){	
+			ls.add(f);
+		}
+		Collections.sort(ls, new Comparator<File>() {
+            //升序排序
+            public int compare(File o1, File o2) {
+            	String fn = o1.getName();
+    			int dian = fn.indexOf(".");
+    			int dian2 = 2;
+    			if (dian==20) 
+    				dian2 = 3;
+    			String fnc = fn.substring(17,17+ dian2);
+    			int a = Integer.parseInt(fnc);
+    			String fn1 = o2.getName();
+    			int dian1 = fn1.indexOf(".");
+    			int dian21 = 2;
+    			if (dian1==20) 
+    				dian21 = 3;
+    			String fnc1 = fn1.substring(17,17+ dian21);
+    			int b = Integer.parseInt(fnc1);
+    			return a - b;
+            }
+        });
+		
+		for(File f:ls){					//遍历File[]数组
+			if(!f.isDirectory())		//若非目录(即文件)，则打印
+			{
+				System.out.println(f.getAbsolutePath());
+				String image = f.getAbsolutePath();//"D:\\图4.png";
+			    JSONObject res = client.basicGeneral(image, options);
+			    //System.out.println(res.toString(2));
+			    JSONArray a = res.getJSONArray("words_result");
+			    
+			    for (Object one : a ) {
+			    	JSONObject one1 = (JSONObject) one;
+			    	//System.out.println("111"  + one1.getString("words"));
+			    	FileXiangGuan.writeLogToFile(jilulog, one1.getString("words"));
+			    }
+			}	
+		}
+		
+	    
 	}
 	
 
