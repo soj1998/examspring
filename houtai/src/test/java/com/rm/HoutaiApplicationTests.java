@@ -4,6 +4,7 @@ package com.rm;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+
+import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +40,8 @@ import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.util.file.FileXiangGuan;
+import com.rm.util.file.SheetResult;
+import com.rm.util.file.WriteExcel;
 
 
 @EnableTransactionManagement
@@ -172,11 +177,17 @@ class HoutaiApplicationTests {
 
 	@Transactional
 	@Test
-    public void test(){
-		String a = "1.1921年7月23日，中国共产党第一次全";
-		String b = "1.";
-		String c = a.replaceFirst(b, "");
-		System.out.println("2  " + c);
+    public void test() throws IOException{
+		Workbook wb = WriteExcel.createWorkBook(WriteExcel.XLSX);
+		SheetResult sh = new SheetResult();
+		List<List<String>> ab = new ArrayList<List<String>>();
+		List<String> ab1 = new ArrayList<String>();
+		ab1.add("abb");
+		ab1.add("abc");
+		ab1.add("abd");
+		ab.add(ab1);
+		sh.setDataList(ab);
+		WriteExcel.writeDataToExcel(wb, "sheet1", "d:\\1.xlsx", sh);
     }
 	
 	
