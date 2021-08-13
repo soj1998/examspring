@@ -259,8 +259,9 @@ public class SaveServiceImpl{
 		zl.setExamque(examUser.getExamque());
 		zl.setUserid(examUser.getUserid());	
 		Example<ExamUser> example2 = Example.of(zl);	
-		ExamUser rs1 =  examUserDao.findOne(example2).get();
-		if (rs1 != null) {
+		List<ExamUser> rslist =  examUserDao.findAll(example2);
+		if (rslist != null && rslist.size() > 0) {
+			ExamUser rs1 = rslist.get(0);
 			examUser.setShuliang(rs1.getShuliang() + 1);
 			examUser.setId(rs1.getId());
 		} else {

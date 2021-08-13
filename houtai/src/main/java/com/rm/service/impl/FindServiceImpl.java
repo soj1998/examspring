@@ -7,10 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 import javax.annotation.Resource;
-
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -19,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
@@ -349,22 +347,18 @@ public class FindServiceImpl{
 	}
 	
 	
-	public List<ExamQue> getTiMuForDingding(int szid,String tmlx,int zsdid,int sl,int slbeishu){
+	public List<JSONObject> getTiMuForDingding(int szid,String tmlx,int zsdid,int sl,int slbeishu){
 		List<ExamQue> danxuan = examQueDao.getallbytmleixingandzsd(szid, tmlx, zsdid);
-		List<ExamQue> danxuanrs = getExamQueOrder(sl,slbeishu,new SysUser(),danxuan);
+		List<JSONObject> danxuanrs = getExamQueOrder(sl,slbeishu,new SysUser(),danxuan);
 		return danxuanrs;
 	}
 	
 	public ExamUser findExamUser(ExamUser examUser) {
-		ExamUser zl = new ExamUser();
-		zl.setExamque(examUser.getExamque());
-		zl.setUserid(examUser.getUserid());	
-		Example<ExamUser> example2 = Example.of(zl);	
-		ExamUser rs1 =  examUserDao.findOne(example2).get();
+		ExamUser rs1 =  examUserDao.findExamUser(examUser.getUserid(),examUser.getExamque());
 		return rs1;
 	}
 	
-	private List<ExamQue> getExamQueOrder(int sl,int beishu,SysUser user,List<ExamQue> list) {
+	private List<JSONObject> getExamQueOrder(int sl,int beishu,SysUser user,List<ExamQue> list) {
 		JSONArray rd = new JSONArray();
 		for (ExamQue q: list) {
 			JSONObject one = new JSONObject();
@@ -372,18 +366,23 @@ public class FindServiceImpl{
 			ExamUser zl = new ExamUser();
 			zl.setUserid(user.getId());
 			zl.setExamque(q.getQue());
+			zl.setExamid(q.getId());
 			ExamUser zl2 = findExamUser(zl);
-			one.put("user", zl2);
-			rd.put(one);
+			if (zl2 != null) {
+				one.put("user", zl2);
+			} else {
+				one.put("user", zl);
+			}
+			rd.add(one);
 		}
 		List<JSONObject> list2 = new ArrayList<JSONObject>();
-        int rdsize = rd.length();
+        int rdsize = rd.size();
         for (int i = 0; i < rdsize; i++) {
-        	JSONObject one = (JSONObject)rd.get(i);
-            list2.add(one);
+        	JSONObject one2 =  rd.getJSONObject(i);
+        	list2.add(one2);
         }
 		
-		List<ExamQue> rs = new ArrayList<ExamQue>();
+		List<JSONObject> rs = new ArrayList<JSONObject>();
 		if (list2.size() >=sl) {
 			Set<Integer> rsshu = new HashSet<Integer>();
 			while (rsshu.size() < sl * beishu ) {
@@ -394,7 +393,7 @@ public class FindServiceImpl{
 			List<JSONObject> list3 = new ArrayList<JSONObject>();
 			for (int i = 0; i < list2.size(); i++) {
 				if (rsshu.contains(i)) {
-		        	JSONObject one = (JSONObject)list2.get(i);
+					JSONObject one = (JSONObject)list2.get(i);
 		        	list3.add(one);
 				}
 	        }
@@ -406,27 +405,34 @@ public class FindServiceImpl{
 	            public int compare(JSONObject a, JSONObject b) {
 	            	ExamUser valA1 = new ExamUser();
 	            	ExamUser valA2 = new ExamUser();                
-	                try {
-	                    valA1 = a.getObject(KEY_NAME1,ExamUser.class);
-	                    valA2 = b.getObject(KEY_NAME1,ExamUser.class);
+	                try {	                	
+	                    valA1 = (ExamUser)a.get(KEY_NAME1);
+	                    valA2 = (ExamUser)b.get(KEY_NAME1);
 	                } catch (JSONException e) {
 	                    System.out.println(e);
 	                }
 	                // 设置排序规则
-	                int i = valA1.getShuliang();
-	                int j = valA2.getShuliang();
-	                return i-j;
+	                if (valA1!= null && valA2 != null) {
+		                int i = valA1.getShuliang();
+		                int j = valA2.getShuliang();
+		                return i-j;
+	                }
+	                return 0;
 	            }
 	        });
-			for (int i = 0; i < sl; i++) {				
-	        	JSONObject one = (JSONObject)list3.get(i);
-	        	ExamQue one1 = one.getObject("examque",ExamQue.class);
-				rs.add(one1);
+			for (int i = 0; i < sl * beishu; i++) {				
+				ExamQue one = list3.get(i).getObject("examque", ExamQue.class);
+				if(one.getQue().length() > 500) {
+					continue;
+				}
+				rs.add(list3.get(i));
+				if(rs.size() > sl) {
+					break;
+				}
 	        }
 		} else {
 			for (JSONObject q : list2) {
-				ExamQue one1 = q.getObject("examque",ExamQue.class);
-				rs.add(one1);
+				rs.add(q);
 			}
 		}
 		return rs;
