@@ -3,8 +3,14 @@ package com.rm.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import javax.annotation.Resource;
+
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -24,6 +30,7 @@ import com.rm.dao.ExamDaanDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
+import com.rm.dao.ExamUserDao;
 import com.rm.dao.ExamZsdDao;
 import com.rm.dao.ShouYeXinXiDao;
 import com.rm.dao.TreeNodeSjkDao;
@@ -34,8 +41,10 @@ import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamDaan;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
+import com.rm.entity.ExamUser;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ShouYeXinXi;
+import com.rm.entity.SysUser;
 import com.rm.entity.TreeNodeSjk;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
@@ -74,7 +83,8 @@ public class FindServiceImpl{
 	@Resource
     private SzDao szDao;
 	
-	
+	@Resource
+    private ExamUserDao examUserDao;
 	private static final Logger LOG = LoggerFactory.getLogger(FindServiceImpl.class);
 	
 	public Sz getSz(int szid) {
@@ -336,6 +346,90 @@ public class FindServiceImpl{
 			return rs;
 		}
 		return null;
+	}
+	
+	
+	public List<ExamQue> getTiMuForDingding(int szid,String tmlx,int zsdid,int sl,int slbeishu){
+		List<ExamQue> danxuan = examQueDao.getallbytmleixingandzsd(szid, tmlx, zsdid);
+		List<ExamQue> danxuanrs = getExamQueOrder(sl,slbeishu,new SysUser(),danxuan);
+		return danxuanrs;
+	}
+	
+	public ExamUser findExamUser(ExamUser examUser) {
+		ExamUser zl = new ExamUser();
+		zl.setExamque(examUser.getExamque());
+		zl.setUserid(examUser.getUserid());	
+		Example<ExamUser> example2 = Example.of(zl);	
+		ExamUser rs1 =  examUserDao.findOne(example2).get();
+		return rs1;
+	}
+	
+	private List<ExamQue> getExamQueOrder(int sl,int beishu,SysUser user,List<ExamQue> list) {
+		JSONArray rd = new JSONArray();
+		for (ExamQue q: list) {
+			JSONObject one = new JSONObject();
+			one.put("examque", q);
+			ExamUser zl = new ExamUser();
+			zl.setUserid(user.getId());
+			zl.setExamque(q.getQue());
+			ExamUser zl2 = findExamUser(zl);
+			one.put("user", zl2);
+			rd.put(one);
+		}
+		List<JSONObject> list2 = new ArrayList<JSONObject>();
+        int rdsize = rd.length();
+        for (int i = 0; i < rdsize; i++) {
+        	JSONObject one = (JSONObject)rd.get(i);
+            list2.add(one);
+        }
+		
+		List<ExamQue> rs = new ArrayList<ExamQue>();
+		if (list2.size() >=sl) {
+			Set<Integer> rsshu = new HashSet<Integer>();
+			while (rsshu.size() < sl * beishu ) {
+				Random random = new Random();
+				int suiji = random.nextInt(list2.size());
+				rsshu.add(suiji);
+			}
+			List<JSONObject> list3 = new ArrayList<JSONObject>();
+			for (int i = 0; i < list2.size(); i++) {
+				if (rsshu.contains(i)) {
+		        	JSONObject one = (JSONObject)list2.get(i);
+		        	list3.add(one);
+				}
+	        }
+			Collections.sort(list3, new Comparator<JSONObject>() {
+	            //排序字段
+	            private static final String KEY_NAME1 = "user";
+
+	            @Override
+	            public int compare(JSONObject a, JSONObject b) {
+	            	ExamUser valA1 = new ExamUser();
+	            	ExamUser valA2 = new ExamUser();                
+	                try {
+	                    valA1 = a.getObject(KEY_NAME1,ExamUser.class);
+	                    valA2 = b.getObject(KEY_NAME1,ExamUser.class);
+	                } catch (JSONException e) {
+	                    System.out.println(e);
+	                }
+	                // 设置排序规则
+	                int i = valA1.getShuliang();
+	                int j = valA2.getShuliang();
+	                return i-j;
+	            }
+	        });
+			for (int i = 0; i < sl; i++) {				
+	        	JSONObject one = (JSONObject)list3.get(i);
+	        	ExamQue one1 = one.getObject("examque",ExamQue.class);
+				rs.add(one1);
+	        }
+		} else {
+			for (JSONObject q : list2) {
+				ExamQue one1 = q.getObject("examque",ExamQue.class);
+				rs.add(one1);
+			}
+		}
+		return rs;
 	}
 	
 	private List<Integer> gettotalsl(int szid, String tmsq) {

@@ -39,6 +39,7 @@ import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.linshi.ArticleDao;
 import com.rm.dao.linshi.AuthorDao;
 import com.rm.dao.sys.SzDao;
+import com.rm.service.impl.FindServiceImpl;
 import com.rm.util.file.FileXiangGuan;
 import com.rm.util.file.SheetResult;
 import com.rm.util.file.WriteExcel;
@@ -77,7 +78,8 @@ class HoutaiApplicationTests {
     private ZhuanLanDao zhuanLanDao;
 	@Resource 
     private SzDao szDao;
-	
+	@Resource 
+    private FindServiceImpl findservice;
     //mvn 安装命令mvn clean package -DskipTests
 	
 	
@@ -190,7 +192,12 @@ class HoutaiApplicationTests {
 		WriteExcel.writeDataToExcel(wb, "sheet1", "d:\\1.xlsx", sh);
     }
 	
-	
+	@Test
+    public void test2() throws IOException{
+		//找到60道题，20单选 2党史 2大数据 5货劳 5企业 3个人 1土地 2其他 20多选 10判断同样
+		int beishu = 5;
+		findservice.getTiMuForDingding(1, "danxuan", 6, 3, beishu);
+    }
 
 	
 	

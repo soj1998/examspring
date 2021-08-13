@@ -707,11 +707,11 @@ public class StringUtil {
     }
     
     public static String[] getXiTiDaan() {
-    	return new String[] {"参考答案:","参考答案：","【答案】","答案："};
+    	return new String[] {"【参考答案】","参考答案:","参考答案：","【答案】","答案："};
     }
     
     public static String[] getXiTiJieXi() {
-    	return new String[] {"答案解析:","答案解析：","解析：","【解析】"};
+    	return new String[] {"【答案解析】","答案解析:","答案解析：","解析：","【解析】"};
     }
     
     public static String[] getXiTiLeiXingZw() {

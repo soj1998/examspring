@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.BiaoTiDao;
@@ -15,6 +16,7 @@ import com.rm.dao.ExamDaanDao;
 import com.rm.dao.ExamQueDao;
 import com.rm.dao.ExamQueZongHeDaDao;
 import com.rm.dao.ExamQueZongHeXiaoDao;
+import com.rm.dao.ExamUserDao;
 import com.rm.dao.ExamZsdDao;
 import com.rm.dao.ShouYeXinXiDao;
 import com.rm.dao.ZhuanLanDao;
@@ -27,6 +29,7 @@ import com.rm.entity.ExamDaan;
 import com.rm.entity.ExamQue;
 import com.rm.entity.ExamQueZongHeDa;
 import com.rm.entity.ExamQueZongHeXiao;
+import com.rm.entity.ExamUser;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
@@ -56,6 +59,8 @@ public class SaveServiceImpl{
 	@Resource
     private ExamZsdDao examZsdDao;
 	
+	@Resource
+    private ExamUserDao examUserDao;
 	@Resource
     private ZhuanLanDao zhuanLanDao;
 	@Resource
@@ -245,5 +250,23 @@ public class SaveServiceImpl{
 			shouYeXinXiDao.deleteById(rs.getId());
 		}**/
 		LOG.info("no do anything");
+	}
+	
+	
+	public ExamUser saveExamUser(ExamUser examUser) {
+		//判断要不要加1
+		ExamUser zl = new ExamUser();
+		zl.setExamque(examUser.getExamque());
+		zl.setUserid(examUser.getUserid());	
+		Example<ExamUser> example2 = Example.of(zl);	
+		ExamUser rs1 =  examUserDao.findOne(example2).get();
+		if (rs1 != null) {
+			examUser.setShuliang(rs1.getShuliang() + 1);
+			examUser.setId(rs1.getId());
+		} else {
+			examUser.setShuliang(1);
+		}
+		ExamUser rs = examUserDao.save(examUser);
+		return rs;
 	}
 }
