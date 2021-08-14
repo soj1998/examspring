@@ -42,7 +42,7 @@ public class SzExamFileSaveSql {
 	private String jsonarrjieduan = "a1";
 		
 	private void saveExamChoi(SaveServiceImpl examQueService, ExamQue examQue, JSONArray map) {
-		JSONArray sortedJsonArray = StringUtil.getJSONArraySorted(map);
+		JSONArray sortedJsonArray = StringUtil.getJSONArraySortedDesc(map);
         for(Object mapping:sortedJsonArray){
         	JSONObject jone = (JSONObject)mapping;
         	String a = jone.getString("neirong");
@@ -923,7 +923,8 @@ public class SzExamFileSaveSql {
 							jiexilist = fileXiangGuan.getGuiShu(jiexi_qz,arr);
 							ExamQue examQue = null;
 							biaotixh++;
-							if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw()))
+							if(getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZw())
+									|| getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZWZhiShiPanDuan()))
 							{
 								examQue = new ExamQue(fid,sza.getId(),exzsd1,biaoti.getId(),biaotixh,timulist2,"Y",daanlist,jiexilist);
 								try{
@@ -957,7 +958,7 @@ public class SzExamFileSaveSql {
 			}
 			LOG.info("根据学科分组，循环了一遍");
 		}
-		LOG.info(hzarray.size() + ",从正文开始后的hzarray大小，添加完毕");
+		LOG.info(hzarray.size() + "   " + fileweizhi +",从正文开始后的hzarray大小，添加完毕");
 		String rs1 = "";
 		return "ok" + rs1;
 	}

@@ -453,7 +453,49 @@ public class StringUtil {
         }
         return sortedJsonArray;
     }
-    
+    public static JSONArray getJSONArraySortedDesc(JSONArray cr) {
+        JSONArray sortedJsonArray = new JSONArray();
+        // 用于排序的list
+        List<JSONObject> list = new ArrayList<JSONObject>();
+        //遍历待排序的json数组，并将数据放入list
+        for (int i = 0; i < cr.size(); i++) {
+            list.add(cr.getJSONObject(i));
+        }
+        //然后通过比较器来实现排序
+        Collections.sort(list, new Comparator<JSONObject>() {
+            //排序字段
+            private static final String KEY_NAME1 = "hangshu";
+            private static final String KEY_NAME2 = "neirong";
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA1 = new String();
+                String valA2 = new String();
+                String valB1 = new String();
+                String valB2 = new String();
+                try {
+                    valA1 = a.getString(KEY_NAME1);
+                    valA2 = b.getString(KEY_NAME1);
+                    valB1 = a.getString(KEY_NAME2);
+                    valB2 = b.getString(KEY_NAME2);
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+                // 设置排序规则
+                int i = valA2.compareTo(valA1);
+                if (i == 0) {
+                    int j = valB2.compareTo(valB1);
+                    return j;
+                }
+                return i;
+            }
+        });
+      
+        for (int i = 0; i < list.size(); i++) {
+            sortedJsonArray.add(list.get(i));
+        }
+        return sortedJsonArray;
+    }
     
   //jsonobject 格式 hangshu neirong
     public static String getJSONArrayString(JSONArray map,String[] tihuan,int toubuweizhi) {
@@ -757,7 +799,7 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
-    	return new String[] {"【单选题】","【单项选择题】","【多选题】","【多项选择题】","【判断题】"}; //,"【判断题】"
+    	return new String[] {"【单选题】","【单项选择题】","【多选题】","【多项选择题】"}; //,"【判断题】"
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangZWZhiShiPanDuan() {

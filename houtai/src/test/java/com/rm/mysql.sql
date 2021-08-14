@@ -12,7 +12,7 @@ DELETE FROM t_examchoisjk;
 DELETE FROM t_biaoti;
 DELETE  FROM t_examquesjk;
 DELETE  FROM t_examdaansjk;
-DELETE  FROM t_examquezsd;
+-- DELETE  FROM t_examquezsd;
 DELETE FROM t_examuser;
 
 SELECT * FROM t_examquesjk;

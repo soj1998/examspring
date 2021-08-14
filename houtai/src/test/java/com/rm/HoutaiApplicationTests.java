@@ -18,10 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.aip.ocr.AipOcr;
@@ -191,16 +189,12 @@ class HoutaiApplicationTests {
 	@Transactional
 	@Test
     public void test() throws IOException{
-		Workbook wb = WriteExcel.createWorkBook(WriteExcel.XLSX);
-		SheetResult sh = new SheetResult();
-		List<List<String>> ab = new ArrayList<List<String>>();
-		List<String> ab1 = new ArrayList<String>();
-		ab1.add("abb");
-		ab1.add("abc");
-		ab1.add("abd");
-		ab.add(ab1);
-		sh.setDataList(ab);
-		WriteExcel.writeDataToExcel(wb, "sheet1", "d:\\1.xlsx", sh);
+		String a ="AB";
+		String[] ab = a.split("");
+		for(String a1: ab) {
+			System.out.println(a1);
+		}
+		System.out.println(String.join("|", ab));
     }
 	
 	@Test
@@ -219,8 +213,8 @@ class HoutaiApplicationTests {
 			zsdone.put("zsdid", zsdintq);
 			int sl = 0;
 			switch (tm) {
-				case "qitasz" : sl=4; break;
-				case "dashuju" : sl=3; break;
+				case "qitasz" : sl=5; break;
+				case "dashuju" : sl=4; break;
 				case "huolao" : sl=4; break;
 				case "qiye" : sl=3; break;
 				case "geren" : sl=2; break;
@@ -291,11 +285,17 @@ class HoutaiApplicationTests {
 			String que = cd.getQue().length() >= 500 ? cd.getQue().substring(0,499): cd.getQue();
 			ab1.add(que);
 			String ans = cd.getAns();
-			if ("对".equals(ans)) {
-				ans = "正确";
+			if (wentilx.equals("panduan")) {
+				if ("对".equals(ans) || "正确".equals(ans)) {
+					ans = "A";
+				}
+				if ("错".equals(ans) || "错误".equals(ans)) {
+					ans = "B";
+				}
 			}
-			if ("错".equals(ans)) {
-				ans = "错误";
+			if (wentilx.equals("duoxuan")) {
+				String[] ans1 = ans.split("");
+				ans = String.join("|", ans1);
 			}
 			ab1.add(ans);
 			String jiex = cd.getJiexi().length() >= 500 ? cd.getJiexi().substring(0,499): cd.getJiexi();
@@ -308,7 +308,14 @@ class HoutaiApplicationTests {
 			}
 			ab1.add("");
 			ab1.add(String.valueOf(fenshu));
-			for(String aString : cd.getXuanxiang()) {
+			List<String> xuanx = cd.getXuanxiang();
+			Collections.sort(xuanx, new Comparator<String>() {
+	            @Override
+	            public int compare(String a, String b) {
+	            	return a.compareTo(b);
+	            }
+	        });
+			for(String aString : xuanx) {
 				String xs = aString;
 				if (aString.indexOf("A.") == 0) {
 					xs = aString.replaceFirst("A.", "");
@@ -325,7 +332,14 @@ class HoutaiApplicationTests {
 				if (aString.indexOf("E.") == 0) {
 					xs = aString.replaceFirst("E.", "");
 				}
+				if (aString.indexOf("F.") == 0) {
+					xs = aString.replaceFirst("F.", "");
+				}
 				ab1.add(xs);
+			}
+			if (wentilx.equals("panduan")) {
+				ab1.add("正确");
+				ab1.add("错误");
 			}
 			//ab1.add(cd.getZsdneirong());
 			ab0.add(ab1);
