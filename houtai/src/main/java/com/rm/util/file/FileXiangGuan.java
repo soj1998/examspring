@@ -457,6 +457,57 @@ public class FileXiangGuan {
 		}
 		return rsArray;
 	}
+	
+	//对选项为数字而言 要等于0才行 即开头是1. 2.才行
+	public JSONArray diGuiHzXin2(int hs,JSONArray rsArray,JSONArray csArray,String[] panduanchuanru) {
+		if (null == rsArray) {
+			rsArray = new JSONArray();			
+		}
+		JSONObject j = new JSONObject();
+		JSONArray jarray = new JSONArray();
+		for (int i = 0;i<csArray.size();i++) {
+			JSONObject obj1 = (JSONObject)csArray.get(i);
+			int ac = obj1.getIntValue("hangshu");
+			if(hs > 0 && ac <= hs) {
+				continue;
+			}
+			String d = obj1.getString("neirong");
+			boolean panduandao = false;
+			for (String abc : panduanchuanru) {
+				int zhaodao1 = d.indexOf(abc);
+				int zhaodao2 = abc.indexOf(d);
+				String abc1 = abc.replaceAll("【", "");
+				abc1 = abc1.replaceAll("】", "");
+				int zhaodao3 = d.indexOf(abc1);
+				if (zhaodao1 == 0 || zhaodao2 == 0
+						|| zhaodao3 == 0) {
+					panduandao = true;
+					break;
+				}
+			}
+			if(StringUtil.isNotEmpty(d))
+	        {
+				jarray.add(obj1);
+				if(panduandao || i == csArray.size() - 1) {
+					if(StringUtil.isNotEmpty(j.getString("szbz"))) {
+						if (i != csArray.size() - 1) {
+							jarray.remove(jarray.size()-1);
+						}
+						rsArray.add(j);
+						diGuiHzXin(ac-1,rsArray,csArray,panduanchuanru);
+						break;
+					}
+					j.put(StringUtil.getJianGeBiaoZHi(), jarray);
+					j.put("szbz", "1");
+					continue;
+				}				
+	        }			
+			if (i == csArray.size() - 1) {
+				return rsArray;
+			}
+		}
+		return rsArray;
+	}
 	//map key是唯一的 当有重复的行数时 造成数据的丢失 改用 jsonobject jsonarray
 	public JSONArray getGuiShu(int[]qizhi,JSONArray crArray) {
 		JSONArray rs = new JSONArray();

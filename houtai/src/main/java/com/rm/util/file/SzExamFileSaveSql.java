@@ -835,7 +835,7 @@ public class SzExamFileSaveSql {
 				JSONArray hzarray2 = new JSONArray();
 				JSONArray hzarray5 = new JSONArray();//hzarray2 的信息加工后填到hzarray5
 				String[] timufenge = StringUtil.getXiTiShuZiFenZu(xitishuzifenzugeshu, xitishuzifenzufuhao);
-				fileXiangGuan.diGuiHzXin(0,hzarray2,arr3,timufenge);
+				fileXiangGuan.diGuiHzXin2(0,hzarray2,arr3,timufenge);
 				String timuxuanding = "";
 				boolean timuxuandinga = false;
 				for (Object fd3:arr3) {
