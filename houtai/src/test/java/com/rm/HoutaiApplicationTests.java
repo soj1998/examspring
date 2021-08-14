@@ -207,18 +207,19 @@ class HoutaiApplicationTests {
     public void test2() throws IOException{
 		//找到60道题，20单选 2党史 2大数据 5货劳 5企业 3个人 1土地 2其他 20多选 10判断同样
 		//得到所有的知识点id 家里是9 大数据 8 其他税种 10 货物劳务 11  企业 12 个人 13 土增 14 两办 15 党史
+		//单位笔记本 是 从32开始 家里从8开始
 		int beishu = 5;
 		String[] tmlx = new String[] {"danxuan","duoxuan","panduan"};
 		JSONArray zsd = new JSONArray();
 		String[] zsdlx = new String[] {"qitasz","dashuju","huolao","qiye","geren","tuzeng","liangban","dangshi"};
-		int zsdintq = 8;
+		int zsdintq = 32; //改这个起点
 		for(String tm : zsdlx) {
 			JSONObject zsdone = new JSONObject();
 			zsdone.put("zsdlx", tm);
 			zsdone.put("zsdid", zsdintq);
 			int sl = 0;
 			switch (tm) {
-				case "qitasz" : sl=3; break;
+				case "qitasz" : sl=4; break;
 				case "dashuju" : sl=3; break;
 				case "huolao" : sl=4; break;
 				case "qiye" : sl=3; break;
@@ -247,7 +248,8 @@ class HoutaiApplicationTests {
 				JSONObject jone1 = (JSONObject)one1;
 				int zsdid = jone1.getIntValue("zsdid");
 				int zsdsl = jone1.getIntValue("zsdsl");
-				List<JSONObject> rs1 = findservice.getTiMuForDingding(1, tm, zsdid, zsdsl, beishu);
+				//单位学科id 2 家里学科ID 1
+				List<JSONObject> rs1 = findservice.getTiMuForDingding(2, tm, zsdid, zsdsl - 1 , beishu);
 				rs.addAll(rs1);
 			}
 		}
@@ -266,6 +268,7 @@ class HoutaiApplicationTests {
 			examcd.setXuanxiang(xxs);
 			examcd.setAns(examQue.getAns());
 			examcd.setJiexi(examQue.getJiexi());
+			examcd.setZsdneirong(examQue.getExamZsd().getNeirong());
 			examcd.setId(shezhiid);
 			shezhiid++;
 			rs2.add(examcd);
@@ -303,6 +306,7 @@ class HoutaiApplicationTests {
 				case "duoxuan":fenshu = 2.5;break;
 				case "panduan":fenshu = 2;break;
 			}
+			ab1.add("");
 			ab1.add(String.valueOf(fenshu));
 			for(String aString : cd.getXuanxiang()) {
 				String xs = aString;
@@ -323,6 +327,7 @@ class HoutaiApplicationTests {
 				}
 				ab1.add(xs);
 			}
+			//ab1.add(cd.getZsdneirong());
 			ab0.add(ab1);
 		}
 		sh.setDataList(ab0);
@@ -332,19 +337,7 @@ class HoutaiApplicationTests {
 	
 
 	
-	@Test
-	public void contextLoads2() {
-		ExamUser zl = new ExamUser();
-		zl.setExamque("123");
-		zl.setUserid(1);	
-		Example<ExamUser> example2 = Example.of(zl);
-	    List<ExamUser> list = examUserDao.findAll(example2);
-	    System.out.println("112   ");
-	    System.out.println("112   " + list.get(0));
-	    ExamUser list2 = examUserDao.findOne(example2).get();
-	    System.out.println("113   " + list2);
-	}
-	
+
 	
 	 
 	

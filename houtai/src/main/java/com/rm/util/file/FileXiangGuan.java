@@ -494,7 +494,7 @@ public class FileXiangGuan {
 							jarray.remove(jarray.size()-1);
 						}
 						rsArray.add(j);
-						diGuiHzXin(ac-1,rsArray,csArray,panduanchuanru);
+						diGuiHzXin2(ac-1,rsArray,csArray,panduanchuanru);
 						break;
 					}
 					j.put(StringUtil.getJianGeBiaoZHi(), jarray);

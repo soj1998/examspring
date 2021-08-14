@@ -87,5 +87,31 @@ public class ExamQueChuanDi {
 	public void setXuanxiang(List<String> xuanxiang) {
 		this.xuanxiang = xuanxiang;
 	}
-    
+	
+	private int zsdid;
+
+
+
+
+	public int getZsdid() {
+		return zsdid;
+	}
+
+	public void setZsdid(int zsdid) {
+		this.zsdid = zsdid;
+	}
+	private String zsdneirong;
+
+
+
+
+	public String getZsdneirong() {
+		return zsdneirong;
+	}
+
+	public void setZsdneirong(String zsdneirong) {
+		this.zsdneirong = zsdneirong;
+	}
+	
+	
 }

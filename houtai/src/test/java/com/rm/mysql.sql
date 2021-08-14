@@ -15,6 +15,10 @@ DELETE  FROM t_examdaansjk;
 DELETE  FROM t_examquezsd;
 DELETE FROM t_examuser;
 
+SELECT * FROM t_examquesjk;
+
+SELECT DISTINCT biaotiid, t1.`biaoti` FROM t_examquesjk t,t_biaoti t1 WHERE t.biaotiid = t1.id;
+
 drop view if exists t_shouyexinxi;
 
 CREATE VIEW t_shouyexinxi AS 
