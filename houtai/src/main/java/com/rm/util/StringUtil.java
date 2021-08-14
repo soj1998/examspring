@@ -757,9 +757,12 @@ public class StringUtil {
     }
     
     public static String[] getXiTiLeiXingZwYouXuanXiangZw() {
-    	return new String[] {"【单选题】","【单项选择题】","【多选题】","【多项选择题】"}; //,"【判断题】"
+    	return new String[] {"【单选题】","【单项选择题】","【多选题】","【多项选择题】","【判断题】"}; //,"【判断题】"
     }
     
+    public static String[] getXiTiLeiXingZwYouXuanXiangZWZhiShiPanDuan() {
+    	return new String[] {"【判断题】"}; //,"【判断题】"
+    }
     public static String[] getXiTiLeiXingZwYouXuanXiangYw() {
     	return new String[] {"danxuan","duoxuan","panduan"};
     }

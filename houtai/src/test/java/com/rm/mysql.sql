@@ -13,6 +13,7 @@ DELETE FROM t_biaoti;
 DELETE  FROM t_examquesjk;
 DELETE  FROM t_examdaansjk;
 DELETE  FROM t_examquezsd;
+DELETE FROM t_examuser;
 
 drop view if exists t_shouyexinxi;
 

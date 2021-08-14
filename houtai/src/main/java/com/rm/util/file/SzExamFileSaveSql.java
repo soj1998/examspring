@@ -932,7 +932,9 @@ public class SzExamFileSaveSql {
 										LOG.error("添加ExamQue 失败!,问题已存在");
 										continue;
 									}
-									saveExamChoi(examQueService,examQue2,xuanxianglist); 
+									if(!getpanDuanXuanXiang(arr,StringUtil.getXiTiLeiXingZwYouXuanXiangZWZhiShiPanDuan())) {
+										saveExamChoi(examQueService,examQue2,xuanxianglist); 
+									}
 						        }catch (Exception e){
 						            LOG.error("添加ExamQue 失败!"+e.getMessage());
 						        }
