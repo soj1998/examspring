@@ -60,7 +60,7 @@ public class ZtController {
     /*
      * id 标题 类型 学科 知识点 录入时间
      * */
-    @RequestMapping(value="/getsyxxcount")
+    @RequestMapping(value="/getsyxxcount1")
     public int listall1(){    	
         Long zlsl = service.getShouYeXinXiShuLiang();
         return zlsl.intValue();
@@ -73,7 +73,14 @@ public class ZtController {
         return list_glx;
     }
     
-    @RequestMapping(value="/getsycount")
+    @RequestMapping(value="/getsyxxcount")
+    public int listall32(){    	
+        //totalrecord sortby
+		List<ShouYeXinXi> list_glx=service.getShouYeXinXiList(1, 100000);
+        return list_glx.size();
+    }
+    
+    @RequestMapping(value="/getsycount1")
     public ResquestZlsl listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
         Long timu = service.getXiTiShuLiang();
         Long zlsl = service.getZhuanLanShuLiang();

@@ -213,14 +213,14 @@ class HoutaiApplicationTests {
 			zsdone.put("zsdid", zsdintq);
 			int sl = 0;
 			switch (tm) {
-				case "qitasz" : sl=5; break;
+				case "qitasz" : sl=4; break;
 				case "dashuju" : sl=4; break;
 				case "huolao" : sl=4; break;
-				case "qiye" : sl=3; break;
+				case "qiye" : sl=4; break;
 				case "geren" : sl=2; break;
 				case "tuzeng" : sl=1; break;
-				case "liangban" : sl=2; break;
-				case "dangshi" : sl=2; break;
+				case "liangban" : sl=0; break;
+				case "dangshi" : sl=1; break;
 			}
 			zsdone.put("zsdsl", sl);
 			zsdintq++;

@@ -348,6 +348,10 @@ public class FindServiceImpl{
 	
 	
 	public List<JSONObject> getTiMuForDingding(int szid,String tmlx,int zsdid,int sl,int slbeishu){
+		if (sl < 0) {
+			return new ArrayList<JSONObject>();
+		}
+		
 		List<ExamQue> danxuan = examQueDao.getallbytmleixingandzsd(szid, tmlx, zsdid);
 		List<JSONObject> danxuanrs = getExamQueOrder(sl,slbeishu,new SysUser(),danxuan);
 		return danxuanrs;
@@ -385,7 +389,10 @@ public class FindServiceImpl{
 		List<JSONObject> rs = new ArrayList<JSONObject>();
 		if (list2.size() >=sl) {
 			Set<Integer> rsshu = new HashSet<Integer>();
-			while (rsshu.size() < sl * beishu ) {
+			int sla = sl;
+			if (sl==0)
+				sla=1;
+			while (rsshu.size() < sla * beishu ) {
 				Random random = new Random();
 				int suiji = random.nextInt(list2.size());
 				rsshu.add(suiji);
@@ -420,7 +427,7 @@ public class FindServiceImpl{
 	                return 0;
 	            }
 	        });
-			for (int i = 0; i < sl * beishu; i++) {				
+			for (int i = 0; i < sla * beishu; i++) {				
 				ExamQue one = list3.get(i).getObject("examque", ExamQue.class);
 				if(one.getQue().length() > 500) {
 					continue;
