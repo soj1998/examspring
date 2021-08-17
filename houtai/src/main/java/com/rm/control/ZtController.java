@@ -1,6 +1,7 @@
 package com.rm.control;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
@@ -10,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
+import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamQue;
+import com.rm.entity.ExamUser;
 import com.rm.entity.ShouYeXinXi;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.pt.ExamQueChuanDi;
 import com.rm.service.impl.FindServiceImpl;
+import com.rm.service.impl.SaveServiceImpl;
 
 @CrossOrigin(origins = "*")
 @RequestMapping(value="/wbzt")
@@ -23,6 +27,9 @@ public class ZtController {
 	
 	@Resource
 	private FindServiceImpl service;
+	
+	@Resource
+	private SaveServiceImpl saveservice;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ZtController.class);
     @RequestMapping(value="/gettab")
@@ -53,6 +60,35 @@ public class ZtController {
     public List<ExamQueChuanDi> listall4(@RequestParam("sid") int szid,@RequestParam("biaoti") int biaoti){    	
     	return service.getTiMuByBiaoTi(szid,biaoti);
     }
+    
+    @RequestMapping(value="/getsuijixitibyszidbiaoti")
+    public List<ExamQueChuanDi> listall5(@RequestParam("sid") int szid){   
+    	List<JSONObject> rs2 = service.getSuijiTiByUser(szid,2);
+    	List<ExamQueChuanDi> rs1 = new ArrayList<ExamQueChuanDi>();
+    	int shezhiid = 1;
+		for (JSONObject examQue1: rs2) {
+			ExamQue examQue = examQue1.getObject("examque", ExamQue.class);
+			ExamQueChuanDi examcd = new ExamQueChuanDi();
+			examcd.setQue(examQue.getQue());
+			examcd.setExamtype(examQue.getExamtype());
+			List<ExamChoi> zbchoidel = service.getExamChoiListByQue(examQue.getId());
+			List<String> xxs = new ArrayList<>();
+			for (ExamChoi xx:zbchoidel) {
+				xxs.add(xx.getXuanxiang());
+			}
+			examcd.setXuanxiang(xxs);
+			examcd.setAns(examQue.getAns());
+			examcd.setJiexi(examQue.getJiexi());
+			examcd.setZsdneirong(examQue.getExamZsd().getNeirong());
+			examcd.setId(shezhiid);
+			shezhiid++;
+			rs1.add(examcd);
+			ExamUser examuser = examQue1.getObject("user", ExamUser.class);
+			saveservice.saveExamUser(examuser);
+		}
+    	return rs1;
+    }
+    
     @RequestMapping(value="/getquanbuxitibyszidbiaoticount")
     public int listall5(@RequestParam("sid") int szid,@RequestParam("biaoti") String biaoti){    	
     	return service.getTiMuByBiaoTiCount(szid,biaoti);

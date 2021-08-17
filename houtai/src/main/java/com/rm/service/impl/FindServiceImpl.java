@@ -347,14 +347,18 @@ public class FindServiceImpl{
 	}
 	
 	
-	public List<JSONObject> getTiMuForDingding(int szid,String tmlx,int zsdid,int sl,int slbeishu){
+	public List<JSONObject> getTiMuForDingding(int szid,int userid,String tmlx,int zsdid,int sl,int slbeishu){
 		if (sl < 0) {
 			return new ArrayList<JSONObject>();
 		}
-		
+		SysUser user = new SysUser(userid);
 		List<ExamQue> danxuan = examQueDao.getallbytmleixingandzsd(szid, tmlx, zsdid);
-		List<JSONObject> danxuanrs = getExamQueOrder(sl,slbeishu,new SysUser(),danxuan);
+		List<JSONObject> danxuanrs = getExamQueOrder(sl,slbeishu,user,danxuan);
 		return danxuanrs;
+	}
+	
+	public List<ExamChoi> getExamChoiListByQue(int examqueid) {
+		return examChoiDao.getExamChoiListByQue(examqueid);
 	}
 	
 	public ExamUser findExamUser(ExamUser examUser) {
@@ -368,7 +372,7 @@ public class FindServiceImpl{
 			JSONObject one = new JSONObject();
 			one.put("examque", q);
 			ExamUser zl = new ExamUser();
-			zl.setUserid(user.getId());
+			zl.setUserid(user.getUid());
 			zl.setExamque(q.getQue());
 			zl.setExamid(q.getId());
 			ExamUser zl2 = findExamUser(zl);
@@ -652,6 +656,59 @@ public class FindServiceImpl{
 			shezhiid++;
 			rs.add(examcd);
 		}			
+		return rs;		
+	}
+	
+	
+	public List<JSONObject> getSuijiTiByUser(int szid,int userid){
+		//找到60道题，20单选 2党史 2大数据 5货劳 5企业 3个人 1土地 2其他 20多选 10判断同样
+		//得到所有的知识点id 家里是9 大数据 8 其他税种 10 货物劳务 11  企业 12 个人 13 土增 14 两办 15 党史
+		//单位笔记本 是 从32开始 家里从8开始
+		int beishu = 5;
+		String[] tmlx = new String[] {"danxuan","duoxuan","panduan"};
+		JSONArray zsd = new JSONArray();
+		String[] zsdlx = new String[] {"qitasz","dashuju","huolao","qiye","geren","tuzeng","liangban","dangshi"};
+		int zsdintq = 32; //改这个起点
+		for(String tm : zsdlx) {
+			JSONObject zsdone = new JSONObject();
+			zsdone.put("zsdlx", tm);
+			zsdone.put("zsdid", zsdintq);
+			int sl = 0;
+			switch (tm) {
+				case "qitasz" : sl=4; break;
+				case "dashuju" : sl=4; break;
+				case "huolao" : sl=4; break;
+				case "qiye" : sl=4; break;
+				case "geren" : sl=2; break;
+				case "tuzeng" : sl=1; break;
+				case "liangban" : sl=0; break;
+				case "dangshi" : sl=1; break;
+			}
+			zsdone.put("zsdsl", sl);
+			zsdintq++;
+			zsd.add(zsdone);
+		}		
+		JSONArray ab = new JSONArray();
+		for(String tm : tmlx) {
+			JSONObject a = new JSONObject();
+			a.put("tmlx", tm);
+			a.put("zsdid", zsd);
+			ab.add(a);
+		}
+		List<JSONObject> rs = new ArrayList<JSONObject>();
+		for (Object one : ab) {
+			JSONObject jone = (JSONObject)one;
+			String tm = jone.getString("tmlx");
+			JSONArray jarr = jone.getJSONArray("zsdid");
+			for (Object one1 : jarr) {
+				JSONObject jone1 = (JSONObject)one1;
+				int zsdid = jone1.getIntValue("zsdid");
+				int zsdsl = jone1.getIntValue("zsdsl");
+				//单位学科id 2 家里学科ID 1
+				List<JSONObject> rs1 = getTiMuForDingding(szid, userid,tm, zsdid, zsdsl - 1 , beishu);
+				rs.addAll(rs1);
+			}
+		}
 		return rs;		
 	}
 	

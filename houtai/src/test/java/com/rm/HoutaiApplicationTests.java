@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.aip.ocr.AipOcr;
 import com.rm.dao.AtcSjkDao;
@@ -199,62 +198,16 @@ class HoutaiApplicationTests {
 	
 	@Test
     public void test2() throws IOException{
-		//找到60道题，20单选 2党史 2大数据 5货劳 5企业 3个人 1土地 2其他 20多选 10判断同样
-		//得到所有的知识点id 家里是9 大数据 8 其他税种 10 货物劳务 11  企业 12 个人 13 土增 14 两办 15 党史
-		//单位笔记本 是 从32开始 家里从8开始
-		int beishu = 5;
-		String[] tmlx = new String[] {"danxuan","duoxuan","panduan"};
-		JSONArray zsd = new JSONArray();
-		String[] zsdlx = new String[] {"qitasz","dashuju","huolao","qiye","geren","tuzeng","liangban","dangshi"};
-		int zsdintq = 32; //改这个起点
-		for(String tm : zsdlx) {
-			JSONObject zsdone = new JSONObject();
-			zsdone.put("zsdlx", tm);
-			zsdone.put("zsdid", zsdintq);
-			int sl = 0;
-			switch (tm) {
-				case "qitasz" : sl=4; break;
-				case "dashuju" : sl=4; break;
-				case "huolao" : sl=4; break;
-				case "qiye" : sl=4; break;
-				case "geren" : sl=2; break;
-				case "tuzeng" : sl=1; break;
-				case "liangban" : sl=0; break;
-				case "dangshi" : sl=1; break;
-			}
-			zsdone.put("zsdsl", sl);
-			zsdintq++;
-			zsd.add(zsdone);
-		}		
-		JSONArray ab = new JSONArray();
-		for(String tm : tmlx) {
-			JSONObject a = new JSONObject();
-			a.put("tmlx", tm);
-			a.put("zsdid", zsd);
-			ab.add(a);
-		}
-		List<JSONObject> rs = new ArrayList<JSONObject>();
-		for (Object one : ab) {
-			JSONObject jone = (JSONObject)one;
-			String tm = jone.getString("tmlx");
-			JSONArray jarr = jone.getJSONArray("zsdid");
-			for (Object one1 : jarr) {
-				JSONObject jone1 = (JSONObject)one1;
-				int zsdid = jone1.getIntValue("zsdid");
-				int zsdsl = jone1.getIntValue("zsdsl");
-				//单位学科id 2 家里学科ID 1
-				List<JSONObject> rs1 = findservice.getTiMuForDingding(2, tm, zsdid, zsdsl - 1 , beishu);
-				rs.addAll(rs1);
-			}
-		}
-		List<ExamQueChuanDi> rs2 = new ArrayList<ExamQueChuanDi>();
-		int shezhiid = 1;
-		for (JSONObject examQue1: rs) {
+		
+		List<JSONObject> rs2 = findservice.getSuijiTiByUser(1,2);
+    	List<ExamQueChuanDi> rs1 = new ArrayList<ExamQueChuanDi>();
+    	int shezhiid = 1;
+		for (JSONObject examQue1: rs2) {
 			ExamQue examQue = examQue1.getObject("examque", ExamQue.class);
 			ExamQueChuanDi examcd = new ExamQueChuanDi();
 			examcd.setQue(examQue.getQue());
 			examcd.setExamtype(examQue.getExamtype());
-			List<ExamChoi> zbchoidel = examChoiDao.getExamChoiListByQue(examQue.getId());
+			List<ExamChoi> zbchoidel = findservice.getExamChoiListByQue(examQue.getId());
 			List<String> xxs = new ArrayList<>();
 			for (ExamChoi xx:zbchoidel) {
 				xxs.add(xx.getXuanxiang());
@@ -265,14 +218,15 @@ class HoutaiApplicationTests {
 			examcd.setZsdneirong(examQue.getExamZsd().getNeirong());
 			examcd.setId(shezhiid);
 			shezhiid++;
-			rs2.add(examcd);
+			rs1.add(examcd);
 			ExamUser examuser = examQue1.getObject("user", ExamUser.class);
 			saveservice.saveExamUser(examuser);
 		}
+    	
 		Workbook wb = WriteExcel.createWorkBook(WriteExcel.XLSX);
 		SheetResult sh = new SheetResult();
 		List<List<String>> ab0 = new ArrayList<List<String>>();
-		for (ExamQueChuanDi cd: rs2) {
+		for (ExamQueChuanDi cd: rs1) {
 			List<String> ab1 = new ArrayList<String>();
 			String wentilx = cd.getExamtype();
 			String wentileixing = "daiding";
