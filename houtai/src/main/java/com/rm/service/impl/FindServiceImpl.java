@@ -391,7 +391,7 @@ public class FindServiceImpl{
         }
 		
 		List<JSONObject> rs = new ArrayList<JSONObject>();
-		if (list2.size() >=sl) {
+		if (list2.size() >=sl && list2.size() > 0) {
 			Set<Integer> rsshu = new HashSet<Integer>();
 			int sla = sl;
 			if (sl==0)
@@ -667,27 +667,26 @@ public class FindServiceImpl{
 		int beishu = 5;
 		String[] tmlx = new String[] {"danxuan","duoxuan","panduan"};
 		JSONArray zsd = new JSONArray();
-		String[] zsdlx = new String[] {"qitasz","dashuju","huolao","qiye","geren","tuzeng","liangban","dangshi"};
-		int zsdintq = 32; //改这个起点
-		for(String tm : zsdlx) {
+		//String[] zsdlx = new String[] {"qitasz","dashuju","huolao","qiye","geren","tuzeng","liangban","dangshi"};
+		List<ExamZsd> zsdshuishou = getZsdByNeiRong("税收业务");
+		int sjid= zsdshuishou.get(0).getId();
+		List<ExamZsd> zsdjihe = getZsdXiaJi(sjid);
+		for(ExamZsd tm : zsdjihe) {
 			JSONObject zsdone = new JSONObject();
-			zsdone.put("zsdlx", tm);
-			zsdone.put("zsdid", zsdintq);
+			zsdone.put("zsdid", tm.getId());
 			int sl = 0;
-			switch (tm) {
-				case "qitasz" : sl=4; break;
-				case "dashuju" : sl=4; break;
-				case "huolao" : sl=4; break;
-				case "qiye" : sl=4; break;
-				case "geren" : sl=2; break;
-				case "tuzeng" : sl=1; break;
-				case "liangban" : sl=0; break;
-				case "dangshi" : sl=1; break;
+			switch (tm.getNeirong()) {
+				case "其他税种" : sl=4; break;
+				case "大数据税收风险" : sl=4; break;
+				case "货物劳务税" : sl=4; break;
+				case "企业所得税" : sl=4; break;
+				case "个人所得税" : sl=2; break;
+				case "土地增值税" : sl=1; break;
+				case "党史" : sl=1; break;
 			}
 			zsdone.put("zsdsl", sl);
-			zsdintq++;
 			zsd.add(zsdone);
-		}		
+		}	
 		JSONArray ab = new JSONArray();
 		for(String tm : tmlx) {
 			JSONObject a = new JSONObject();
@@ -740,5 +739,16 @@ public class FindServiceImpl{
 		List<ExamZsd> rs = examZsdDao.getZsdYiJi();
 		return rs;
 	}
+	
+	public List<ExamZsd> getZsdByNeiRong(String nr) {		    	
+		List<ExamZsd> rs = examZsdDao.getZsdByNeiRong(nr);
+		return rs;
+	}
+	
+	public List<ExamZsd> getZsdXiaJi(int sjid) {		    	
+		List<ExamZsd> rs = examZsdDao.getZsdXiaJi(sjid);
+		return rs;
+	}
+	
 	
 }

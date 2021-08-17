@@ -61,7 +61,7 @@ public class ZtController {
     	return service.getTiMuByBiaoTi(szid,biaoti);
     }
     
-    @RequestMapping(value="/getsuijixitibyszidbiaoti")
+    @RequestMapping(value="/getsuijixitibyszid")
     public List<ExamQueChuanDi> listall5(@RequestParam("sid") int szid){   
     	List<JSONObject> rs2 = service.getSuijiTiByUser(szid,2);
     	List<ExamQueChuanDi> rs1 = new ArrayList<ExamQueChuanDi>();

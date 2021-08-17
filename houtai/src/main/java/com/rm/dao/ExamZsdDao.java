@@ -23,6 +23,6 @@ public interface ExamZsdDao extends JpaRepository<ExamZsd, Integer>{
 	@Query(value = "select * from t_examquezsd where sjid= -1",nativeQuery = true)
 	public List<ExamZsd> getZsdYiJi();
 	
-	@Query(value = "select * from t_examquezsd where sjid= :sid",nativeQuery = true)
+	@Query(value = "select * from t_examquezsd where sjid= :sid order by neirong",nativeQuery = true)
 	public List<ExamZsd> getZsdXiaJi(@Param("sid") int sid);
 }
