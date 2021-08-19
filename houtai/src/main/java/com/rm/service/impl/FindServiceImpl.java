@@ -358,7 +358,24 @@ public class FindServiceImpl{
 	}
 	
 	public List<ExamChoi> getExamChoiListByQue(int examqueid) {
-		return examChoiDao.getExamChoiListByQue(examqueid);
+		List<ExamChoi>  rs = examChoiDao.getExamChoiListByQue(examqueid);
+		Collections.sort(rs, new Comparator<ExamChoi>() {
+            @Override
+            public int compare(ExamChoi a, ExamChoi b) {
+                String valA1 = new String();
+                String valA2 = new String();
+                try {
+                    valA1 = a.getXuanxiang();
+                    valA2 = b.getXuanxiang();
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+                // 设置排序规则
+                int i = valA1.compareTo(valA2);
+                return i;
+            }
+        });
+		return rs;
 	}
 	
 	public ExamUser findExamUser(ExamUser examUser) {

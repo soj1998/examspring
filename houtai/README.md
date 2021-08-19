@@ -23,6 +23,11 @@ exam question and answer
 	到pom文件所在文件夹下,运行命令mvn clean package -DskipTests
 ```
 
+# pull push
+```
+	examspring git remote show origin git push origin master git pull origin master
+```
+
 # 搞首页
 ```
 	（1）所有文章，包括专栏、试题、基础都要再存入shouyexinxi表
