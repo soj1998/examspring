@@ -358,7 +358,17 @@ public class FindServiceImpl{
 	}
 	
 	public List<ExamChoi> getExamChoiListByQue(int examqueid) {
-		List<ExamChoi>  rs = examChoiDao.getExamChoiListByQue(examqueid);
+		List<ExamChoi>  rs = new ArrayList<ExamChoi>();
+		ExamQue eq = examQueDao.findById(examqueid).get();
+		if (eq.getExamtype().equals("panduan")) {
+			ExamChoi a = new ExamChoi("A.正确",eq);
+			ExamChoi b = new ExamChoi("B.错误",eq);
+			rs.add(a);
+			rs.add(b);
+		}
+		if (eq.getExamtype().equals("danxuan") || eq.getExamtype().equals( "duoxuan")) {
+			rs = examChoiDao.getExamChoiListByQue(examqueid);
+		}
 		Collections.sort(rs, new Comparator<ExamChoi>() {
             @Override
             public int compare(ExamChoi a, ExamChoi b) {
