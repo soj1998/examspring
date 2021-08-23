@@ -692,7 +692,8 @@ public class FindServiceImpl{
 		//得到所有的知识点id 家里是9 大数据 8 其他税种 10 货物劳务 11  企业 12 个人 13 土增 14 两办 15 党史
 		//单位笔记本 是 从32开始 家里从8开始
 		int beishu = 5;
-		String[] tmlx = new String[] {"danxuan","duoxuan","panduan"};
+		//String[] tmlx = new String[] {"danxuan","duoxuan","panduan"};
+		String[] tmlx = new String[] {"duoxuan"};
 		JSONArray zsd = new JSONArray();
 		//String[] zsdlx = new String[] {"qitasz","dashuju","huolao","qiye","geren","tuzeng","liangban","dangshi"};
 		List<ExamZsd> zsdshuishou = getZsdByNeiRong("税收业务");
