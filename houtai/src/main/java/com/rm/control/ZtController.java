@@ -19,6 +19,7 @@ import com.rm.entity.ZhuanLan;
 import com.rm.entity.pt.ExamQueChuanDi;
 import com.rm.service.impl.FindServiceImpl;
 import com.rm.service.impl.SaveServiceImpl;
+import com.rm.util.StringUtil;
 
 @CrossOrigin(origins = "*")
 @RequestMapping(value="/wbzt")
@@ -77,7 +78,11 @@ public class ZtController {
 				xxs.add(xx.getXuanxiang());
 			}
 			examcd.setXuanxiang(xxs);
-			examcd.setAns(examQue.getAns());
+			String ans = examQue.getAns();
+			if (examQue.getExamtype().equals("panduan")) {
+				ans = StringUtil.getPanDuanTiDaAn(examQue.getAns());
+			}
+			examcd.setAns(ans);
 			examcd.setJiexi(examQue.getJiexi());
 			examcd.setZsdneirong(examQue.getExamZsd().getNeirong());
 			examcd.setId(shezhiid);

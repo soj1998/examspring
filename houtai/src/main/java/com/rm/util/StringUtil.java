@@ -834,6 +834,19 @@ public class StringUtil {
     public static String[] getXuanXiangBzTou() {
     	return new String[] {"A．","A."};
     }
+    
+    public static String getPanDuanTiDaAn(String cr) {
+    	String rs = "A";
+    	switch (cr) {
+    		case "正确": rs = "A";break;
+    		case "对": rs = "A";break;
+    		case "错误": rs = "B";break;
+    		case "错": rs = "B";break;
+    		default : rs = cr;
+    	}
+    	return rs;
+    }
+    
     public static String transExamXiTiLeiXing(String crstr) {
     	String rs ="weizhi";
     	String[] timu = getXiTiLeiXingZw();
