@@ -416,7 +416,29 @@ public class FindServiceImpl{
         	JSONObject one2 =  rd.getJSONObject(i);
         	list2.add(one2);
         }
-		
+        Collections.sort(list2, new Comparator<JSONObject>() {
+            //排序字段
+            private static final String KEY_NAME1 = "user";
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+            	ExamUser valA1 = new ExamUser();
+            	ExamUser valA2 = new ExamUser();                
+                try {	                	
+                    valA1 = (ExamUser)a.get(KEY_NAME1);
+                    valA2 = (ExamUser)b.get(KEY_NAME1);
+                } catch (JSONException e) {
+                    System.out.println(e);
+                }
+                // 设置排序规则
+                if (valA1!= null && valA2 != null) {
+	                int i = valA1.getShuliang();
+	                int j = valA2.getShuliang();
+	                return i-j;
+                }
+                return 0;
+            }
+        });
 		List<JSONObject> rs = new ArrayList<JSONObject>();
 		if (list2.size() >=sl && list2.size() > 0) {
 			Set<Integer> rsshu = new HashSet<Integer>();
