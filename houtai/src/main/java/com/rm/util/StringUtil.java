@@ -534,11 +534,13 @@ public class StringUtil {
     public static String getJSONArrayString(JSONArray map,List<String> tihuan,int toubuweizhi) {
 		StringBuilder sb = new StringBuilder();		
 		//存放排序结果json数组
+		List<String> list=new ArrayList<String>();
+		list.addAll(Arrays.asList(getXiTiLeiXingZw()));
         JSONArray sortedJsonArray = getJSONArraySorted(map);      
         for (int i = 0; i < map.size(); i++) {
         	JSONObject jone = (JSONObject)sortedJsonArray.get(i);
             String a12 = jone.getString("neirong");
-            for (String ati : tihuan) {
+            for (String ati : list) {
             	if (a12.indexOf(ati)>=0) {
 					//t1ci =true;
             		a12 = a12.replaceFirst(ati, "");

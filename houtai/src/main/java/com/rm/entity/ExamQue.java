@@ -217,7 +217,7 @@ public class ExamQue {
 		this.biaotixh = biaotixh;
 		this.biaotiid = biaotiid;
 		List<String> list=new ArrayList<String>();
-		list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
+		//list.addAll(Arrays.asList(StringUtil.getXiTiLeiXingZw()));
 		String[] timufenge = StringUtil.getXiTiShuZiFenZu(StringUtil.getXiTiShuZiFenZuGeShu(), xitishuzifenzufuhao);
 		list.addAll(Arrays.asList(timufenge));
 		this.que = StringUtil.getJSONArrayString(examque,list,tihuantouweishu);
