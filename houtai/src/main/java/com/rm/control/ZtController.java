@@ -63,7 +63,7 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getsuijixitibyszid")
-    public List<ExamQueChuanDi> listall5(@RequestParam("sid") int szid){   
+    public List<ExamQueChuanDi> getSuijiTiByUser(@RequestParam("sid") int szid){   
     	List<JSONObject> rs2 = service.getSuijiTiByUser(szid,2);
     	List<ExamQueChuanDi> rs1 = new ArrayList<ExamQueChuanDi>();
     	int shezhiid = 1;

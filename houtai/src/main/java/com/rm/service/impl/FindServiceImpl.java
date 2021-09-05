@@ -353,6 +353,9 @@ public class FindServiceImpl{
 		}
 		SysUser user = new SysUser(userid);
 		List<ExamQue> danxuan = examQueDao.getallbytmleixingandzsd(szid, tmlx, zsdid);
+		LOG.info(danxuan.size() + "  szid:" + szid + ",tmlx" + tmlx + ",zsdid" + zsdid);
+		if(danxuan != null && danxuan.size() > 0)
+			LOG.info(danxuan.get(0).getQue());
 		List<JSONObject> danxuanrs = getExamQueOrder(sl,slbeishu,user,danxuan);
 		return danxuanrs;
 	}
@@ -726,16 +729,17 @@ public class FindServiceImpl{
 			zsdone.put("zsdid", tm.getId());
 			int sl = 0;
 			switch (tm.getNeirong()) {
-				case "其他税种" : sl=4; break;
-				case "大数据税收风险" : sl=4; break;
-				case "货物劳务税" : sl=4; break;
-				case "企业所得税" : sl=4; break;
-				case "个人所得税" : sl=2; break;
+				case "其他税种" : sl=2; break;
+				case "大数据税收风险" : sl=2; break;
+				case "货物劳务税" : sl=2; break;
+				case "企业所得税" : sl=2; break;
+				case "个人所得税" : sl=1; break;
 				case "土地增值税" : sl=1; break;
-				case "党史" : sl=1; break;
+				case "党史" : sl=0; break;
 			}
 			zsdone.put("zsdsl", sl);
 			zsd.add(zsdone);
+			LOG.info(tm.getNeirong() + "    " + tm.getId());
 		}	
 		JSONArray ab = new JSONArray();
 		for(String tm : tmlx) {
@@ -754,7 +758,7 @@ public class FindServiceImpl{
 				int zsdid = jone1.getIntValue("zsdid");
 				int zsdsl = jone1.getIntValue("zsdsl");
 				//单位学科id 2 家里学科ID 1
-				List<JSONObject> rs1 = getTiMuForDingding(szid, userid,tm, zsdid, zsdsl - 1 , beishu);
+				List<JSONObject> rs1 = getTiMuForDingding(szid, userid, tm, zsdid, zsdsl - 1 , beishu);
 				rs.addAll(rs1);
 			}
 		}
