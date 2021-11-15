@@ -34,7 +34,7 @@ public class ZtController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ZtController.class);
     @RequestMapping(value="/gettab")
-    public JSONObject listall(@RequestParam("szid") int szid){    	
+    public JSONObject gettab(@RequestParam("szid") int szid){    	
         JSONObject jSONObject= new JSONObject();
         Long timu = service.getXiTiShuLiang(szid);
         jSONObject.put("xiti", timu.intValue());
@@ -47,23 +47,23 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getquanbuxitibyszid1")
-    public List<ExamQueChuanDi> listall2(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
+    public List<ExamQueChuanDi> getquanbuxitibyszid1(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
     	int zuidashu = 1000;    	
 		return service.getTiMuBySqtmSzid(szid, sqtm, zuidashu);
     }
     
     @RequestMapping(value="/getquanbuxitibyszid2")
-    public List<ExamQueChuanDi> listall3(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
+    public List<ExamQueChuanDi> getquanbuxitibyszid2(@RequestParam("sid") int szid,@RequestParam("sqtm") String sqtm){    	
     	return service.getTiMuBySzid(szid,100);
     }
     
     @RequestMapping(value="/getquanbuxitibyszidbiaoti")
-    public List<ExamQueChuanDi> listall4(@RequestParam("sid") int szid,@RequestParam("biaoti") int biaoti){    	
+    public List<ExamQueChuanDi> getquanbuxitibyszidbiaoti(@RequestParam("sid") int szid,@RequestParam("biaoti") int biaoti){    	
     	return service.getTiMuByBiaoTi(szid,biaoti);
     }
     
     @RequestMapping(value="/getsuijixitibyszid")
-    public List<ExamQueChuanDi> getSuijiTiByUser(@RequestParam("sid") int szid){   
+    public List<ExamQueChuanDi> getsuijixitibyszid(@RequestParam("sid") int szid){   
     	List<JSONObject> rs2 = service.getSuijiTiByUser(szid,2);
     	List<ExamQueChuanDi> rs1 = new ArrayList<ExamQueChuanDi>();
     	int shezhiid = 1;
@@ -95,34 +95,34 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getquanbuxitibyszidbiaoticount")
-    public int listall5(@RequestParam("sid") int szid,@RequestParam("biaoti") String biaoti){    	
+    public int getquanbuxitibyszidbiaoticount(@RequestParam("sid") int szid,@RequestParam("biaoti") String biaoti){    	
     	return service.getTiMuByBiaoTiCount(szid,biaoti);
     }
     /*
      * id 标题 类型 学科 知识点 录入时间
      * */
     @RequestMapping(value="/getsyxxcount1")
-    public int listall1(){    	
+    public int getsyxxcount1(){    	
         Long zlsl = service.getShouYeXinXiShuLiang();
         return zlsl.intValue();
     }
     
     @RequestMapping(value="/getsyxx")
-    public List<ShouYeXinXi> listall31(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+    public List<ShouYeXinXi> getsyxx(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
         //totalrecord sortby
 		List<ShouYeXinXi> list_glx=service.getShouYeXinXiList(pageNum, pageSize);
         return list_glx;
     }
     
     @RequestMapping(value="/getsyxxcount")
-    public int listall32(){    	
+    public int getsyxxcount(){    	
         //totalrecord sortby
 		List<ShouYeXinXi> list_glx=service.getShouYeXinXiList(1, 100000);
         return list_glx.size();
     }
     
     @RequestMapping(value="/getsycount1")
-    public ResquestZlsl listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+    public ResquestZlsl getsycount1(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
         Long timu = service.getXiTiShuLiang();
         Long zlsl = service.getZhuanLanShuLiang();
         Long jcsl = service.getJiChuShuLiang();
@@ -132,7 +132,7 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getsy")
-    public List<ZhuanLan> listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("zlsl")ResquestZlsl zlsl){    	
+    public List<ZhuanLan> getsy(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("zlsl")ResquestZlsl zlsl){    	
         //totalrecord sortby
     	
 		List<ZhuanLan> list_glx=service.getZhuanLanListOrderBysj(pageNum, pageSize);
@@ -140,7 +140,7 @@ public class ZtController {
     }
     
     @RequestMapping(value="/getsyexam")
-    public List<ExamQue> listall3(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("zlsl")ResquestZlsl zlsl){    	
+    public List<ExamQue> getsyexam(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("zlsl")ResquestZlsl zlsl){    	
         //totalrecord sortby
 		List<ExamQue> list_glx=service.getExamQueListOrderBysj(pageNum, pageSize);
         return list_glx;

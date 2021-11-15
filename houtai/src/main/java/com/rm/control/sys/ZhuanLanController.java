@@ -57,7 +57,7 @@ public class ZhuanLanController {
 	
 	@ResponseBody
 	@RequestMapping(value="/listdaican",method=RequestMethod.POST)
-    public List<ZhuanLan> listall(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
+    public List<ZhuanLan> listdaican(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){    	
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
 		List<ZhuanLan> list_glx=zhuanLanDao.getzlbybtidfuyi(pageRequest);
 		return list_glx;        
@@ -65,7 +65,7 @@ public class ZhuanLanController {
 	
 	@ResponseBody
 	@RequestMapping(value="/listdaicanzhanshi",method=RequestMethod.POST)
-    public List<ZhuanLan> listall2(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("szid") int szid){    	
+    public List<ZhuanLan> listdaicanzhanshi(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize,@RequestParam("szid") int szid){    	
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);
 		List<ZhuanLan> list_glx=zhuanLanDao.getzlbybtidfuyizhanshi(pageRequest,szid);
 		return list_glx;        
@@ -73,19 +73,19 @@ public class ZhuanLanController {
 	
 	@ResponseBody
 	@RequestMapping(value="/getcount")
-    public int listall2(){    	
+    public int getcount(){    	
 		return zhuanLanDao.getCountbybtidfuyi();        
     }
 	
 	@ResponseBody
 	@RequestMapping(value="/getcountbysz")
-    public int listall5(@RequestParam("szid") int szid){    	
+    public int getcountbysz(@RequestParam("szid") int szid){    	
 		return zhuanLanDao.getCountbybtidfuyizhanshi(szid);        
     }
 	
 	@ResponseBody
 	@RequestMapping(value="/getzlbyid",method=RequestMethod.POST)
-    public List<ZhuanLan> listall6(@RequestParam("tid") int glid){  
+    public List<ZhuanLan> getzlbyid(@RequestParam("tid") int glid){  
 		ZhuanLan zl = zhuanLanDao.findById(glid).get();    	
     	List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
     	zllist.add(zl);
@@ -94,7 +94,7 @@ public class ZhuanLanController {
 	
 	@ResponseBody
 	@RequestMapping(value="/getzlztbyid",method=RequestMethod.POST)
-    public ZhuanLan listall7(@RequestParam("tid") int glid){  
+    public ZhuanLan getzlztbyid(@RequestParam("tid") int glid){  
 		ZhuanLan zl = zhuanLanDao.findById(glid).get();
 		return zl;        
     }
@@ -103,7 +103,7 @@ public class ZhuanLanController {
 	
     @ResponseBody
 	@RequestMapping(value="/uploadsave",method=RequestMethod.POST)
-	public String getUploadUmImage(HttpServletRequest request,@RequestParam("wzlx") int wzlx,HttpServletResponse response) throws Exception{
+	public String uploadsave(HttpServletRequest request,@RequestParam("wzlx") int wzlx,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		UMEditor_Uploader up = new UMEditor_Uploader(request);
@@ -137,7 +137,7 @@ public class ZhuanLanController {
     
     @ResponseBody
 	@RequestMapping(value="/uploadztsave",method=RequestMethod.POST)
-	public String getUploadUmImage2(HttpServletRequest request,HttpServletResponse response,
+	public String uploadztsave(HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(name = "szid")int  szid,
 			@RequestParam(name = "wzbiaoti")String  biaoti,
 			@RequestParam(name = "wzriqi")String  wzrq,
@@ -214,7 +214,7 @@ public class ZhuanLanController {
 	private String urllinux;
     @ResponseBody
 	@RequestMapping(value="/uploadimg",method=RequestMethod.POST)
-	public JSONObject getUploadUmImage3(HttpServletRequest request,HttpServletResponse response) throws Exception{
+	public JSONObject uploadimg(HttpServletRequest request,HttpServletResponse response) throws Exception{
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		UMEditor_Uploader up = new UMEditor_Uploader(request);

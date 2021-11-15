@@ -40,7 +40,7 @@ public class AtcController {
 	private static final Logger LOG = LoggerFactory.getLogger(AtcController.class);
 	@CrossOrigin
 	@RequestMapping(value="/gettree",method=RequestMethod.POST)
-    public JSONArray listerji3(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
+    public JSONArray gettree(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
         JSONArray rs = new JSONArray();
 		List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid,atcid);
         list_glx.forEach(e -> {
@@ -58,7 +58,7 @@ public class AtcController {
 	
 	@CrossOrigin
 	@RequestMapping(value="/gettreebyid",method=RequestMethod.POST)
-    public List<TreeNodeSjk> listerji(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
+    public List<TreeNodeSjk> gettreebyid(@RequestParam("parentid") int pid,@RequestParam("atctreenodesjkid") int atcid){    	
         List<TreeNodeSjk> list_glx=treeNodeSjkDao.getTreeByParentid(pid,atcid);
         LOG.info(list_glx.size() + "");
         return list_glx;
@@ -66,7 +66,7 @@ public class AtcController {
 	
 	@CrossOrigin
 	@RequestMapping(value="/getatcidbyszwzlx",method=RequestMethod.POST)
-    public List<AtcSjk> listerji2(@RequestParam("szid") int szid,@RequestParam("wzlxid") int wzlxid){    	
+    public List<AtcSjk> getatcidbyszwzlx(@RequestParam("szid") int szid,@RequestParam("wzlxid") int wzlxid){    	
         List<AtcSjk> list_glx=atcSjkDao.getBanbenBySzWzlx(szid,wzlxid);
         LOG.info(list_glx.size() + "");
         return list_glx;
@@ -74,7 +74,7 @@ public class AtcController {
 	
 	@CrossOrigin
 	@RequestMapping(value="/gettreeneirongbyid",method=RequestMethod.POST)
-    public JSONObject listerji2(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid,@RequestParam("atctreenodesjkid") int atcid){
+    public JSONObject gettreeneirongbyid(@RequestParam("parentid") int pid,@RequestParam("rootid") int rid,@RequestParam("atctreenodesjkid") int atcid){
 		JSONObject r1 =new JSONObject();
 		int minr = treeNodeSjkDao.getMinRootidByParentid(pid,atcid);
         List<TnsQbNeiRong> rs1 = new ArrayList<TnsQbNeiRong>();
