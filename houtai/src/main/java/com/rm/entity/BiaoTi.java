@@ -90,7 +90,7 @@ public class BiaoTi implements Serializable{
 		this.laiyuan = laiyuan;
 		this.xilie = xilie;
 		this.lrsj = lrsj;
-		this.yxbz = "Y";
+		this.yxbz = yxbz;
 		this.szid = szid;
 	}
 
@@ -108,6 +108,11 @@ public class BiaoTi implements Serializable{
 
 	public void setLrsj(Date lrsj) {
 		this.lrsj = lrsj;
+	}
+
+	public BiaoTi() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	
 	

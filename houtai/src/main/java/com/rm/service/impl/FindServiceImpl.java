@@ -34,6 +34,7 @@ import com.rm.dao.ShouYeXinXiDao;
 import com.rm.dao.TreeNodeSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
+import com.rm.entity.BiaoTi;
 import com.rm.entity.ExamAnsDa;
 import com.rm.entity.ExamChoi;
 import com.rm.entity.ExamDaan;
@@ -769,7 +770,9 @@ public class FindServiceImpl{
 		return biaotiDao.getallbybiaoticount(szid, biaoti);		
 	}
 	
-	
+	public BiaoTi getBiaoTiById(int szid){
+		return biaotiDao.findById(szid).get();		
+	}
 	
 	public List<ExamQue> getExamQue(int pageNum, int pageSize, int szid) {
 		Pageable pageRequest = PageRequest.of(pageNum - 1, pageSize);

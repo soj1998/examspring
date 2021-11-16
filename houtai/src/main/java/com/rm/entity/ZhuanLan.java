@@ -38,18 +38,30 @@ public class ZhuanLan {
 		this.zlxilie = zlxilie;
 	}
 
-	@Column(length=200)
-	private String biaoti;
+	@Column
+	private int biaoti;
 	
 
-	public String getBiaoti() {
+	public int getBiaoti() {
 		return biaoti;
 	}
 
-	public void setBiaoti(String biaoti) {
+	public void setBiaoti(int biaoti) {
 		this.biaoti = biaoti;
 	}
 
+	@Transient
+	private String biaotinr;
+	
+
+	public String getBiaotinr() {
+		return biaotinr;
+	}
+
+	public void setBiaotinr(String biaotinr) {
+		this.biaotinr = biaotinr;
+	}
+	
 	@Column(columnDefinition="int default -1")
     private int btid; //是标题的话 存入-1
      
@@ -225,7 +237,7 @@ public class ZhuanLan {
 	/*
 	 * 搞单个专栏的时候用，且有系列
 	 * */
-	public ZhuanLan(String yxbz,int szid,int btid,String biaoti, Date riqi,String laiyuan,String xilie, String zhengge, String zhenggetxt,int exzsdid) {
+	public ZhuanLan(String yxbz,int szid,int btid,int biaoti, Date riqi,String laiyuan,String xilie, String zhengge, String zhenggetxt,int exzsdid) {
 		super();
 		this.szid = szid;
 		this.btid = btid;

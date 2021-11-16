@@ -19,24 +19,24 @@ SELECT * FROM t_examquesjk;
 
 SELECT DISTINCT biaotiid, t1.`biaoti` FROM t_examquesjk t,t_biaoti t1 WHERE t.biaotiid = t1.id;
 
-drop view if exists t_shouyexinxi;
+DROP VIEW IF EXISTS t_shouyexinxi;
 
 CREATE VIEW t_shouyexinxi AS 
 SELECT  ROW_NUMBER() OVER (ORDER BY a.lrsj) AS id, a.* FROM
 (
-SELECT lrsj,
-(SELECT szmc FROM t_sz t2 WHERE t2.id= t.szid) sz, 
-szid,
+SELECT bt.lrsj,
+(SELECT szmc FROM t_sz t2 WHERE t2.id= bt.szid) sz, 
+bt.szid,
 t.id xinxiyuanid,
 "zhuanlan" xinxiyuanleixing,
-yxbz,
+bt.yxbz,
 (SELECT neirong FROM t_examquezsd t2 WHERE t2.id= t.exzsdid)  zsd,
-exzsdid zsdid,
-biaoti,
-0 biaotiid,
+t.exzsdid zsdid,
+bt.biaoti,
+bt.id biaotiid,
 ROW_NUMBER() OVER (ORDER BY t.lrsj) AS rn 
-FROM t_zhuanlan t
-WHERE btid = -1
+FROM t_zhuanlan t,t_biaoti bt
+WHERE btid = -1 AND bt.id = t.biaoti
 
 UNION ALL 
 SELECT a.* FROM (

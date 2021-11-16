@@ -738,7 +738,7 @@ public class SzExamFileSaveSql {
         }
 		JSONArray hzarray = new JSONArray();
 		fileXiangGuan.diGuiHzXin(kashihangshu,hzarray,yuanshiarray,sz);
-		boolean biaotione = false;
+		//boolean biaotione = false;
 		for (Object fd2:hzarray) {
 			JSONObject jb2 = (JSONObject)fd2;
 			JSONArray arr2 = jb2.getJSONArray(StringUtil.getJianGeBiaoZHi());//a1 al 简直坑爹
@@ -803,7 +803,7 @@ public class SzExamFileSaveSql {
 			String ly = StringUtil.getJSONArrayString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
 			String xl = StringUtil.getJSONArrayString(xilielist, StringUtil.getZhuanLanXiLie());
 			BiaoTi biaoti = new BiaoTi(biaoti2,ly,xl,lrsj2,"Y",sza.getId());
-			if (!biaotione) {
+			if (true) {        //!biaotione) {
 				BiaoTi biaoti21 = examQueService.saveBiaoTi(biaoti);
 				if (biaoti21 == null ) {
 					LOG.info("---标题保存错误，不继续了");

@@ -20,6 +20,7 @@ import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
 import com.rm.entity.AtcSjk;
+import com.rm.entity.BiaoTi;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
@@ -129,6 +130,16 @@ public class ZhuanLanFileSaveSql {
 			
 			String ly = StringUtil.getJSONArrayString(laiyuanlist, StringUtil.getZhuanLanLaiYuan());
 			String xl = StringUtil.getJSONArrayString(xilielist, StringUtil.getZhuanLanXiLie());
+			BiaoTi biaoti = new BiaoTi(biaoti2,ly,xl,lrsj2,"Y",sza.getId());
+			
+			BiaoTi biaoti21 = examQueService.saveBiaoTi(biaoti);
+			if (biaoti21 == null ) {
+				LOG.info("---标题保存错误，不继续了");
+				continue;
+			} else {
+				biaoti = biaoti21;
+			}
+			
 			//List<Map.Entry<Integer,String>> listmap = new ArrayList<Map.Entry<Integer,String>>(zwlist.entrySet());
 			int minhstimu  = 0;
 			for(Object mapping1:zwlist){
@@ -160,12 +171,12 @@ public class ZhuanLanFileSaveSql {
 		        	}
 		        	if (StringUtil.isNotEmpty(a1)) {
 		        		if(hs == minhstimu) {
-		        			ZhuanLan zlan = new ZhuanLan("Y",-1,hs,a1,xl,atcSjk);
-		        			zlan.setLrsj(lrsj2);
-		        			zlan.setWzlaiyuan(ly);
-		        			zlan.setSzid(sza.getId());
-		        			zlan.setYxbz("Y");
-		        			zlan.setBiaoti(biaoti2);
+		        			ZhuanLan zlan = new ZhuanLan("Y",-1,hs,a1,xl,null);
+		        			//zlan.setLrsj(lrsj2);
+		        			//zlan.setWzlaiyuan(ly);
+		        			//zlan.setSzid(sza.getId());
+		        			//zlan.setYxbz("Y");
+		        			zlan.setBiaoti(biaoti21.getId());
 		        			zlan.setExzsdid(exzsd1.getId());
 		        			btid = zhuanLanDao.save(zlan).getId();
 		        			/**
@@ -209,12 +220,12 @@ public class ZhuanLanFileSaveSql {
 			        	int hs = mapping.getIntValue("hangshu");		        	
 			        	if (StringUtil.isNotEmpty(a1)) {
 			        		if(hs != minhstimu) {
-			        			ZhuanLan zlan = new ZhuanLan("Y",btid,hs,a1,xl,atcSjk);
-			        			zlan.setLrsj(lrsj2);
-			        			zlan.setWzlaiyuan(ly);
-			        			zlan.setSzid(sza.getId());
-			        			zlan.setYxbz("Y");
-			        			zlan.setExzsd(exzsd1);
+			        			ZhuanLan zlan = new ZhuanLan("Y",btid,hs,a1,xl,null);
+			        			//zlan.setLrsj(lrsj2);
+			        			//zlan.setWzlaiyuan(ly);
+			        			//zlan.setSzid(sza.getId());
+			        			//zlan.setYxbz("Y");
+			        			//zlan.setExzsd(exzsd1);
 			        			zhuanLanDao.save(zlan).getId();
 			        		}
 			        	}

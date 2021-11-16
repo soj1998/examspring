@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.rm.dao.AtcSjkDao;
 import com.rm.dao.ZhuanLanDao;
 import com.rm.dao.sys.SzDao;
+import com.rm.entity.BiaoTi;
 import com.rm.entity.ExamZsd;
 import com.rm.entity.ZhuanLan;
 import com.rm.entity.lieju.Sz;
@@ -88,6 +89,8 @@ public class ZhuanLanController {
     public List<ZhuanLan> getzlbyid(@RequestParam("tid") int glid){  
 		ZhuanLan zl = zhuanLanDao.findById(glid).get();    	
     	List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
+    	BiaoTi bt = findServiceImpl.getBiaoTiById(zl.getBiaoti());
+    	zl.setBiaotinr(bt.getBiaoti());
     	zllist.add(zl);
 		return zllist;        
     }
@@ -139,7 +142,7 @@ public class ZhuanLanController {
 	@RequestMapping(value="/uploadztsave",method=RequestMethod.POST)
 	public String uploadztsave(HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(name = "szid")int  szid,
-			@RequestParam(name = "wzbiaoti")String  biaoti,
+			@RequestParam(name = "wzbiaoti")String  biaoti1,
 			@RequestParam(name = "wzriqi")String  wzrq,
 			@RequestParam(name = "wzlaiyuan")String  wzlaiyuan,
 			@RequestParam(name = "wzxilie")String  wzxilie,
@@ -176,8 +179,17 @@ public class ZhuanLanController {
 			rs = "zsd wrong";
 			return rs;
 		}
+		BiaoTi biaoti = new BiaoTi(biaoti1,wzlaiyuan,wzxilie,wddate,"Y",szid);
+		BiaoTi biaoti21 = saveServiceImpl.saveBiaoTi(biaoti);
+		if (biaoti21 == null ) {
+			LOG.info("---标题保存错误，不继续了");
+			rs = "biaoti wrong";
+			return rs;
+		} else {
+			biaoti = biaoti21;
+		}
 		// -100 是单个专栏  -1 是整体保存的专栏
-		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,biaoti,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId());
+		ZhuanLan zlan = new ZhuanLan("Y",szid,-100,biaoti21.getId(),wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1.getId());
 		if (StringUtil.isNotEmpty(wzxilie)) {
 			//zlan = new ZhuanLan("Y",szid,-100,wddate,wzlaiyuan,wzxilie,wzquanbu,wzquanbutxt,exzsd1);
 		} else {
