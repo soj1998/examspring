@@ -62,6 +62,18 @@ public class ZhuanLan {
 		this.biaotinr = biaotinr;
 	}
 	
+	@Transient
+	private String szmc;
+	
+
+	public String getSzmc() {
+		return szmc;
+	}
+
+	public void setSzmc(String szmc) {
+		this.szmc = szmc;
+	}
+	
 	@Column(columnDefinition="int default -1")
     private int btid; //是标题的话 存入-1
      

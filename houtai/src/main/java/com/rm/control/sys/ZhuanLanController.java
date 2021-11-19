@@ -91,6 +91,10 @@ public class ZhuanLanController {
     	List<ZhuanLan> zllist = zhuanLanDao.getzlbyid(zl.getId());
     	BiaoTi bt = findServiceImpl.getBiaoTiById(zl.getBiaoti());
     	zl.setBiaotinr(bt.getBiaoti());
+    	zl.setWzlaiyuan(bt.getLaiyuan());
+    	String szmc = findServiceImpl.getSz(bt.getSzid()).getSzmc();
+    	zl.setSzmc(szmc);
+    	zl.setLrsj(bt.getLrsj());
     	zllist.add(zl);
 		return zllist;        
     }
