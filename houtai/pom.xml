@@ -166,7 +166,7 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<dependency>
 	    <groupId>commons-fileupload</groupId>
 	    <artifactId>commons-fileupload</artifactId>
-	    <version>1.4</version>
+	    <version>1.5</version>
 	</dependency>
 	
 	<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-app -->
